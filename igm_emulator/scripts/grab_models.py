@@ -3,7 +3,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 import dill
-from atropy.table import Table
+from astropy.table import Table
 from igm_emulator.emulator.utils import lhs
 
 
