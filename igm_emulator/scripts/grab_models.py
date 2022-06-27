@@ -64,7 +64,7 @@ if __name__ == '__main__':
                                         np.array([fobs[-1], log_T0s[-1], gammas[-1]]))
 
         # determine the closest model to each lhs sample
-        fobs_idx = np.armin(np.abs(fobs - sample_params[0]))
+        fobs_idx = np.argmin(np.abs(fobs - sample_params[0]))
         log_T0_idx = np.argmin(np.abs(log_T0s - sample_params[1]))
         gamma_idx = np.argmin(np.abs(gammas - sample_params[2]))
 
