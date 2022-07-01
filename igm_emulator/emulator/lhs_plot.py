@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats.distributions import norm
-from igm_emulator.emulator.utils import *
-from igm_emulator.scripts.grab_models import *
+from ../emulator/utils import *
+from ../scripts/grab_models import final_samples
 
 H=final_samples
 #H= norm(loc=0, scale=1).ppf(lhd)
