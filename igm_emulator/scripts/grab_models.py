@@ -89,5 +89,8 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 2], cmap='viridis', linewidth=0.5)
+    ax.set_xlabel(r'$<F>$')
+    ax.set_ylabel(r'$log(T_0)$')
+    ax.set_zlabel(r'$\gamma$')
     plt.savefig("params.png")
     plt.show()
