@@ -84,3 +84,10 @@ if __name__ == '__main__':
     # now you have the parameters (final samples) and the corresponding auto-correlation values (models)
     # for each n_samples (initially written for 15) of the latin hypercube sampling results
     print(final_samples)
+    H = final_samples
+    # H= norm(loc=0, scale=1).ppf(lhd)
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 2], cmap='viridis', linewidth=0.5)
+    plt.savefig("params.png")
+    plt.show()
