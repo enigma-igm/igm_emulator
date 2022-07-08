@@ -30,8 +30,8 @@ gammas = param_dict['gammas']  # gamma from temperature - density relation
 
 # get the path to the autocorrelation function results from the simulations
 in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS'
-X = dill.load(open(dir + '/model1.p', 'rb'))
+dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
+X = dill.load(open(dir + '{z_string}_param1.p', 'rb'))
 #X, Y = H, models
 #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.8, random_state=123)
 
