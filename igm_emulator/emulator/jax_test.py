@@ -38,3 +38,5 @@ print("Weights Type : {}\n".format(type(params)))
 for layer_name, weights in params.items():
     print(layer_name)
     print("Weights : {}, Biases : {}\n".format(params[layer_name]["w"].shape,params[layer_name]["b"].shape))
+preds = model.apply(params, rng, X_train)
+print(preds[:5])

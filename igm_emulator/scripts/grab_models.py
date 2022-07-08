@@ -43,6 +43,7 @@ if __name__ == '__main__':
 
     fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
     log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
+    T0s = np.exp(log_T0s)
     gammas = param_dict['gammas']  # gamma from temperature - density relation
 
     # get the path to the autocorrelation function results from the simulations
@@ -60,21 +61,21 @@ if __name__ == '__main__':
     for sample_idx, sample in enumerate(samples):
         # convert the output of lhs (between 0 and 1 for each parameter) to our model grid
         sample_params = param_transform(sample,
-                                        np.array([fobs[0], log_T0s[0], gammas[0]]),
-                                        np.array([fobs[-1], log_T0s[-1], gammas[-1]]))
+                                        np.array([fobs[0], T0s[0], gammas[0]]),
+                                        np.array([fobs[-1], T0s[-1], gammas[-1]]))
 
         # determine the closest model to each lhs sample
         fobs_idx = np.argmin(np.abs(fobs - sample_params[0]))
-        log_T0_idx = np.argmin(np.abs(log_T0s - sample_params[1]))
+        T0_idx = np.argmin(np.abs(T0s - sample_params[1]))
         gamma_idx = np.argmin(np.abs(gammas - sample_params[2]))
 
         # save the closest model parameters for each lhs sample
         final_samples[sample_idx, 0] = fobs[fobs_idx]
-        final_samples[sample_idx, 1] = log_T0s[log_T0_idx]
+        final_samples[sample_idx, 1] = T0s[T0_idx]
         final_samples[sample_idx, 2] = gammas[gamma_idx]
 
         # get the corresponding model autocorrelation for each parameter location
-        like_name = f'likelihood_dicts_R_30000_nf_9_T{log_T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
         like_dict = dill.load(open(in_path + like_name, 'rb'))
         model_autocorrelation = like_dict['mean_data']
         if sample_idx == 0:
@@ -83,15 +84,21 @@ if __name__ == '__main__':
 
     # now you have the parameters (final samples) and the corresponding auto-correlation values (models)
     # for each n_samples (initially written for 15) of the latin hypercube sampling results
-    print(final_samples)
-    print(models[14,:])
+    dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS'
+    final_samples = dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param1.p'),'wb'))
+    models = dill.dump(models,open(os.path.join(dir, f'{z_string}_model1.p'),'wb'))
+    #print(final_samples.shape)
+    #print(models.shape)
+
+    '''
     H = final_samples
     # H= norm(loc=0, scale=1).ppf(lhd)
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 2], cmap='viridis', linewidth=0.5)
     ax.set_xlabel(r'$<F>$')
-    ax.set_ylabel(r'$log(T_0)$')
+    ax.set_ylabel(r'$T_0$')
     ax.set_zlabel(r'$\gamma$')
     plt.savefig("params.png")
     plt.show()
+    '''
