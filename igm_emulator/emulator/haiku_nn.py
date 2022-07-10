@@ -17,20 +17,20 @@ z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 
-dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
-X = dill.load(open(dir + f'{z_string}_param1.p', 'rb'))
-Y = dill.load(open(dir + f'{z_string}_model1.p', 'rb'))
+dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
+X = dill.load(open(dir_lhs + f'{z_string}_param1.p', 'rb'))
+Y = dill.load(open(dir_lhs + f'{z_string}_model1.p', 'rb'))
 #print(Y[1,:],Y[2,:])
-
+dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'
 def save(attributes,filename):
     # attributes= [n_hidden,layer_sizes,X,Y,loss,w,b]
     # save attributes to file
-    dill.dump(attributes,open(os.path.join(dir, f'{filename}.p'),'wb'))
+    dill.dump(attributes,open(os.path.join(dir_exp, f'{filename}.p'),'wb'))
 
 X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
                     jnp.array(Y, dtype=jnp.float32),\
 
-n_hidden = 4
+n_hidden = 3
 r = np.random.randint(300, 400, n_hidden)
 layer_size = np.ndarray.tolist(np.append(r,276))
 print(layer_size)
@@ -76,12 +76,12 @@ with trange(epochs) as t:
                     #print (early_stopping_counter)
                     if early_stopping_counter >= patience_values:
                         attributes = [n_hidden, layer_size, X, Y, best_loss, params]
-                        save(attributes,'emu2')
+                        #save(attributes,'emu5_200to400nrs')
                         print('Loss = ' + str(best_loss))
                         print('Model saved.')
                         break
                 attributes = [n_hidden, layer_size, X, Y, best_loss, params]
-                save(attributes, 'emu2')
+                #save(attributes, 'emu5_200to400nrs')
                 print('Reached max number of epochs. Loss = ' + str(best_loss))
                 print('Model saved.')
 
@@ -95,6 +95,7 @@ for i in range (1,sample+1):
     axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}')
     axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}')
 plt.legend()
+dill.dump(fig,open(os.path.join(dir_exp, f'{layer_size}.png'),'wb'))
 plt.show()
 
 
