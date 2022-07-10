@@ -5,7 +5,7 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="296" />
+          <option name="caretOffset" value="143" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -13,11 +13,11 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/lhs_plot.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3508" />
+          <option name="caretOffset" value="3542" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1287" />
+          <option name="caretOffset" value="1044" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
       </list>
