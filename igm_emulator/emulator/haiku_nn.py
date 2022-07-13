@@ -95,8 +95,15 @@ for i in range (1,sample+1):
     axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}')
     axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}')
 plt.legend()
-dill.dump(fig,open(os.path.join(dir_exp, f'{layer_size}.png'),'wb'))
+plt.savefig(os.path.join(dir_exp, f'{layer_size}.png'))
 plt.show()
 
-
+fig, axs = plt.subplots(1, 1)
+for i in range(5):
+    axs.plot(ax, preds[i], label=f'pred {i}', c=f'C{i}', alpha=0.5)
+    axs.plot(ax, Y[i], label=f'real {i}', c=f'C{i}', linestyle='--')
+# axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
+plt.legend()
+plt.savefig(os.path.join(dir_exp, f'{layer_size}_overplot.png'))
+plt.show()
 
