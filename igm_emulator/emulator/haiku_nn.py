@@ -10,7 +10,7 @@ from jax import value_and_grad
 
 
 redshift = 5.4
-num = 2
+num = 3
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -34,8 +34,8 @@ X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
 
 
 n_hidden = 3
-r = np.random.randint(300, 400, n_hidden)
-layer_size = np.ndarray.tolist(np.append(r,276))
+r = np.random.randint(100, 400, 1)
+layer_size = np.ndarray.tolist(np.append([r,r,r],276))
 print(layer_size)
 def FeedForward(x):
     mlp = hk.nets.MLP(output_sizes=layer_size)
@@ -44,7 +44,7 @@ model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train)
-epochs = 1000
+epochs = 6000
 learning_rate = jnp.array(0.001)
 patience_values = 100
 loss = []

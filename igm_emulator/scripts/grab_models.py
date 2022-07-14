@@ -54,7 +54,7 @@ if __name__ == '__main__':
     rng = np.random.default_rng(seed)
 
     # get n_samples (15) latin hypercube sampling samples
-    n_samples = 20
+    n_samples = 100
     samples = lhs(3, samples=n_samples)
 
     final_samples = np.empty([n_samples, 3])
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # now you have the parameters (final samples) and the corresponding auto-correlation values (models)
     # for each n_samples (initially written for 15) of the latin hypercube sampling results
     dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS'
-    num = 2
+    num = 3
     print(final_samples)
     dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{num}.p'),'wb'))
     dill.dump(models,open(os.path.join(dir, f'{z_string}_model{num}.p'),'wb'))
