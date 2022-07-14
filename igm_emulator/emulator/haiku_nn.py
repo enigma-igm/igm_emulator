@@ -27,10 +27,11 @@ def save(attributes,filename):
     # save attributes to file
     dill.dump(attributes,open(os.path.join(dir_exp, f'{filename}{num}.p'),'wb'))
 
-Y = np.divide(Y,np.subtract(Y.max,Y.min))
+Y = Y/((Y.max())-(Y.min()))
 
 X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
                     jnp.array(Y, dtype=jnp.float32),\
+
 
 n_hidden = 3
 r = np.random.randint(300, 400, n_hidden)
