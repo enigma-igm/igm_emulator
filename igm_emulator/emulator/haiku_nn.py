@@ -10,7 +10,7 @@ from jax import value_and_grad
 
 
 redshift = 5.4
-
+num = 2
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -18,14 +18,16 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
-X = dill.load(open(dir_lhs + f'{z_string}_param1.p', 'rb'))
-Y = dill.load(open(dir_lhs + f'{z_string}_model1.p', 'rb'))
+X = dill.load(open(dir_lhs + f'{z_string}_normparam{num}.p', 'rb'))
+Y = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
 #print(Y[1,:],Y[2,:])
 dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'
 def save(attributes,filename):
     # attributes= [n_hidden,layer_sizes,X,Y,loss,w,b]
     # save attributes to file
-    dill.dump(attributes,open(os.path.join(dir_exp, f'{filename}.p'),'wb'))
+    dill.dump(attributes,open(os.path.join(dir_exp, f'{filename}{num}.p'),'wb'))
+
+Y = np.divide(Y,np.subtract(Y.max,Y.min))
 
 X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
                     jnp.array(Y, dtype=jnp.float32),\
@@ -95,7 +97,7 @@ for i in range (1,sample+1):
     axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}')
     axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}')
 plt.legend()
-plt.savefig(os.path.join(dir_exp, f'{layer_size}.png'))
+plt.savefig(os.path.join(dir_exp, f'{layer_size}_{num}.png'))
 plt.show()
 
 fig, axs = plt.subplots(1, 1)
@@ -104,6 +106,6 @@ for i in range(5):
     axs.plot(ax, Y[i], label=f'real {i}', c=f'C{i}', linestyle='--')
 # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
 plt.legend()
-plt.savefig(os.path.join(dir_exp, f'{layer_size}_overplot.png'))
+plt.savefig(os.path.join(dir_exp, f'{layer_size}_overplot_{num}.png'))
 plt.show()
 
