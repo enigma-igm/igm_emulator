@@ -9,15 +9,16 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[205, 205, 205, 276]_overplot_3.png" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
           <option name="caretOffset" value="1174" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="263" />
+          <option name="caretOffset" value="185" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1669" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test_scatter.py" />
         </OpenedFileInfo>
       </list>
     </option>
