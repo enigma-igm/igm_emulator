@@ -8,11 +8,18 @@ import dill
 from igm_emulator.scripts.grab_models import *
 from jax import value_and_grad
 import seaborn as sns
-
+from jax.config import config
+config.update("jax_enable_x64", True)
+dtype=jnp.float64
+'''
 X = np.linspace(-10, 10, num=1000)
 Y = 0.1*X*np.cos(X) + 0.1*np.random.normal(size=1000)
 X_train, Y_train =  jnp.reshape(jnp.array(X, dtype=jnp.float32),(1000,1)),\
                     jnp.reshape(jnp.array(Y, dtype=jnp.float32),(1000,1))
+'''
+X_train = np.random.normal(size=(128, 1))
+Y_train = X_train ** 2
+
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=3)
   fig1.tight_layout()
@@ -30,13 +37,13 @@ def plot_params(params):
   plt.show()
 
 def FeedForward(x):
-    mlp = hk.nets.MLP(output_sizes=[100,100,1])
+    mlp = hk.nets.MLP(output_sizes=[100,100,1],activate_final=True)
     return mlp(x)
 model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train)
-plot_params(params)
+print(params)
 epochs = 1000
 learning_rate = 0.0001
 patience_values = 100
@@ -44,20 +51,29 @@ loss = []
 best_loss= np.inf
 early_stopping_counter = 0
 
-def MeanSquaredErrorLoss(weights, input_data, actual):
+def MeanSquaredErrorLoss(trainable_params, non_trainable_params, input_data, actual):
+    weights = hk.data_structures.merge(trainable_params, non_trainable_params)
     preds = model.apply(weights, rng, input_data)
     preds = preds.squeeze()
     #print(preds.shape,actual.shape)
-    return jnp.power(actual - preds, 2).mean()
+    return jnp.mean((preds - actual) ** 2)
 
 def UpdateWeights(params,grad):
     return jax.tree_map(lambda p, g: p - g * learning_rate, params, grad)
 
+#Separate trainable and non-trainable so grad changes accordingly
+trainable_params, non_trainable_params = hk.data_structures.partition(
+    lambda m, n, p: m != "mlp/~/linear_1", params)
+print("trainable:", list(trainable_params))
+print("non_trainable:", list(non_trainable_params))
+
 with trange(epochs) as t:
                 for i in t:
-                    l, param_grads = value_and_grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
+                    grads = jax.grad(MeanSquaredErrorLoss)(trainable_params, non_trainable_params, X_train, Y_train)
+                    l = MeanSquaredErrorLoss(trainable_params,non_trainable_params, X_train, Y_train,)
 
-                    params = jax.tree_map(UpdateWeights, params, param_grads)
+                    trainable_params = jax.tree_map(UpdateWeights, trainable_params, grads)
+                    params = hk.data_structures.merge(trainable_params, non_trainable_params)
                     if i % 500 == 0:
                         '''
                         for layer_name, weights in params.items():
@@ -89,8 +105,8 @@ with trange(epochs) as t:
 
                 print('Reached max number of epochs. Loss = ' + str(best_loss))
                 print('Model saved.')
-
-preds = model.apply(params, None, X_train)
+plot_params(params)
+preds = model.apply(params, rng, X_train)
 #for layer_name, weights in params.items():
     #print(params[layer_name]["w"].shape
 print(preds.shape)
