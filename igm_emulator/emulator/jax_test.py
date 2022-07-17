@@ -11,18 +11,20 @@ import seaborn as sns
 from jax.config import config
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
+
 '''
 X = np.linspace(-10, 10, num=1000)
 Y = 0.1*X*np.cos(X) + 0.1*np.random.normal(size=1000)
 X_train, Y_train =  jnp.reshape(jnp.array(X, dtype=jnp.float32),(1000,1)),\
                     jnp.reshape(jnp.array(Y, dtype=jnp.float32),(1000,1))
 '''
+
 X_train = np.random.normal(size=(128, 1))
 Y_train = np.reshape(X_train ** 2,(128, 1))
 
 
 def plot_params(params):
-  fig1, axs = plt.subplots(ncols=2, nrows=5)
+  fig1, axs = plt.subplots(ncols=2, nrows=3)
   fig1.tight_layout()
   fig1.set_figwidth(12)
   fig1.set_figheight(6)
@@ -38,22 +40,21 @@ def plot_params(params):
   plt.show()
 
 def FeedForward(x):
-    mlp = hk.nets.MLP(output_sizes=[100,100,100,100,1])
+    mlp = hk.nets.MLP(output_sizes=[3,3,1])
     return mlp(x)
 model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train[:5])
 #print(params)
-epochs = 1000
-learning_rate = 0.0003
+epochs = 2000
+learning_rate = 0.001
 patience_values = 100
 loss = []
 best_loss= np.inf
 early_stopping_counter = 0
 
-def MeanSquaredErrorLoss(trainable_params, non_trainable_params, input_data, actual):
-    weights = hk.data_structures.merge(trainable_params, non_trainable_params)
+def MeanSquaredErrorLoss(weights, input_data, actual):
     preds = model.apply(weights, rng, input_data)
     preds = preds.squeeze()
     #print(preds.shape,actual.shape)
@@ -62,18 +63,19 @@ def MeanSquaredErrorLoss(trainable_params, non_trainable_params, input_data, act
 def UpdateWeights(params,grads):
     return jax.tree_util.tree_map(lambda p, g: p - g * learning_rate, params, grads)
 
+'''
 #Separate trainable and non-trainable so grad changes accordingly
 trainable_params, non_trainable_params = hk.data_structures.partition(
     lambda m, n, p: m != "mlp/~/linear_1" and m != "mlp/~/linear_2" and m != "mlp/~/linear_3", params)
 print("trainable:", list(trainable_params))
 print("non_trainable:", list(non_trainable_params))
+'''
 
 with trange(epochs) as t:
                 for i in t:
-                    l , grads = value_and_grad(MeanSquaredErrorLoss)(trainable_params, non_trainable_params, X_train, Y_train)
-
-                    trainable_params = jax.tree_map(UpdateWeights, trainable_params, grads)
-                    params = hk.data_structures.merge(trainable_params, non_trainable_params)
+                    grads = jax.grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
+                    l = MeanSquaredErrorLoss(params, X_train, Y_train)
+                    params = jax.tree_map(UpdateWeights, params, grads)
                     if i % 500 == 0:
                         '''
                         for layer_name, weights in params.items():
@@ -84,6 +86,7 @@ with trange(epochs) as t:
                         '''
 
                         plot_params(params)
+                        print(grads)
                     # compute validation loss at the end of the epoch
                     loss.append(l)
 
@@ -111,7 +114,7 @@ preds = model.apply(params, rng, X_train)
 #for layer_name, weights in params.items():
     #print(params[layer_name]["w"].shape
 print(preds.shape)
-
+print(params)
 
 plt.scatter(X_train,Y_train,label='real')
 plt.scatter(X_train,preds,label='pred')
