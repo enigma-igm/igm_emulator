@@ -13,7 +13,7 @@ from jax.config import config
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
-
+'''
 X = np.linspace(-10, 10, num=1000)
 Y = 0.1*X*np.cos(X) + 0.1*np.random.normal(size=1000)
 X_train, Y_train =  jnp.reshape(jnp.array(X, dtype=jnp.float32),(1000,1)),\
@@ -24,7 +24,7 @@ X = np.random.normal(size=(128, 1))
 Y = np.reshape(X ** 2,(128, 1))
 X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
                     jnp.array(Y, dtype=jnp.float32)
-'''
+
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=3)
   fig1.tight_layout()
@@ -42,7 +42,7 @@ def plot_params(params):
   plt.show()
 
 def FeedForward(x):
-    mlp = hk.nets.MLP(output_sizes=[40,40,1])
+    mlp = hk.nets.MLP(output_sizes=[10,10,1])
     return mlp(x)
 model = hk.transform(FeedForward)
 
@@ -50,7 +50,7 @@ rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same w
 params = model.init(rng, X_train[:5])
 #print(params)
 epochs = 1000
-learning_rate = 0.001
+learning_rate = 0.003
 patience_values = 100
 loss = []
 best_loss= np.inf

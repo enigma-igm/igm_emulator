@@ -7,13 +7,13 @@ import seaborn as sns
 from jax.config import config
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
-'''
+
 xs = np.reshape(np.linspace(-10, 10, num=1000),(1000,1))
 ys = 0.1*xs*np.cos(xs) + 0.1*np.random.normal(size=(1000,1))
 '''
 X_train = np.random.normal(size=(128, 1))
 Y_train = np.reshape(X_train ** 2,(128, 1))
-
+'''
 def init_mlp_params(layer_widths):
   params = []
   for n_in, n_out in zip(layer_widths[:-1], layer_widths[1:]):
