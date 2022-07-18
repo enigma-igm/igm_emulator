@@ -5,15 +5,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1745" />
+          <option name="caretOffset" value="1712" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1174" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="456" />
+          <option name="caretOffset" value="826" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/tf_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -21,11 +17,27 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test_scatter.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
+          <option name="caretOffset" value="599" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/tf_cos_curvefit.png" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1305" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
+          <option name="caretOffset" value="1187" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[198, 198, 198, 276]_overplot_3.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[198, 198, 198, 276]_3.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[205, 205, 205, 276]_overplot_3.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[225, 225, 225, 276]_overplot_3.png" />
         </OpenedFileInfo>
       </list>
     </option>

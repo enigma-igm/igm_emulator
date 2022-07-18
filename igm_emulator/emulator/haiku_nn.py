@@ -2,6 +2,7 @@ import jax
 import numpy as np
 from jax import numpy as jnp
 import haiku as hk
+import optax
 from matplotlib import pyplot as plt
 from tqdm import trange
 import dill
@@ -44,26 +45,33 @@ model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train)
-epochs = 6000
-learning_rate = jnp.array(0.001)
+epochs = 2000
+learning_rate = 0.001
 patience_values = 100
 loss = []
 best_loss= np.inf
 early_stopping_counter = 0
-
+'''
 def MeanSquaredErrorLoss(weights, input_data, actual):
     preds = model.apply(weights, rng, input_data)
     preds = preds.squeeze()
     #print(preds.shape,actual.shape)
     return jnp.power(actual - preds, 2).mean()
+'''
+def MeanSquaredErrorLoss(params, x, y):
+    compute_loss =  jnp.mean((model.apply(params, rng, x) - y) ** 2)
+    return compute_loss
 
-def UpdateWeights(weights,gradients):
-    return weights - learning_rate * gradients
+
+optimizer = optax.adam(learning_rate)
+opt_state = optimizer.init(params)
 
 with trange(epochs) as t:
                 for i in t:
-                    l, param_grads = value_and_grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
-                    params = jax.tree_map(UpdateWeights, params, param_grads)
+                    l, grads = value_and_grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
+                    updates, opt_state = optimizer.update(grads, opt_state)
+                    params = optax.apply_updates(params, updates)
+
                     # compute validation loss at the end of the epoch
                     loss.append(l)
 
@@ -95,15 +103,15 @@ ax = np.arange(276)
 sample=5
 fig, axs = plt.subplots(sample,1)
 for i in range (1,sample+1):
-    axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}')
-    axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}')
+    axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}',linewidth=5)
+    axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}',linewidth=2)
 plt.legend()
 plt.savefig(os.path.join(dir_exp, f'{layer_size}_{num}.png'))
 plt.show()
 
 fig, axs = plt.subplots(1, 1)
 for i in range(5):
-    axs.plot(ax, preds[i], label=f'pred {i}', c=f'C{i}', alpha=0.5)
+    axs.plot(ax, preds[i], label=f'pred {i}', c=f'C{i}', alpha=0.3)
     axs.plot(ax, Y[i], label=f'real {i}', c=f'C{i}', linestyle='--')
 # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
 plt.legend()
