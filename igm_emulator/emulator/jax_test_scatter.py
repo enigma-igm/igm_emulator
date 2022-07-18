@@ -55,7 +55,7 @@ def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=3)
   fig1.tight_layout()
   fig1.set_figwidth(12)
-  fig1.set_figheight(6)
+  fig1.set_figheight(6)pip install optax
   *hidden, last = params
   print(f'hidden:{hidden}')
   for row,layer in enumerate(hidden):

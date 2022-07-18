@@ -13,19 +13,19 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="584" />
+          <option name="caretOffset" value="456" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/tf_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1580" />
+          <option name="caretOffset" value="1597" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test_scatter.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="586" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/tf_cos_curvefit.png" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/hiaku_mlp_squared_curvefit.png" />
+          <option name="caretOffset" value="1305" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
         </OpenedFileInfo>
       </list>
     </option>

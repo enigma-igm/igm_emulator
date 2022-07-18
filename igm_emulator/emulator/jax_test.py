@@ -1,6 +1,7 @@
 import jax
 import numpy as np
 from jax import numpy as jnp
+import optax
 import haiku as hk
 from matplotlib import pyplot as plt
 from tqdm import trange
@@ -12,17 +13,18 @@ from jax.config import config
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
-'''
+
 X = np.linspace(-10, 10, num=1000)
 Y = 0.1*X*np.cos(X) + 0.1*np.random.normal(size=1000)
 X_train, Y_train =  jnp.reshape(jnp.array(X, dtype=jnp.float32),(1000,1)),\
                     jnp.reshape(jnp.array(Y, dtype=jnp.float32),(1000,1))
 '''
 
-X_train = np.random.normal(size=(128, 1))
-Y_train = np.reshape(X_train ** 2,(128, 1))
-
-
+X = np.random.normal(size=(128, 1))
+Y = np.reshape(X ** 2,(128, 1))
+X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
+                    jnp.array(Y, dtype=jnp.float32)
+'''
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=3)
   fig1.tight_layout()
@@ -40,29 +42,33 @@ def plot_params(params):
   plt.show()
 
 def FeedForward(x):
-    mlp = hk.nets.MLP(output_sizes=[3,3,1])
+    mlp = hk.nets.MLP(output_sizes=[40,40,1])
     return mlp(x)
 model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train[:5])
 #print(params)
-epochs = 2000
+epochs = 1000
 learning_rate = 0.001
 patience_values = 100
 loss = []
 best_loss= np.inf
 early_stopping_counter = 0
 
-def MeanSquaredErrorLoss(weights, input_data, actual):
-    preds = model.apply(weights, rng, input_data)
-    preds = preds.squeeze()
-    #print(preds.shape,actual.shape)
-    return jnp.power(actual - preds, 2).mean()
 
+def MeanSquaredErrorLoss(params, x, y):
+    compute_loss =  jnp.mean((model.apply(params, rng, x) - y) ** 2)
+    return compute_loss
+
+
+optimizer = optax.adam(learning_rate)
+opt_state = optimizer.init(params)
+'''
 def UpdateWeights(params,grads):
     return jax.tree_util.tree_map(lambda p, g: p - g * learning_rate, params, grads)
 
+'''
 '''
 #Separate trainable and non-trainable so grad changes accordingly
 trainable_params, non_trainable_params = hk.data_structures.partition(
@@ -73,9 +79,9 @@ print("non_trainable:", list(non_trainable_params))
 
 with trange(epochs) as t:
                 for i in t:
-                    grads = jax.grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
-                    l = MeanSquaredErrorLoss(params, X_train, Y_train)
-                    params = jax.tree_map(UpdateWeights, params, grads)
+                    l, grads = value_and_grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
+                    updates, opt_state = optimizer.update(grads, opt_state)
+                    params = optax.apply_updates(params, updates)
                     if i % 500 == 0:
                         '''
                         for layer_name, weights in params.items():

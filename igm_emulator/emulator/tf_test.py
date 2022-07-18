@@ -15,7 +15,7 @@ model.add(keras.layers.Dense(units = 1, activation = 'linear', input_shape=[1]))
 model.add(keras.layers.Dense(units = 100, activation = 'relu'))
 model.add(keras.layers.Dense(units = 100, activation = 'relu'))
 model.add(keras.layers.Dense(units = 1, activation = 'linear'))
-model.compile(loss='mse', optimizer="adam")
+model.compile(loss='mse', optimizer="sgd",learning_rate=0.001)
 
 # Display the model
 model.summary()
