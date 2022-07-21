@@ -6,7 +6,6 @@ import optax
 from matplotlib import pyplot as plt
 from tqdm import trange
 import dill
-from igm_emulator.scripts.grab_models import *
 from jax import value_and_grad
 
 

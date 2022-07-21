@@ -5,14 +5,6 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1712" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="826" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/tf_test.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
           <option name="caretOffset" value="1597" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test_scatter.py" />
         </OpenedFileInfo>
@@ -21,23 +13,12 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/tf_cos_curvefit.png" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1187" />
+          <option name="caretOffset" value="1140" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[198, 198, 198, 276]_overplot_3.png" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[198, 198, 198, 276]_3.png" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[205, 205, 205, 276]_overplot_3.png" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/[225, 225, 225, 276]_overplot_3.png" />
+          <option name="caretOffset" value="1478" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn_train.py" />
         </OpenedFileInfo>
       </list>
     </option>
