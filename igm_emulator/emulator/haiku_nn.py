@@ -2,119 +2,141 @@ import jax
 import numpy as np
 from jax import numpy as jnp
 import haiku as hk
-import os
 import optax
 from matplotlib import pyplot as plt
 from tqdm import trange
-import dill
+import os
 from jax import value_and_grad
+from sklearn.metrics import r2_score
 
-
-redshift = 5.4
-num = 3
-# get the appropriate string and pathlength for chosen redshift
-zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-z_idx = np.argmin(np.abs(zs - redshift))
-z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-z_string = z_strings[z_idx]
-
-dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
-X = dill.load(open(dir_lhs + f'{z_string}_normparam{num}.p', 'rb'))
-Y = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
-#print(Y[1,:],Y[2,:])
-dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'
-def save(attributes,filename):
-    # attributes= [n_hidden,layer_sizes,X,Y,loss,w,b]
-    # save attributes to file
-    dill.dump(attributes,open(os.path.join(dir_exp, f'{filename}{num}.p'),'wb'))
-
-Y = Y/((Y.max())-(Y.min()))
-
-X_train, Y_train =  jnp.array(X, dtype=jnp.float32),\
-                    jnp.array(Y, dtype=jnp.float32),\
-
-
-n_hidden = 3
-r = np.random.randint(100, 400, 1)
-layer_size = np.ndarray.tolist(np.append([r,r,r],276))
-print(layer_size)
-def FeedForward(x):
-    mlp = hk.nets.MLP(output_sizes=layer_size)
-    return mlp(x)
-model = hk.transform(FeedForward)
-
-rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
-params = model.init(rng, X_train)
-epochs = 1000
-learning_rate = 0.001
-patience_values = 100
-loss = []
-best_loss= np.inf
-early_stopping_counter = 0
 '''
-def MeanSquaredErrorLoss(weights, input_data, actual):
-    preds = model.apply(weights, rng, input_data)
-    preds = preds.squeeze()
-    #print(preds.shape,actual.shape)
-    return jnp.power(actual - preds, 2).mean()
+Constructing Haiku Neural Network:
+    haiku_nn(X_train, Y_train): create emulator with chosen properties on train data
+    haiku_nn.train(): training loop for emulator to learn on traian data
+    haiku_nn.test(X_test, Y_test): evaluate performance of trained emulator on new LHS test data, including loss, R^2 score, and relative error plot
 '''
-def MeanSquaredErrorLoss(params, x, y):
-    compute_loss =  jnp.mean((model.apply(params, rng, x) - y) ** 2)
-    return compute_loss
+class haiku_nn:
+
+# -*- Define arguments for training -*-
+    def __init__(
+            self,
+            layer_size = (206,206,206,276),     #hidden layers and final layer(size of 276 is the size of the output)
+            rng = jax.random.PRNGKey(42),       #for generating initialized weights and biases
+            epochs = 1000,                      #epoch time for training
+            learning_rate = 0.001,              #rate of changing weight parameters when learning
+            patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
+            X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
+            Y_train: jnp.ndarray = []           #output tensor of shape [sampling_size, output_dimension(=276)]
+    ):
+        self.rng = rng
+        self.epochs = epochs
+        self.lr = learning_rate
+        self.pv = patience_values
+        self.layers = layer_size
+        self.x = X_train
+        self.y = Y_train
+        # -----------------------------------------------------------------------
+        #use MLP module in Haiku to initialize parameter and calculate predictions
+        def FeedForward(x):
+            mlp = hk.nets.MLP(output_sizes=self.layers)
+            return mlp(x)
+        model = hk.transform(FeedForward)
+
+        self.model = model
+        self.params_init = self.model.init(rng, self.x)
+        # -----------------------------------------------------------------------
 
 
-optimizer = optax.adam(learning_rate)
-opt_state = optimizer.init(params)
+# -*- Define Loss function to be updated on -*-
+    def MeanSquaredErrorLoss(self, params, X, Y):
+        compute_loss = jnp.mean((self.model.apply(params, None, X) - Y) ** 2)
+        return compute_loss
 
-with trange(epochs) as t:
-                for i in t:
-                    l, grads = value_and_grad(MeanSquaredErrorLoss)(params, X_train, Y_train)
-                    updates, opt_state = optimizer.update(grads, opt_state)
-                    params = optax.apply_updates(params, updates)
 
-                    # compute validation loss at the end of the epoch
-                    loss.append(l)
+# -*- Learning process by minimizing the loss function -*-
+    def train(self):
+        # Select loss optimizer with Optax, here we choose "adam"
+        optimizer = optax.adam(self.lr)
+        opt_state = optimizer.init(self.params_init)
 
-                    # update the progressbar
-                    t.set_postfix(loss=loss[-1])
+        # Initial conditions for arguments during training
+        loss = []
+        best_loss = np.inf
+        early_stopping_counter = 0
+        params = self.params_init #initializing weight parameters
 
-                    # early stopping condition
-                    if l <= best_loss:
-                        best_loss = l
-                        early_stopping_counter = 0
-                    else:
-                        early_stopping_counter += 1
-                    #print (early_stopping_counter)
-                    if early_stopping_counter >= patience_values:
-                        attributes = [n_hidden, layer_size, X, Y, best_loss, params]
-                        #save(attributes,'emu5_200to400nrs')
-                        print('Loss = ' + str(best_loss))
-                        print('Model saved.')
-                        break
-                attributes = [n_hidden, layer_size, X, Y, best_loss, params]
-                #save(attributes, 'emu5_200to400nrs')
-                print('Reached max number of epochs. Loss = ' + str(best_loss))
-                print('Model saved.')
+        # Training loop
+        with trange(self.epochs) as t:
+            for i in t:
+                # optimizing loss by gradient descent
+                l, grads = value_and_grad(self.MeanSquaredErrorLoss)(params, self.x, self.y)
+                updates, opt_state = optimizer.update(grads, opt_state)
+                params = optax.apply_updates(params, updates)
 
-preds = model.apply(params, rng, X_train)
-#print(preds[1,:]-Y[1,:],preds[2,:]-Y[2,:])
+                # compute validation loss at the end of the epoch
+                loss.append(l)
 
-ax = np.arange(276)
-sample=5
-fig, axs = plt.subplots(sample,1)
-for i in range (1,sample+1):
-    axs[i-1].plot(ax,preds[i-1,:],label=f'pred_{i}',linewidth=5)
-    axs[i-1].plot(ax,Y[i-1,:],label=f'real_{i}',linewidth=2)
-plt.legend()
-plt.savefig(os.path.join(dir_exp, f'{layer_size}_{num}.png'))
-plt.show()
+                # update the progressbar
+                t.set_postfix(loss=loss[-1])
 
-fig, axs = plt.subplots(1, 1)
-for i in range(5):
-    axs.plot(ax, preds[i], label=f'pred {i}', c=f'C{i}', alpha=0.3)
-    axs.plot(ax, Y[i], label=f'real {i}', c=f'C{i}', linestyle='--')
-# axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-plt.legend()
-plt.savefig(os.path.join(dir_exp, f'{layer_size}_overplot_{num}.png'))
-plt.show()
+                # early stopping condition
+                if l <= best_loss:
+                    best_loss = l
+                    early_stopping_counter = 0
+                else:
+                    early_stopping_counter += 1
+                # print (early_stopping_counter)
+                if early_stopping_counter >= self.pv:
+                    print('Loss = ' + str(best_loss))
+                    print('Model saved.')
+                    break
+
+            print('Reached max number of epochs. Loss = ' + str(best_loss))
+            print(f'Model of size {self.layers} saved.')
+        # Final trained parameters and resulting prediction
+        self.params = params
+        preds = self.model.apply(params, None, self.x)
+
+        # Plot partial predited corrolation functions and
+        ax = np.arange(276)                                                 # arbitrary even spaced x-axis (will be converted to velocityZ)
+        sample = 5                                                          # number of functions plotted
+        fig, axs = plt.subplots(1, 1)
+        corr_idx = np.random.randint(0, 100, sample)                        # randomly select correlation functions to compare
+        for i in range(sample):
+            axs.plot(ax, preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{self.x[corr_idx[i],0]:.2f},'
+                                                            r'$T_0$='f'{self.x[corr_idx[i],1]:.2f},'
+                                                            r'$\gamma$='f'{self.x[corr_idx[i],2]:.2f}', c=f'C{i}', alpha=0.3)
+            axs.plot(ax, self.y[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
+        # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
+        plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+        plt.ylabel('Correlation function')
+        plt.title(f'Train Loss = {best_loss}')
+        plt.legend()
+        dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
+        plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot.png'))
+        plt.show()
+
+
+# -*- Test emulator with new LHS data -*-
+    def test(self, X_test, Y_test):
+        test_preds = self.model.apply(self.params, None, X_test)
+        test_loss = self.MeanSquaredErrorLoss(self.params, X_test, Y_test)
+        test_R2 = r2_score(test_preds.squeeze(), Y_test)
+
+        # Print performance of emulator on test data
+        print("Test MSE Loss: {}\n".format(test_loss)) # Loss
+        print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
+
+        # Plot relative error of all test correlation functions
+        delta = (Y_test - test_preds)/Y_test*100
+        ax = np.arange(276)
+        for i in range(delta.shape[0]):
+            #plt.ylim(-4,)
+            plt.plot(ax,delta[i,:], linewidth=0.5)
+        plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+        plt.ylabel('% error on Correlation function')
+        plt.title(f'Test Loss = {test_loss}')
+        dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
+        plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error.png'))
+        plt.show()
 

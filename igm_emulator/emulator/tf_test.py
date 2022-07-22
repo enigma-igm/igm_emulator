@@ -12,8 +12,9 @@ print('Data created successfully')
 # Create the model
 model = keras.Sequential()
 model.add(keras.layers.Dense(units = 1, activation = 'linear', input_shape=[1]))
-model.add(keras.layers.Dense(units = 100, activation = 'relu'))
-model.add(keras.layers.Dense(units = 100, activation = 'relu'))
+model.add(keras.layers.Dense(units = 206, activation = 'relu'))
+model.add(keras.layers.Dense(units = 206, activation = 'relu'))
+model.add(keras.layers.Dense(units = 206, activation = 'relu'))
 model.add(keras.layers.Dense(units = 1, activation = 'linear'))
 model.compile(loss='mse', optimizer="sgd",learning_rate=0.001)
 
