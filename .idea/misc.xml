@@ -13,11 +13,14 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/jax_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1140" />
+          <option name="caretOffset" value="1150" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1478" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(200, 200, 200, 276)_overplot_3.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1993" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn_train.py" />
         </OpenedFileInfo>
       </list>

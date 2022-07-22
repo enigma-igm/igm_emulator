@@ -2,6 +2,7 @@ import jax
 import numpy as np
 from jax import numpy as jnp
 import haiku as hk
+import os
 import optax
 from matplotlib import pyplot as plt
 from tqdm import trange
@@ -44,7 +45,7 @@ model = hk.transform(FeedForward)
 
 rng = jax.random.PRNGKey(42) ## Reproducibility ## Initializes model with same weights each time.
 params = model.init(rng, X_train)
-epochs = 2000
+epochs = 1000
 learning_rate = 0.001
 patience_values = 100
 loss = []
