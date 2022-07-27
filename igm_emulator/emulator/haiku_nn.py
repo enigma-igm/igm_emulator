@@ -20,13 +20,14 @@ class haiku_nn:
 # -*- Define arguments for training -*-
     def __init__(
             self,
-            layer_size = (206,206,206,276),     #hidden layers and final layer(size of 276 is the size of the output)
+            layer_size = (100,100,100,100,276),     #hidden layers and final layer(size of 276 is the size of the output)
             rng = jax.random.PRNGKey(42),       #for generating initialized weights and biases
             epochs = 1000,                      #epoch time for training
-            learning_rate = 0.0001,             #rate of changing weight parameters when learning
+            learning_rate = 0.0003,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
-            Y_train: jnp.ndarray = []           #output tensor of shape [sampling_size, output_dimension(=276)]
+            Y_train: jnp.ndarray = [],           #output tensor of shape [sampling_size, output_dimension(=276)]
+            comment = 'test4_rlterror_norm'
     ):
         self.rng = rng
         self.epochs = epochs
@@ -35,6 +36,7 @@ class haiku_nn:
         self.layers = layer_size
         self.x = X_train
         self.y = Y_train
+        self.comment = comment
         # -----------------------------------------------------------------------
         #use MLP module in Haiku to initialize parameter and calculate predictions
         def FeedForward(x):
@@ -72,7 +74,7 @@ class haiku_nn:
         with trange(self.epochs) as t:
             for i in t:
                 # optimizing loss by gradient descent
-                l, grads = value_and_grad(self.MeanSquaredErrorLoss)(params, self.x, self.y)
+                l, grads = value_and_grad(self.RelativeError)(params, self.x, self.y)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 params = optax.apply_updates(params, updates)
 
@@ -116,7 +118,7 @@ class haiku_nn:
         plt.title(f'Train Loss = {best_loss}')
         plt.legend()
         dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-        plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot.png'))
+        plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
         plt.show()
 
 
@@ -127,6 +129,7 @@ class haiku_nn:
         test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
         # Print performance of emulator on test data
+        print(self.comment)
         print("Test MSE Loss: {}\n".format(test_loss)) # Loss
         print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
 
@@ -138,8 +141,8 @@ class haiku_nn:
             plt.plot(ax,delta[i,:], linewidth=0.5)
         plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
         plt.ylabel('% error on Correlation function')
-        plt.title(f'Test Loss = {test_loss}')
+        plt.title(f'Test Loss = {test_loss:.6f}, R^2 Score = {test_R2:.4f}')
         dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-        plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error.png'))
+        plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error{self.comment}.png'))
         plt.show()
 

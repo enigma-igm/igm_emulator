@@ -17,11 +17,11 @@ dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
 
 X_train = dill.load(open(dir_lhs + f'{z_string}_normparam{num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
 Y_train = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
-#Y = Y/((Y.max())-(Y.min())) #normalize corr functions for better convergence
+Y_train = Y_train/((Y_train.max())-(Y_train.min())) #normalize corr functions for better convergence
 
-X_test = dill.load(open(dir_lhs + f'{z_string}_normparam2.p', 'rb')) # load normalized cosmological parameters from grab_models.py
-Y_test = dill.load(open(dir_lhs + f'{z_string}_model2.p', 'rb'))
-
+X_test = dill.load(open(dir_lhs + f'{z_string}_normparam4.p', 'rb')) # load normalized cosmological parameters from grab_models.py
+Y_test = dill.load(open(dir_lhs + f'{z_string}_model4.p', 'rb'))
+Y_test = Y_test/((Y_test.max())-(Y_test.min()))
 '''
 Use Haiku Emulator
 '''

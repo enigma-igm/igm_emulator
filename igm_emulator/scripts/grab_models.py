@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # now you have the parameters (final samples) and the corresponding auto-correlation values (models)
     # for each n_samples (initially written for 15) of the latin hypercube sampling results
     dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS'
-    num = 3
+    num = 4
     print(final_samples)
     dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{num}.p'),'wb'))
     dill.dump(models,open(os.path.join(dir, f'{z_string}_model{num}.p'),'wb'))
