@@ -23,7 +23,7 @@ class haiku_nn:
             layer_size = (206,206,206,276),     #hidden layers and final layer(size of 276 is the size of the output)
             rng = jax.random.PRNGKey(42),       #for generating initialized weights and biases
             epochs = 1000,                      #epoch time for training
-            learning_rate = 0.001,              #rate of changing weight parameters when learning
+            learning_rate = 0.0001,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
             Y_train: jnp.ndarray = []           #output tensor of shape [sampling_size, output_dimension(=276)]
@@ -47,11 +47,14 @@ class haiku_nn:
         # -----------------------------------------------------------------------
 
 
-# -*- Define Loss function to be updated on -*-
+# -*- Define Loss functions to be updated on -*-
     def MeanSquaredErrorLoss(self, params, X, Y):
         compute_loss = jnp.mean((self.model.apply(params, None, X) - Y) ** 2)
         return compute_loss
 
+    def RelativeError(self, params, X, Y):
+        delta = jnp.mean(jnp.abs(self.model.apply(params, None, X) - Y)/Y)
+        return delta
 
 # -*- Learning process by minimizing the loss function -*-
     def train(self):
