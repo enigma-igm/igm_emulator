@@ -5,19 +5,37 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3156" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
+          <option name="caretOffset" value="1091" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="609" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_test%errortest4_rlterror_norm.png" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="1428" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_test%errortest4_rlterror_norm.png" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_overplottest4_rlterror_norm.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_overplottest4_mse_norm.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_overplottest4_mse.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_test%errortest4_rlterror.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_test%errortest4_mse.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/(100, 100, 100, 100, 276)_test%errortest4_mse_norm.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="3156" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
       </list>
     </option>

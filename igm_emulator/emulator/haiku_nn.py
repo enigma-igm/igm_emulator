@@ -27,7 +27,7 @@ class haiku_nn:
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
             Y_train: jnp.ndarray = [],           #output tensor of shape [sampling_size, output_dimension(=276)]
-            comment = 'test4_rlterror_norm'
+            comment = 'test4_mse_norm'
     ):
         self.rng = rng
         self.epochs = epochs
@@ -74,7 +74,7 @@ class haiku_nn:
         with trange(self.epochs) as t:
             for i in t:
                 # optimizing loss by gradient descent
-                l, grads = value_and_grad(self.RelativeError)(params, self.x, self.y)
+                l, grads = value_and_grad(self.MeanSquaredErrorLoss)(params, self.x, self.y)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 params = optax.apply_updates(params, updates)
 
