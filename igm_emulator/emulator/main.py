@@ -7,7 +7,7 @@ from igm_emulator.emulator.haiku_nn import haiku_nn
 Load Train and Test Data
 '''
 redshift = 5.4 #choose redshift from
-num = 3 #choose data number of LHS sampling
+num = '6_1000' #choose data number of LHS sampling
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))

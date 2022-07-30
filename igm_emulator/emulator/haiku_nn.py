@@ -20,14 +20,14 @@ class haiku_nn:
 # -*- Define arguments for training -*-
     def __init__(
             self,
-            layer_size = (100,100,100,100,276),     #hidden layers and final layer(size of 276 is the size of the output)
+            layer_size = (500,500,500,500,276),     #hidden layers and final layer(size of 276 is the size of the output)
             rng = jax.random.PRNGKey(42),       #for generating initialized weights and biases
             epochs = 1000,                      #epoch time for training
-            learning_rate = 0.0003,             #rate of changing weight parameters when learning
+            learning_rate = 0.001,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
             Y_train: jnp.ndarray = [],           #output tensor of shape [sampling_size, output_dimension(=276)]
-            comment = 'test4_mse_norm'
+            comment = 'test4_1000_sigmoid'
     ):
         self.rng = rng
         self.epochs = epochs
@@ -40,7 +40,7 @@ class haiku_nn:
         # -----------------------------------------------------------------------
         #use MLP module in Haiku to initialize parameter and calculate predictions
         def FeedForward(x):
-            mlp = hk.nets.MLP(output_sizes=self.layers)
+            mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
             return mlp(x)
         model = hk.transform(FeedForward)
 
@@ -54,9 +54,9 @@ class haiku_nn:
         compute_loss = jnp.mean((self.model.apply(params, None, X) - Y) ** 2)
         return compute_loss
 
-    def RelativeError(self, params, X, Y):
-        delta = jnp.mean(jnp.abs(self.model.apply(params, None, X) - Y)/Y)
-        return delta
+    #def RelativeError(self, params, X, Y):
+    #    delta = jnp.mean(jnp.abs(self.model.apply(params, None, X) - Y)/Y)
+    #    return delta
 
 # -*- Learning process by minimizing the loss function -*-
     def train(self):
