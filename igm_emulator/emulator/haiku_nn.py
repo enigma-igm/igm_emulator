@@ -20,14 +20,14 @@ class haiku_nn:
 # -*- Define arguments for training -*-
     def __init__(
             self,
-            layer_size = (500,500,500,500,276),     #hidden layers and final layer(size of 276 is the size of the output)
-            rng = jax.random.PRNGKey(42),       #for generating initialized weights and biases
+            layer_size = (300,300,300,276),     #hidden layers and final layer(size of 276 is the size of the output)
+            rng = jax.random.PRNGKey(5678),       #for generating initialized weights and biases
             epochs = 1000,                      #epoch time for training
             learning_rate = 0.001,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
             Y_train: jnp.ndarray = [],           #output tensor of shape [sampling_size, output_dimension(=276)]
-            comment = 'test4_1000_sigmoid'
+            comment = 'test4_sigmoid_5678'
     ):
         self.rng = rng
         self.epochs = epochs
@@ -37,7 +37,9 @@ class haiku_nn:
         self.x = X_train
         self.y = Y_train
         self.comment = comment
-        # -----------------------------------------------------------------------
+        # -------------------------------------------------     def FeedForward(x):
+            mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
+            return mlp(x)----------------------
         #use MLP module in Haiku to initialize parameter and calculate predictions
         def FeedForward(x):
             mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
