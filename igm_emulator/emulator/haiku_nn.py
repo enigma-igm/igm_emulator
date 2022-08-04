@@ -37,13 +37,11 @@ class haiku_nn:
         self.x = X_train
         self.y = Y_train
         self.comment = comment
-        # -------------------------------------------------     def FeedForward(x):
-            mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
-            return mlp(x)----------------------
+        # -------------------------------------------------    
+	def FeedForward(x):
+	  mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
+          return mlp(x)
         #use MLP module in Haiku to initialize parameter and calculate predictions
-        def FeedForward(x):
-            mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
-            return mlp(x)
         model = hk.transform(FeedForward)
 
         self.model = model
