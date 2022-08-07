@@ -17,7 +17,7 @@
           <option name="fileUrl" value="file://$APPLICATION_HOME_DIR$/plugins/python/helpers/pydev/_pydev_imps/_pydev_execfile.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="865" />
+          <option name="caretOffset" value="264" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/TEST/jax_test.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -25,7 +25,7 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3981" />
+          <option name="caretOffset" value="3972" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
       </list>

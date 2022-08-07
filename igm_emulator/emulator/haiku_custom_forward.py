@@ -8,6 +8,10 @@ import optax
 from tqdm import trange
 from matplotlib import pyplot as plt
 import seaborn as sns
+from jax.config import config
+config.update("jax_enable_x64", True)
+dtype=jnp.float64
+
 
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=4)
@@ -94,7 +98,7 @@ Infrastructure for network training
 '''
 
 lr = 0.0001
-max_grad_norm = 1.0
+max_grad_norm = 1
 n_epochs = 1000
 batch_size = 1
 n_examples = X_train.shape[0]
@@ -117,7 +121,7 @@ def make_lr_schedule(warmup_percentage, total_steps):
 total_steps = n_epochs * (n_examples // batch_size)
 lr_schedule = make_lr_schedule(warmup_percentage=0.1, total_steps=total_steps)
 optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.scale_by_adam(lr),
+                        optax.scale_by_adam(eps = lr),
                         optax.scale_by_schedule(lr_schedule))
 opt_state = optimizer.init(params)
 
@@ -143,10 +147,10 @@ early_stopping_counter = 0
 pv = 100
 
 with trange(n_epochs) as t:
-        for i in t:
+        for step in t:
                 # optimizing loss by gradient descent
                 params, opt_state, batch_loss = update(params, opt_state, X_train, Y_train)
-                if i % 500 == 0:
+                if step % 500 == 0:
                     plot_params(params)
                 # compute validation loss at the end of the epoch
                 l = batch_loss
