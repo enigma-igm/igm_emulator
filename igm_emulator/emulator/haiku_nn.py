@@ -22,7 +22,7 @@ class haiku_nn:
             self,
             layer_size = (300,300,300,276),     #hidden layers and final layer(size of 276 is the size of the output)
             rng = jax.random.PRNGKey(5678),       #for generating initialized weights and biases
-            epochs = 1000,                      #epoch time for training
+            epochs = 500,                      #epoch time for training
             learning_rate = 0.001,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
@@ -38,11 +38,12 @@ class haiku_nn:
         self.y = Y_train
         self.comment = comment
         # -------------------------------------------------    
-	def FeedForward(x):
-	  mlp = hk.nets.MLP(output_sizes=self.layers, activation=jax.nn.sigmoid)
-          return mlp(x)
-        #use MLP module in Haiku to initialize parameter and calculate predictions
+        def FeedForward(x):
+            mlp = hk.nets.MLP(output_sizes=[100, 100, 100, 276])
+            return mlp(x)
+
         model = hk.transform(FeedForward)
+        #use MLP module in Haiku to initialize parameter and calculate predictions
 
         self.model = model
         self.params_init = self.model.init(rng, self.x)
@@ -77,7 +78,8 @@ class haiku_nn:
                 l, grads = value_and_grad(self.MeanSquaredErrorLoss)(params, self.x, self.y)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 params = optax.apply_updates(params, updates)
-
+                if i % 100 == 0:
+                    print(f'grads{grads}')
                 # compute validation loss at the end of the epoch
                 loss.append(l)
 
@@ -118,7 +120,7 @@ class haiku_nn:
         plt.title(f'Train Loss = {best_loss}')
         plt.legend()
         dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-        plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
+        #plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
         plt.show()
 
 
@@ -143,6 +145,6 @@ class haiku_nn:
         plt.ylabel('% error on Correlation function')
         plt.title(f'Test Loss = {test_loss:.6f}, R^2 Score = {test_R2:.4f}')
         dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-        plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error{self.comment}.png'))
+        #plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error{self.comment}.png'))
         plt.show()
 
