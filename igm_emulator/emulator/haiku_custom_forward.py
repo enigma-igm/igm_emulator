@@ -96,60 +96,53 @@ preds = custom_forward.apply(params=params, x=X_train)
 '''
 Infrastructure for network training
 '''
-
-lr = 0.0001
 max_grad_norm = 1
 n_epochs = 1000
-batch_size = 1
-n_examples = X_train.shape[0]
+batch_size = 200
+n_samples = X_train.shape[0]
+total_steps = int(n_samples/batch_size)
 
  ###Learning Rate schedule + Gradient Clipping###
-def make_lr_schedule(warmup_percentage, total_steps):
-    def lr_schedule(step):
-        percent_complete = step / total_steps
-        before_peak = jax.lax.convert_element_type(
-            (percent_complete <= warmup_percentage),
-            np.float32
-        )
-        scale = (
-            (before_peak * (percent_complete / warmup_percentage) + (1 - before_peak))
-            * (1 - percent_complete)
-        )
-        return scale
-    return lr_schedule
-
-total_steps = n_epochs * (n_examples // batch_size)
-lr_schedule = make_lr_schedule(warmup_percentage=0.1, total_steps=total_steps)
-optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.scale_by_adam(eps = lr),
-                        optax.scale_by_schedule(lr_schedule))
-opt_state = optimizer.init(params)
+def schedule_lr(init_lr=0.001,  decay = 0.1, total_steps = total_steps):
+    lr = []
+    for i in range(total_steps):
+       lr.append(init_lr*(decay**i))
+    print(lr)
+    return lr
+lr = schedule_lr()
 
 def loss_fn(params, x, y):
   return jnp.mean((custom_forward.apply(params, x) - y) ** 2)
 
 @jax.jit
-def update(params, opt_state, x,y):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x,y)
-    updates, opt_state = optimizer.update(grads, opt_state)
-    new_params = optax.apply_updates(params, updates)
-    return new_params, opt_state, batch_loss
-
-@jax.jit
 def accuracy(params, x, y):
     preds = custom_forward.apply(params=params, x=x)
-    return (y - preds) / y * 100
+    return abs(y - preds) / y * 100
 
+for i in range(total_steps):
+    optimizer = optax.chain(
+                            optax.clip_by_global_norm(max_grad_norm),
+                            optax.adam(lr[i])
+                            )
+    #optimizer = optax.adam(lr)
+    @jax.jit
+    def update(params, opt_state, x, y):
+        batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
+        updates, opt_state = optimizer.update(grads, opt_state)
+        new_params = optax.apply_updates(params, updates)
+        return new_params, opt_state, batch_loss, grads
 ### TRAINING loop###
-loss = []
-best_loss = np.inf
-early_stopping_counter = 0
-pv = 100
+    loss = []
+    best_loss = np.inf
+    early_stopping_counter = 0
+    pv = 100
+    opt_state = optimizer.init(params)
 
-with trange(n_epochs) as t:
+    with trange(n_epochs) as t:
         for step in t:
-                # optimizing loss by gradient descent
-                params, opt_state, batch_loss = update(params, opt_state, X_train, Y_train)
+                # optimizing loss by update function
+                params, opt_state, batch_loss, grads = update(params, opt_state, X_train[range(batch_size*(i+1)),:], Y_train[range(batch_size*(i+1)),:])
+
                 if step % 500 == 0:
                     plot_params(params)
                 # compute validation loss at the end of the epoch
@@ -171,9 +164,9 @@ with trange(n_epochs) as t:
                     print('Model saved.')
                     break
 
-        print('Reached max number of epochs. Loss = ' + str(best_loss))
+        print('Reached max number of epochs in this batch. Loss = ' + str(best_loss))
         print(f'Model saved.')
-        print(f'early_stopping_counter{early_stopping_counter}')
+        print(f'early_stopping_counter: {early_stopping_counter}')
+        print(f'accuracy: {jnp.mean(accuracy(params, X_test, Y_test))}')
         # Final trained parameters and resulting prediction
-        params = params
-        preds = custom_forward.apply(params=params, x=X_train)
+        #preds = custom_forward.apply(params=params, x=X_train)

@@ -5,27 +5,23 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="9272" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/haiku/_src/base.py" />
+          <option name="caretOffset" value="716" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="339" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
+          <option name="caretOffset" value="1006" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="9272" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/haiku/_src/base.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="593" />
           <option name="fileUrl" value="file://$APPLICATION_HOME_DIR$/plugins/python/helpers/pydev/_pydev_imps/_pydev_execfile.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="264" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/TEST/jax_test.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="3972" />
+          <option name="caretOffset" value="5755" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
       </list>

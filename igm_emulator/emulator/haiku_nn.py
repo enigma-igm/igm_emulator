@@ -20,9 +20,9 @@ class haiku_nn:
 # -*- Define arguments for training -*-
     def __init__(
             self,
-            layer_size = (300,300,300,276),     #hidden layers and final layer(size of 276 is the size of the output)
+            layer_size = [100,100,100,276],     #hidden layers and final layer(size of 276 is the size of the output)
             rng = jax.random.PRNGKey(5678),       #for generating initialized weights and biases
-            epochs = 500,                      #epoch time for training
+            epochs = 1000,                      #epoch time for training
             learning_rate = 0.001,             #rate of changing weight parameters when learning
             patience_values = 100,              #number of increasing loss gradient, prevent from overlearning
             X_train: jnp.ndarray = [],          #input tensor of shape [sampling_size, input_dimension(=3)]
@@ -78,8 +78,8 @@ class haiku_nn:
                 l, grads = value_and_grad(self.MeanSquaredErrorLoss)(params, self.x, self.y)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 params = optax.apply_updates(params, updates)
-                if i % 100 == 0:
-                    print(f'grads{grads}')
+                #if i % 100 == 0:
+                    #print(f'grads{grads}')
                 # compute validation loss at the end of the epoch
                 loss.append(l)
 
