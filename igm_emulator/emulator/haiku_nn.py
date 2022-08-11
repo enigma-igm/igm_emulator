@@ -136,7 +136,8 @@ class haiku_nn:
         print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
 
         # Plot relative error of all test correlation functions
-        delta = (Y_test - test_preds)/Y_test*100
+        delta = abs(Y_test - test_preds)/Y_test*100
+        print (jnp.mean(delta))
         ax = np.arange(276)
         for i in range(delta.shape[0]):
             #plt.ylim(-4,)

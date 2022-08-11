@@ -9,10 +9,12 @@ from tqdm import trange
 from matplotlib import pyplot as plt
 import seaborn as sns
 from jax.config import config
+
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
-
-
+'''
+Visualization of hyperparameters
+'''
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=4)
   fig1.tight_layout()
@@ -29,6 +31,17 @@ def plot_params(params):
     ax.title.set_text(f"{module}/b")
   plt.show()
 
+def gradientsVis(grads, modelName):
+    fig, ax = plt.subplots(2, 1, constrained_layout=True, figsize=(7,5))
+    for i, layer in enumerate(sorted(grads)):
+        ax[0].scatter(i, grads[layer]['w'].mean())
+        ax[0].title.set_text(f'W_grad {modelName}')
+
+        ax[1].scatter(i, grads[layer]['b'].mean())
+        ax[1].title.set_text(f'B_grad {modelName}')
+    plt.show()
+    return fig
+
 '''
 Load Train and Test Data
 '''
@@ -41,13 +54,22 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
 
-X_train = dill.load(open(dir_lhs + f'{z_string}_normparam{num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
-Y_train = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
-Y_train = Y_train/((Y_train.max())-(Y_train.min())) #normalize corr functions for better convergence
+X_train = dill.load(open(dir_lhs + f'{z_string}_param{num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
+meanX = X_train.mean(axis=0)
+stdX = X_train.std(axis=0)
+X_train = (X_train - meanX) / stdX
+print(X_train.mean())
 
-X_test = dill.load(open(dir_lhs + f'{z_string}_normparam4.p', 'rb')) # load normalized cosmological parameters from grab_models.py
+Y_train = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
+meanY = Y_train.mean(axis=0)
+stdY = Y_train.std(axis=0)
+Y_train = (Y_train - meanY) / stdY
+print(Y_train.mean())
+
+X_test = dill.load(open(dir_lhs + f'{z_string}_param4.p', 'rb')) # load normalized cosmological parameters from grab_models.py
+X_test = (X_test - meanX) / stdX
 Y_test = dill.load(open(dir_lhs + f'{z_string}_model4.p', 'rb'))
-Y_test = Y_test/((Y_test.max())-(Y_test.min()))
+Y_test = (Y_test- meanY) / stdY
 
 '''
 Build custom haiku Module
@@ -65,7 +87,7 @@ class MyModuleCustom(hk.Module):
     self.dropout_rate = dropout_rate
     l = []
     for i, layer in enumerate(output_size):
-        z =hk.Linear(output_size=layer, name="linear_%d" % i)
+        z =hk.Linear(output_size=layer, name="linear_%d" % i, w_init = hk.initializers.VarianceScaling(1.0, "fan_avg", "uniform"))
         l.append(z)
     self.layer = l
 
@@ -90,7 +112,8 @@ def _custom_forward_fn(x):
   return module(x)
 
 custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
-params = custom_forward.init(rng=5678, x=X_train)
+rng_sequence = hk.PRNGSequence(42)
+params = custom_forward.init(rng=next(rng_sequence), x=X_train)
 preds = custom_forward.apply(params=params, x=X_train)
 
 '''
@@ -103,7 +126,7 @@ n_samples = X_train.shape[0]
 total_steps = int(n_samples/batch_size)
 
  ###Learning Rate schedule + Gradient Clipping###
-def schedule_lr(init_lr=0.001,  decay = 0.1, total_steps = total_steps):
+def schedule_lr(init_lr=0.0001,  decay = 0.1, total_steps = total_steps):
     lr = []
     for i in range(total_steps):
        lr.append(init_lr*(decay**i))
@@ -117,7 +140,11 @@ def loss_fn(params, x, y):
 @jax.jit
 def accuracy(params, x, y):
     preds = custom_forward.apply(params=params, x=x)
-    return abs(y - preds) / y * 100
+    delta = abs(y - preds) / y * 100
+    return delta
+
+early_stopping_counter = 0
+pv = 100
 
 for i in range(total_steps):
     optimizer = optax.chain(
@@ -132,19 +159,21 @@ for i in range(total_steps):
         new_params = optax.apply_updates(params, updates)
         return new_params, opt_state, batch_loss, grads
 ### TRAINING loop###
-    loss = []
-    best_loss = np.inf
-    early_stopping_counter = 0
-    pv = 100
     opt_state = optimizer.init(params)
+    best_loss = np.inf
+    loss = []
+    idx = [np.random.randint(0,1000,1) for i in range(200)]
 
     with trange(n_epochs) as t:
         for step in t:
                 # optimizing loss by update function
-                params, opt_state, batch_loss, grads = update(params, opt_state, X_train[range(batch_size*(i+1)),:], Y_train[range(batch_size*(i+1)),:])
+                params, opt_state, batch_loss, grads = update(params, opt_state, X_train[idx,:], Y_train[idx,:])
 
                 if step % 500 == 0:
                     plot_params(params)
+                    gradientsVis(grads, f'Step{i} Epoch{step}')
+                    #print(f'grads: {grads}')
+
                 # compute validation loss at the end of the epoch
                 l = batch_loss
                 loss.append(l)
@@ -167,6 +196,8 @@ for i in range(total_steps):
         print('Reached max number of epochs in this batch. Loss = ' + str(best_loss))
         print(f'Model saved.')
         print(f'early_stopping_counter: {early_stopping_counter}')
-        print(f'accuracy: {jnp.mean(accuracy(params, X_test, Y_test))}')
+        print(f'accuracy: {jnp.mean(accuracy(params, X_test, Y_test)[np.random.randint(0,100,20)])}')
+        print(f'Test Loss: {loss_fn(params, X_test, Y_test)}')
+        plt.plot(range(0,1000),loss)
         # Final trained parameters and resulting prediction
         #preds = custom_forward.apply(params=params, x=X_train)
