@@ -5,28 +5,32 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="145" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
+          <option name="caretOffset" value="4309" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="6418" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
+          <option name="caretOffset" value="194" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/hyperparam_tuner.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="593" />
           <option name="fileUrl" value="file://$APPLICATION_HOME_DIR$/plugins/python/helpers/pydev/_pydev_imps/_pydev_execfile.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="9272" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/haiku/_src/base.py" />
+          <option name="caretOffset" value="400" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
+          <option name="caretOffset" value="542" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="30" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="956" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
+          <option name="caretOffset" value="3081" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/regulargrid_data.py" />
         </OpenedFileInfo>
       </list>
     </option>

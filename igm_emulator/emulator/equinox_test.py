@@ -1,11 +1,9 @@
-import math
 import jax
 import jax.lax as lax
 import jax.numpy as jnp
 import jax.random as jrandom
 import optax
 import equinox as eqx
-
 
 class RNN(eqx.Module):
     hidden_size: int
@@ -35,8 +33,8 @@ def main(
     learning_rate=0.001,  # rate of changing weight parameters when learning
     patience_values=100,
     hidden_size=3,
-    X_train: jnp.ndarray,  # input tensor of shape [sampling_size, input_dimension(=3)]
-    Y_train: jnp.ndarray,
+    X_train = [],  # input tensor of shape [sampling_size, input_dimension(=3)]
+    Y_train = [],
     rng = jax.random.PRNGKey(5678)
 ):
 
