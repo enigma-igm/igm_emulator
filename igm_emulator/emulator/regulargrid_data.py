@@ -3,6 +3,7 @@ import dill
 import os
 import numpy as np
 from matplotlib import pyplot as plt
+import tensorflow as tf
 
 # redshift to get models for -- can make this an input to this script if desired
 redshift = 5.4
@@ -39,7 +40,7 @@ print(all_data.shape)
 
 # Construct regular grid for training + validation
 x = np.linspace(0,1,8)
-y = np.linspace(0,1,13)
+y = np.linspace(0,1,12)
 z = np.linspace(0,1,8)
 n_samples = x.shape[0]*y.shape[0]*z.shape[0]
 xg, yg, zg = np.meshgrid(x, y, z)
@@ -143,3 +144,34 @@ ax.set_ylabel(r'$T_0$')
 ax.set_zlabel(r'$\gamma$')
 plt.savefig("params.png")
 plt.show()
+
+n_testing = round(test_corr.shape[0] * 0.2)
+n_validation = round(test_corr.shape[0] * 0.8)
+
+test_selection = tf.random.shuffle([True]*n_testing+[False]*n_validation)#, lambda:random.gauss(0.5,0.1))
+
+#test_selection =  1 >= test_selection
+
+
+vali_param, vali_corr = test_param[~test_selection], test_corr[~test_selection]
+testing_param, testing_corr = test_param[test_selection], test_corr[test_selection]
+print(vali_param.shape)
+print(testing_param.shape)
+
+T = testing_param
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
+ax.set_xlabel(r'$<F>$')
+ax.set_ylabel(r'$T_0$')
+ax.set_zlabel(r'$\gamma$')
+plt.savefig("params.png")
+plt.show()
+
+test_num=f'_test_{testing_param.shape[0]}'
+dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}.p'),'wb'))
+dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}.p'),'wb'))
+
+vali_num=f'_vali_{vali_param.shape[0]}'
+dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{test_num}.p'),'wb'))
+dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{test_num}.p'),'wb'))
