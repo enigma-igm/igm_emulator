@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 
 # redshift to get models for -- can make this an input to this script if desired
 redshift = 5.4
-n_samples = 972
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -25,27 +24,37 @@ fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI -9
 log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation -15
 T0s = np.exp(log_T0s)
 gammas = param_dict['gammas']  # gamma from temperature - density relation -9
-#print(fobs, T0s, gammas)
+print(f'fobs:{fobs}')
+print(f'T0s: {T0s}')
+print(f'gammas:{gammas}')
 
+# Construct all data
+xv, yv, zv = np.meshgrid(fobs, T0s, gammas)
+print(xv.flatten()[:15])
+print(yv.flatten()[:15])
+print(zv.flatten()[:15])
+all_data = np.array([xv.flatten(),yv.flatten(), zv.flatten()])
+all_data = all_data.T
+print(all_data.shape)
 
-final_samples = np.empty([n_samples, 3])
-x = np.linspace(0,1,9)
-y = np.linspace(0,1,12)
-z = np.linspace(0,1,9)
+# Construct regular grid for training + validation
+x = np.linspace(0,1,8)
+y = np.linspace(0,1,13)
+z = np.linspace(0,1,8)
+n_samples = x.shape[0]*y.shape[0]*z.shape[0]
 xg, yg, zg = np.meshgrid(x, y, z)
-print (f'xg: {xg}')
-print (f'yg: {yg}')
-print (f'zg: {zg}')
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(xg, yg, zg)
+ax.scatter(xv, yv, zv)
+final_samples = np.empty([n_samples, 3])
+
 # convert the output of lhs (between 0 and 1 for each parameter) to our model grid
-xg_trans = param_transform(xg, fobs[0], fobs[-1]).flatten()
-
-sample_params = np.array([param_transform(xg, fobs[0], fobs[-1]).flatten(),param_transform(yg, T0s[0], T0s[-1]).flatten(),param_transform(yg, gammas[0], gammas[-1]).flatten()])
+xg_trans = param_transform(xg, fobs[0], fobs[-1])
+yg_trans = param_transform(yg, T0s[0], T0s[-1])
+zg_trans = param_transform(zg, gammas[0], gammas[-1])
+sample_params = np.array([xg_trans.flatten(),yg_trans.flatten(),zg_trans.flatten()])
 sample_params = sample_params.T
-print(sample_params.shape)
-
 
 for sample_idx, sample in enumerate(sample_params):
 
@@ -67,20 +76,70 @@ for sample_idx, sample in enumerate(sample_params):
         models = np.empty([n_samples, len(model_autocorrelation)])
     models[sample_idx] = model_autocorrelation
 
+# Filter out repeated data
+final_params = []
+final_corr = []
+count = 0
+for idx, data in enumerate(final_samples):
+    for i in final_params:
+        if np.array_equal(data,i):
+            count += 1
+    if count == 0:
+        final_params.append(data)
+        final_corr.append(models[idx,:])
+    count = 0
+final_samples = np.asarray(final_params)
+models = np.asarray(final_corr)
 print(final_samples.shape)
+
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
-num = '7_972'
-#dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{num}.p'),'wb'))
-#dill.dump(models,open(os.path.join(dir, f'{z_string}_model{num}.p'),'wb'))
+num = f'_training_{models.shape[0]}'
+dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{num}.p'),'wb'))
+dill.dump(models,open(os.path.join(dir, f'{z_string}_model{num}.p'),'wb'))
 
 H = final_samples
-# H= norm(loc=0, scale=1).ppf(lhd)
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 2], cmap='viridis', linewidth=0.5)
+ax.scatter(H[:, 0], H[:, 1], H[:, 2], c =H[:, 1], cmap='viridis', linewidth=0.5)
 ax.set_xlabel(r'$<F>$')
 ax.set_ylabel(r'$T_0$')
 ax.set_zlabel(r'$\gamma$')
 plt.savefig("params.png")
 plt.show()
 
+# Test data
+test_param = []
+test_corr = []
+for idx, data in enumerate(all_data):
+    count = 0
+    for i in final_samples:
+        if np.array_equal(data,i):
+            count += 1
+            break
+        else:
+            pass
+    if count == 0:
+        test_param.append(data)
+        fobs_idx = np.argmin(np.abs(fobs - data[0]))
+        T0_idx = np.argmin(np.abs(T0s - data[1]))
+        gamma_idx = np.argmin(np.abs(gammas - data[2]))
+
+        # get the corresponding model autocorrelation for each parameter location
+        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+        like_dict = dill.load(open(in_path + like_name, 'rb'))
+        model_autocorrelation = like_dict['mean_data']
+        test_corr.append(model_autocorrelation)
+test_param = np.asarray(test_param)
+test_corr = np.asarray(test_corr)
+print(test_corr.shape)
+print(test_param.shape)
+
+A = test_param
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
+ax.set_xlabel(r'$<F>$')
+ax.set_ylabel(r'$T_0$')
+ax.set_zlabel(r'$\gamma$')
+plt.savefig("params.png")
+plt.show()
