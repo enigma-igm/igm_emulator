@@ -40,7 +40,7 @@ print(all_data.shape)
 
 # Construct regular grid for training + validation
 x = np.linspace(0,1,8)
-y = np.linspace(0,1,12)
+y = np.linspace(0,1,13)
 z = np.linspace(0,1,8)
 n_samples = x.shape[0]*y.shape[0]*z.shape[0]
 xg, yg, zg = np.meshgrid(x, y, z)
@@ -173,5 +173,5 @@ dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}.p'),
 dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}.p'),'wb'))
 
 vali_num=f'_vali_{vali_param.shape[0]}'
-dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{test_num}.p'),'wb'))
-dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{test_num}.p'),'wb'))
+dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}.p'),'wb'))
+dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}.p'),'wb'))

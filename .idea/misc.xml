@@ -25,11 +25,7 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="593" />
-          <option name="fileUrl" value="file://$APPLICATION_HOME_DIR$/plugins/python/helpers/pydev/_pydev_imps/_pydev_execfile.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="835" />
+          <option name="caretOffset" value="5942" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/regulargrid_data.py" />
         </OpenedFileInfo>
       </list>
