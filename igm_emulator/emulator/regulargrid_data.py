@@ -23,7 +23,7 @@ in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}
 
 fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI -9
 log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation -15
-T0s = np.exp(log_T0s)
+T0s = np.power(10,log_T0s)
 gammas = param_dict['gammas']  # gamma from temperature - density relation -9
 print(f'fobs:{fobs}')
 print(f'T0s: {T0s}')
@@ -40,7 +40,7 @@ print(all_data.shape)
 
 # Construct regular grid for training + validation
 x = np.linspace(0,1,8)
-y = np.linspace(0,1,13)
+y = np.linspace(0,1,12)
 z = np.linspace(0,1,8)
 n_samples = x.shape[0]*y.shape[0]*z.shape[0]
 xg, yg, zg = np.meshgrid(x, y, z)
@@ -105,7 +105,6 @@ ax.scatter(H[:, 0], H[:, 1], H[:, 2], c =H[:, 1], cmap='viridis', linewidth=0.5)
 ax.set_xlabel(r'$<F>$')
 ax.set_ylabel(r'$T_0$')
 ax.set_zlabel(r'$\gamma$')
-plt.savefig("params.png")
 plt.show()
 
 # Test data
@@ -142,7 +141,6 @@ ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
 ax.set_xlabel(r'$<F>$')
 ax.set_ylabel(r'$T_0$')
 ax.set_zlabel(r'$\gamma$')
-plt.savefig("params.png")
 plt.show()
 
 n_testing = round(test_corr.shape[0] * 0.2)

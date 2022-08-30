@@ -9,24 +9,20 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="35" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/hyperparam_tuner.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="400" />
+          <option name="caretOffset" value="128" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="542" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/main.py" />
+          <option name="caretOffset" value="7149" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="30" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="5942" />
+          <option name="caretOffset" value="259" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/regulargrid_data.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="4525" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
         </OpenedFileInfo>
       </list>
     </option>
