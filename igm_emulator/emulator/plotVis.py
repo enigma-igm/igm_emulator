@@ -96,11 +96,11 @@ def test_overplot(test_preds, Y_test, X_test):
     fig2.set_figwidth(15)
     fig2.set_figheight(15)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
-    for i in range(Y_test.shape[0]):
-        axs2.plot(ax, test_preds[i], label=f'Preds {i}:' r'$<F>$='f'{X_test[i, 0]:.2f},'
-                                                     r'$T_0$='f'{X_test[i, 1]:.2f},'
-                                                     r'$\gamma$='f'{X_test[i, 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs2.plot(ax, Y_test[i], label=f'Real {i}', c=f'C{i}', linestyle='--')
+    for i in range(sample):
+        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
+                                                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
+                                                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
+        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
     plt.ylabel('Correlation function')
