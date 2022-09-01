@@ -8,14 +8,15 @@ import optax
 from tqdm import trange
 from jax.config import config
 from sklearn.metrics import r2_score
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update
+from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation
 from plotVis import *
 max_grad_norm = 0.1
 n_epochs = 1000
 lr = 1e-3
 decay = 5e-3
 batch_size = 1000
-
+print(f'Layers: {output_size}')
+print(f'Activation: {activation}')
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
@@ -72,7 +73,7 @@ opt_state = optimizer.init(init_params)
 '''
 Training Loop + Visualization of params
 '''
-params_grads_distribution(loss_fn,init_params,X_train,Y_train)
+#params_grads_distribution(loss_fn,init_params,X_train,Y_train)
 
 best_loss = np.inf
 validation_loss = []
@@ -87,8 +88,8 @@ if __name__ == "__main__":
             # optimizing loss by update function
             params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
 
-            if step % 100 == 0:
-                plot_params(params)
+            #if step % 100 == 0:
+                #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
             l = loss_fn(params, X_vali, Y_vali)
@@ -113,8 +114,8 @@ if __name__ == "__main__":
     print(f'early_stopping_counter: {early_stopping_counter}')
     print(f'accuracy: {jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY))}')
     print(f'Test Loss: {loss_fn(params, X_test, Y_test)}')
-    plt.plot(range(len(validation_loss)), validation_loss, label='vali loss')  # plot validation loss
-    plt.plot(range(len(training_loss)), training_loss, label='train loss')  # plot training loss
+    plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
+    plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
 
 '''
@@ -133,7 +134,6 @@ test_overplot(test_preds, Y_test, X_test)
 Accuracy + Results
 '''
 delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
-print("Test MSE Loss: {}\n".format(test_loss)) # Loss
 print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
 print(f'accuracy: {jnp.mean(delta)*100}')
 

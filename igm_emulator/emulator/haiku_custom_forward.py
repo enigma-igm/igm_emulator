@@ -3,9 +3,10 @@ import jax.numpy as jnp
 import jax
 from typing import Callable, Iterable, Optional
 import optax
+import itertools
 
 output_size=[100,100,100,276]
-activation= jax.nn.leaky_relu
+activation= jax.nn.celu
 '''
 Build custom haiku Module
 '''
@@ -61,8 +62,11 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y):
-  return jnp.mean((custom_forward.apply(params, x) - y) ** 2)
+def loss_fn(params, x, y, l2=0.0001):
+    leaves =[]
+    for module in sorted(params):
+        leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
+    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) + l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
 
 @jax.jit
 def accuracy(params, x, y, meanY, stdY):
