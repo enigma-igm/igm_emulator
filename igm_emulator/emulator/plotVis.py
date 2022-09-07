@@ -14,7 +14,7 @@ dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
 num = '_training_768'
 Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
 out = Y.shape[1]
-z= f'{zstr}_768_leaky_relu_adamw'
+z= f'{zstr}_768_leaky_relu_l2+adamw'
 
 in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
 

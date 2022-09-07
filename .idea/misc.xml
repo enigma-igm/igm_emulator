@@ -5,11 +5,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="368" />
+          <option name="caretOffset" value="395" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2165" />
+          <option name="caretOffset" value="2934" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -17,14 +17,28 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/grid_sampling.ipynb" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2573" />
+          <option name="caretOffset" value="192" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/GRID/overplot_test89_vali358.png" />
         </OpenedFileInfo>
         <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/test%error_z54_768_leaky_relu_l2+adamw.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/test%error_z54_768_leaky_relu_l2.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/unlearnt_z54_768_leaky_relu_l2.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="4" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/nn_emulator-z54-best_leakyrelu.ipynb" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/nn_emulator-adamw.ipynb" />
         </OpenedFileInfo>
       </list>
     </option>

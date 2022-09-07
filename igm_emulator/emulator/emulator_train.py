@@ -88,8 +88,8 @@ if __name__ == "__main__":
             # optimizing loss by update function
             params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
 
-            #if step % 100 == 0:
-                #plot_params(params)
+            if step % 100 == 0:
+                plot_params(params)
 
             # compute training & validation loss at the end of the epoch
             l = loss_fn(params, X_vali, Y_vali)

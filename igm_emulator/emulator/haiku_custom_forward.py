@@ -67,7 +67,7 @@ def loss_fn(params, x, y, l2=0.0001):
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
-    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) #+ regularization
+    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
 
 @jax.jit
 def accuracy(params, x, y, meanY, stdY):
