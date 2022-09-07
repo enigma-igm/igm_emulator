@@ -6,7 +6,7 @@ import optax
 import itertools
 
 output_size=[100,100,100,276]
-activation= jax.nn.celu
+activation= jax.nn.leaky_relu
 '''
 Build custom haiku Module
 '''
@@ -66,7 +66,8 @@ def loss_fn(params, x, y, l2=0.0001):
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
-    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) + l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
+    regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
+    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) #+ regularization
 
 @jax.jit
 def accuracy(params, x, y, meanY, stdY):

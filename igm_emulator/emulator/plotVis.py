@@ -3,9 +3,34 @@ import seaborn as sns
 import numpy as np
 import jax.numpy as jnp
 import jax
+import os
+import dill
+import h5py
 '''
 Visualization of hyperparameters
 '''
+zstr = 'z54'
+dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
+num = '_training_768'
+Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
+out = Y.shape[1]
+z= f'{zstr}_768_leaky_relu_adamw'
+
+in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+
+R_value = 30000.
+skewers_use = 2000
+n_flux = 9
+bin_label = '_set_bins_4'
+added_label = ''
+
+
+temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
+with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
+    params = dict(f['params'].attrs.items())
+
+v_bins = params['v_bins']
+
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=4)
   fig1.tight_layout()
@@ -33,17 +58,25 @@ def gradientsVis(grads, modelName = None):
     plt.show()
     return fig
 
-def input_overplot(X_train,X_test):
+def input_overplot(X_train,X_test,X_vali):
     H = X_train
     T = X_test
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5, alpha=0.3)
+    V = X_vali
+    fig = plt.figure(figsize=[15,15])
+    ax = fig.add_subplot(121,projection='3d')
+    ax2 = fig.add_subplot(122, projection='3d')
+    ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis',linewidth=0.5, alpha=0.2)
     ax.scatter(T[:, 0], T[:, 1], T[:, 2], c=T[:, 1], cmap='spring', linewidth=0.5)
+    ax2.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5, alpha=0.2)
+    ax2.scatter(V[:, 0], V[:, 1], V[:, 2], c=V[:, 1], cmap='hot', linewidth=0.5)
     ax.set_xlabel(r'$<F>$')
     ax.set_ylabel(r'$T_0$')
     ax.set_zlabel(r'$\gamma$')
-    ax.set_title('Training parameters')
+    ax.set_title('Sampling Test data in parameters space')
+    ax2.set_xlabel(r'$<F>$')
+    ax2.set_ylabel(r'$T_0$')
+    ax2.set_zlabel(r'$\gamma$')
+    ax2.set_title('Sampling Validation data in parameters space')
     plt.show()
 
 def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
@@ -70,7 +103,7 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.show()
 
 def train_overplot(preds, Y_train, X_train):
-    ax = np.arange(276)  # arbitrary even spaced x-axis (will be converted to velocityZ)
+    ax = v_bins # velocity bins
     sample = 5  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
     fig.set_figwidth(15)
@@ -82,15 +115,15 @@ def train_overplot(preds, Y_train, X_train):
                                                r'$\gamma$='f'{X_train[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
         axs.plot(ax, Y_train[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+    plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Correlation function')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    # plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
+    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X_train.shape[0]}.png'))
     plt.show()
 
 def test_overplot(test_preds, Y_test, X_test):
-    ax = np.arange(276)
+    ax = v_bins
     sample = 5  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
     fig2.set_figwidth(15)
@@ -102,24 +135,25 @@ def test_overplot(test_preds, Y_test, X_test):
                                                      r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
         axs2.plot(ax, Y_test[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+    plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Correlation function')
     plt.title('Test overplot')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    # plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test_overplot_{z}_{X_test.shape[0]}.png'))
     plt.show()
 
 def plot_residue(new_delta):
     plt.figure(figsize=(15, 15))
     for i in range(new_delta.shape[0]):
-        plt.plot(np.arange(276), new_delta[i, :] * 100, linewidth=0.5)
-    plt.plot(np.arange(276), jnp.ones([276]), c='r')
-    plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+        plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5)
+    plt.plot(v_bins, jnp.ones([out]), c='r')
+    plt.plot(v_bins, -jnp.ones([out]), c='r')
+    plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('% error on Correlation function')
-    plt.title('Percentage residue plot')
+    plt.title(f'Percentage residue plot:%mean: {np.mean(new_delta) * 100}; %std: {np.std(new_delta) * 100}')
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    # plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error{self.comment}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test%error_{z}.png'))
     plt.show()
 
 
@@ -133,7 +167,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds):
     unlearnt_idx = jnp.asarray(unlearnt_idx)
     print(f'unlearned:{unlearnt_idx.shape}')
 
-    ax = np.arange(276)
+    ax = v_bins
     fig2, axs2 = plt.subplots(2, 1)
     fig2.set_figwidth(15)
     fig2.set_figheight(30)
@@ -147,12 +181,12 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds):
         axs2[0].plot(ax, Y_test[unlearnt_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
         axs2[1].plot(ax, delta[unlearnt_idx[i], :] * 100, c=f'C{i}', label=f'%{i}', linewidth=0.6)
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
+    plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Correlation function %')
-    plt.title(f'unleanred {unlearnt_idx.shape[0]}')
+    plt.title(f'unlearned residue percentage: {unlearnt_idx.shape[0]} sets')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    # plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
+    plt.savefig(os.path.join(dir_exp, f'unlearnt_{z}.png'))
     plt.show()
 
 def plot_error_distribution(new_delta):

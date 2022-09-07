@@ -5,24 +5,26 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="4309" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_nn.py" />
+          <option name="caretOffset" value="368" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="259" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/regulargrid_data.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="444" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="2303" />
+          <option name="caretOffset" value="2165" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="4531" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
+          <option name="caretOffset" value="4" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/grid_sampling.ipynb" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2573" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/GRID/overplot_test89_vali358.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/test%error_z54_768_leaky_relu_l2.png" />
         </OpenedFileInfo>
       </list>
     </option>

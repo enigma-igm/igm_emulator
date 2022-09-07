@@ -54,7 +54,7 @@ Y_test = (Y_test - meanY) / stdY
 Y_vali = (Y_vali - meanY) / stdY
 print(Y_vali.shape)
 
-input_overplot(X_train,X_test)
+input_overplot(X_train,X_test,X_vali)
 
 '''
 Build custom haiku Module
@@ -66,7 +66,7 @@ n_samples = X_train.shape[0]
 total_steps = n_epochs*n_samples + n_epochs
 
 optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.adam(learning_rate=schedule_lr(lr,total_steps))
+                        optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=0.001)
                         )
 opt_state = optimizer.init(init_params)
 

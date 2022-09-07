@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 
 # redshift to get models for -- can make this an input to this script if desired
-redshift = 5.4
+redshift = 5.6
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
