@@ -139,5 +139,5 @@ print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is go
 print(f'accuracy: {jnp.mean(delta)*100}')
 
 plot_residue(delta)
-bad_learned_plots(delta,X_test,Y_test,test_preds)
+bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
 plot_error_distribution(delta)

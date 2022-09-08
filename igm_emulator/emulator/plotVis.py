@@ -142,7 +142,7 @@ def train_overplot(preds, X, Y, meanY, stdY):
 
 def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
     ax = v_bins
-    sample = 8  # number of functions plotted
+    sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
     fig2.set_figwidth(15)
     fig2.set_figheight(15)
@@ -178,7 +178,7 @@ def plot_residue(new_delta):
     plt.show()
 
 
-def bad_learned_plots(delta,X_test,Y_test,test_preds):
+def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY):
     unlearnt_idx = []
     for i, d in enumerate(delta):
         for j, e in enumerate(d):
@@ -194,6 +194,8 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds):
     fig2.set_figheight(30)
     axs2[0].title.set_text('unlearned fitting overplot')
     axs2[1].title.set_text('unlearned residual [%]')
+    Y_test = Y_test * stdY + meanY
+    test_preds = test_preds * stdY + meanY
     for i in range(unlearnt_idx.shape[0]):
         axs2[0].plot(ax, test_preds[unlearnt_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_test[unlearnt_idx[i], 0]:.2f},'
                                                             r'$T_0$='f'{X_test[unlearnt_idx[i], 1]:.2f},'
