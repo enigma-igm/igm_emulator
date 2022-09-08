@@ -69,6 +69,7 @@ optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
                         optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=0.001)
                         )
 opt_state = optimizer.init(init_params)
+train_overplot(preds,X,Y,meanY,stdY)
 
 '''
 Training Loop + Visualization of params
@@ -88,8 +89,8 @@ if __name__ == "__main__":
             # optimizing loss by update function
             params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
 
-            if step % 100 == 0:
-                plot_params(params)
+            #if step % 100 == 0:
+                #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
             l = loss_fn(params, X_vali, Y_vali)
@@ -122,13 +123,13 @@ if __name__ == "__main__":
 Prediction overplots: Training And Test
 '''
 preds = custom_forward.apply(params=best_params, x=X_train)
-train_overplot(preds, Y_train, X_train)
+train_overplot(preds,X,Y,meanY,stdY)
 
 test_preds = custom_forward.apply(params, X_test)
 test_loss = loss_fn(params, X_test, Y_test)
 test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
-test_overplot(test_preds, Y_test, X_test)
+test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
 
 '''
 Accuracy + Results

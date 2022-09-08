@@ -30,6 +30,21 @@ with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
     params = dict(f['params'].attrs.items())
 
 v_bins = params['v_bins']
+fig = {'legend.fontsize': 16,
+       'legend.frameon': False,
+       'axes.labelsize': 30,
+       'axes.titlesize': 30,
+       'figure.titlesize': 38,
+       'xtick.labelsize': 25,
+       'ytick.labelsize': 25,
+       'lines.linewidth': 3,
+       'lines.markersize': 2,
+       'errorbar.capsize': 3,
+       'font.family': 'serif',
+       # 'text.usetex': True,
+       'xtick.minor.visible': True,
+       }
+plt.rcParams.update(fig)
 
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=4)
@@ -62,21 +77,22 @@ def input_overplot(X_train,X_test,X_vali):
     H = X_train
     T = X_test
     V = X_vali
-    fig = plt.figure(figsize=[15,15])
+    fig = plt.figure()
     ax = fig.add_subplot(121,projection='3d')
     ax2 = fig.add_subplot(122, projection='3d')
-    ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis',linewidth=0.5, alpha=0.2)
+    ax.scatter(H[:, 0], H[:, 1], H[:, 2],linewidth=0.5, alpha=0.2)
     ax.scatter(T[:, 0], T[:, 1], T[:, 2], c=T[:, 1], cmap='spring', linewidth=0.5)
-    ax2.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5, alpha=0.2)
+    ax2.scatter(H[:, 0], H[:, 1], H[:, 2], linewidth=0.5, alpha=0.2)
     ax2.scatter(V[:, 0], V[:, 1], V[:, 2], c=V[:, 1], cmap='hot', linewidth=0.5)
     ax.set_xlabel(r'$<F>$')
     ax.set_ylabel(r'$T_0$')
     ax.set_zlabel(r'$\gamma$')
-    ax.set_title('Sampling Test data in parameters space')
+    ax.set_title('Test data')
     ax2.set_xlabel(r'$<F>$')
     ax2.set_ylabel(r'$T_0$')
     ax2.set_zlabel(r'$\gamma$')
-    ax2.set_title('Sampling Validation data in parameters space')
+    ax2.set_title('Validation data')
+    fig.suptitle('Parameters space')
     plt.show()
 
 def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
@@ -102,33 +118,38 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.legend(labels=['layer1', 'layer2', 'layer3'], title='grads_b')
     plt.show()
 
-def train_overplot(preds, Y_train, X_train):
+def train_overplot(preds, X, Y, meanY, stdY):
     ax = v_bins # velocity bins
-    sample = 5  # number of functions plotted
+    sample = 8  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
     fig.set_figwidth(15)
     fig.set_figheight(15)
-    corr_idx = np.random.randint(0, Y_train.shape[0], sample)  # randomly select correlation functions to compare
+    corr_idx = np.random.randint(0, Y.shape[0], sample)  # randomly select correlation functions to compare
+    preds = preds * stdY + meanY
     for i in range(sample):
-        axs.plot(ax, preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_train[corr_idx[i], 0]:.2f},'
-                                               r'$T_0$='f'{X_train[corr_idx[i], 1]:.2f},'
-                                               r'$\gamma$='f'{X_train[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs.plot(ax, Y_train[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
+        axs.plot(ax, preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X[corr_idx[i], 0]:.2f},'
+                                               r'$T_0$='f'{X[corr_idx[i], 1]:.2f},'
+                                               r'$\gamma$='f'{X[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
+        axs.plot(ax, Y[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Velocity/ $km s^{-1}$')
-    plt.ylabel('Correlation function')
+    plt.ylabel('Auto-Correlation')
+    plt.title('Train overplot in data space')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X_train.shape[0]}.png'))
+    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X.shape[0]}.png'))
     plt.show()
 
-def test_overplot(test_preds, Y_test, X_test):
+def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
     ax = v_bins
-    sample = 5  # number of functions plotted
+    sample = 8  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
     fig2.set_figwidth(15)
     fig2.set_figheight(15)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
+    test_preds = test_preds*stdY+meanY
+    Y_test = Y_test*stdY+meanY
+    X_test = X_test*stdX+meanX
     for i in range(sample):
         axs2.plot(ax, test_preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                                                      r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
@@ -136,8 +157,8 @@ def test_overplot(test_preds, Y_test, X_test):
         axs2.plot(ax, Y_test[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Velocity/ $km s^{-1}$')
-    plt.ylabel('Correlation function')
-    plt.title('Test overplot')
+    plt.ylabel('Auto-Correlation')
+    plt.title('Test overplot in data space')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
     plt.savefig(os.path.join(dir_exp, f'test_overplot_{z}_{X_test.shape[0]}.png'))
@@ -149,9 +170,9 @@ def plot_residue(new_delta):
         plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5)
     plt.plot(v_bins, jnp.ones([out]), c='r')
     plt.plot(v_bins, -jnp.ones([out]), c='r')
-    plt.xlabel(r'Velocity/ $km s^{-1}$')
-    plt.ylabel('% error on Correlation function')
-    plt.title(f'Percentage residue plot:%mean: {np.mean(new_delta) * 100}; %std: {np.std(new_delta) * 100}')
+    plt.xlabel(r'Velocity [$km s^{-1}$]')
+    plt.ylabel('Residual [%]')
+    plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100}; std: {np.std(new_delta) * 100}')
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
     plt.savefig(os.path.join(dir_exp, f'test%error_{z}.png'))
     plt.show()
@@ -172,7 +193,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds):
     fig2.set_figwidth(15)
     fig2.set_figheight(30)
     axs2[0].title.set_text('unlearned fitting overplot')
-    axs2[1].title.set_text('unlearned residue percentage')
+    axs2[1].title.set_text('unlearned residual [%]')
     for i in range(unlearnt_idx.shape[0]):
         axs2[0].plot(ax, test_preds[unlearnt_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_test[unlearnt_idx[i], 0]:.2f},'
                                                             r'$T_0$='f'{X_test[unlearnt_idx[i], 1]:.2f},'
@@ -181,7 +202,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds):
         axs2[0].plot(ax, Y_test[unlearnt_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
         axs2[1].plot(ax, delta[unlearnt_idx[i], :] * 100, c=f'C{i}', label=f'%{i}', linewidth=0.6)
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Velocity/ $km s^{-1}$')
+    plt.xlabel(r'Velocity/ [$km s^{-1}$]')
     plt.ylabel('Correlation function %')
     plt.title(f'unlearned residue percentage: {unlearnt_idx.shape[0]} sets')
     plt.legend()
