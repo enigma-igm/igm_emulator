@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 
 # redshift to get models for -- can make this an input to this script if desired
+num = '1'
 redshift = 5.6
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -94,9 +95,9 @@ models = np.asarray(final_corr)
 print(final_samples.shape)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
-num = f'_training_{models.shape[0]}'
-dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{num}.p'),'wb'))
-dill.dump(models,open(os.path.join(dir, f'{z_string}_model{num}.p'),'wb'))
+train_num = f'_training_{models.shape[0]}'
+dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),'wb'))
+dill.dump(models,open(os.path.join(dir, f'{z_string}_model{train_num}_{num}.p'),'wb'))
 
 H = final_samples
 fig = plt.figure()
@@ -167,9 +168,9 @@ plt.savefig("params.png")
 plt.show()
 
 test_num=f'_test_{testing_param.shape[0]}'
-dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}.p'),'wb'))
-dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}.p'),'wb'))
+dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}_{num}.p'),'wb'))
+dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}_{num}.p'),'wb'))
 
 vali_num=f'_vali_{vali_param.shape[0]}'
-dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}.p'),'wb'))
-dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}.p'),'wb'))
+dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}_{num}.p'),'wb'))
+dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}_{num}.p'),'wb'))

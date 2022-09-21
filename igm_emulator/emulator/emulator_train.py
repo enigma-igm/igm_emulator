@@ -8,15 +8,19 @@ import optax
 from tqdm import trange
 from jax.config import config
 from sklearn.metrics import r2_score
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation
+from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
+from igm_emulator.scripts.pytree_h5py import save, load
 from plotVis import *
+import h5py
+import IPython
+
 max_grad_norm = 0.1
 n_epochs = 1000
 lr = 1e-3
 decay = 5e-3
-batch_size = 1000
 print(f'Layers: {output_size}')
 print(f'Activation: {activation}')
+print(f'L2 regularization lambda: {l2}')
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
@@ -24,7 +28,7 @@ dtype=jnp.float64
 Load Train and Test Data
 '''
 redshift = 5.4 #choose redshift from
-num = '_training_768'
+train_num = '_training_768'
 test_num = '_test_89'
 vali_num = '_vali_358'
 # get the appropriate string and pathlength for chosen redshift
@@ -34,7 +38,7 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
 
-X = dill.load(open(dir_lhs + f'{z_string}_param{num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
+X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
 X_test = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
 X_vali = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
 meanX = X.mean(axis=0)
@@ -44,7 +48,7 @@ X_test = (X_test - meanX) / stdX
 X_vali = (X_vali - meanX) / stdX
 print(X_test.shape)
 
-Y = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))
+Y = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
 Y_test = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
 Y_vali = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
 meanY = Y.mean(axis=0)
@@ -66,7 +70,7 @@ n_samples = X_train.shape[0]
 total_steps = n_epochs*n_samples + n_epochs
 
 optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=0.001)
+                        optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
                         )
 opt_state = optimizer.init(init_params)
 train_overplot(preds,X,Y,meanY,stdY)
@@ -141,3 +145,38 @@ print(f'accuracy: {jnp.mean(delta)*100}')
 plot_residue(delta)
 bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
 plot_error_distribution(delta)
+
+IPython.embed()
+'''
+Save best emulated parameter
+'''
+
+f = h5py.File(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
+group1 = f.create_group('haiku_nn')
+group1.attrs['redshift'] = redshift
+group1.attrs['adamw_decay'] = decay
+group1.attrs['epochs'] = n_epochs
+group1.create_dataset('layers', data = output_size)
+group1.attrs['activation_function'] = f'{activation}'
+group1.attrs['learning_rate'] = lr
+group1.attrs['L2_lambda'] = l2
+
+group2 = f.create_group('data')
+group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
+group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
+group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
+group2.create_dataset('test_data', data = X_test)
+group2.create_dataset('train_data', data = X_train)
+group2.create_dataset('vali_data', data = X_vali)
+
+group3 = f.create_group('performance')
+group3.attrs['R2'] = test_R2
+group3.attrs['test_loss'] = test_loss
+group3.attrs['train_loss'] = batch_loss
+group3.attrs['vali_loss'] = best_loss
+group3.attrs['residuals_resulats'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
+group3.create_dataset('residuals', data=delta)
+
+save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
+IPython.embed()
+f.close()

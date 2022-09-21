@@ -17,7 +17,7 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/LHS/'
+dir_lhs = '/igm_emulator/emulator/LHS/'
 
 X_train = dill.load(open(dir_lhs + f'{z_string}_normparam{num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
 Y_train = dill.load(open(dir_lhs + f'{z_string}_model{num}.p', 'rb'))

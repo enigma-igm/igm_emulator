@@ -7,6 +7,7 @@ import itertools
 
 output_size=[100,100,100,276]
 activation= jax.nn.leaky_relu
+l2 =0.0001
 '''
 Build custom haiku Module
 '''
@@ -62,7 +63,7 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, l2=0.0001):
+def loss_fn(params, x, y, l2=l2):
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
