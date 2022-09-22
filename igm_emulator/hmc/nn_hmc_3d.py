@@ -83,27 +83,81 @@ def mcmc_one(key, x_opt, flux, ivar):
            hmc_num_steps, hmc_tree_depth, total_time
 
 if out_prefix is not None or debug:
-    indx = qaindx[iqso] if qaindx is not None else iqso
-    qa_iqso = 'iqso_{:03d}'.format(indx)
-    walkerfile = out_prefix + '_walkers_' + qa_iqso + '.pdf'
-    cornerfile = out_prefix + '_corner_' + qa_iqso + '.pdf'
-    x_cornerfile = out_prefix + '_x-corner_' + qa_iqso + '.pdf'
-    specfile = out_prefix + '_spec_' + qa_iqso + '.pdf'
+    walkerfile = out_prefix + '_walkers_' +  '.pdf'
+    cornerfile = out_prefix + '_corner_' +  '.pdf'
+    x_cornerfile = out_prefix + '_x-corner_' +  '.pdf'
+    specfile = out_prefix + '_spec_' + '.pdf'
     _x_true = self.x_true[iqso, :] if self.x_true is not None else None
     _theta_true = self.theta_true[iqso, :] if self.theta_true is not None else None
     walker_plot(np.swapaxes(self.x_samples, 0, 1), self.var_label,
                 truths=self.x_true[iqso, :] if self.x_true is not None else None,
                 walkerfile=walkerfile, linewidth=1.0)
     # Raw x_params corner plot
-    corner_plot(self.x_samples[iqso, ...], self.x_var_label,
+    corner_plot(x_samples, x_var_label,
                 theta_true=_x_true if self.x_true is not None else None,
                 cornerfile=x_cornerfile)
-    corner_plot(self.samples[iqso, ...], self.var_label,
-                theta_true=self.theta_true[iqso, :] if self.theta_true is not None else None,
+    corner_plot(samples, var_label,
+                theta_true=self.theta_true if self.theta_true is not None else None,
                 cornerfile=cornerfile)
-    self.quasar_plot(iqso, self.samples[iqso, ...], theta_true=self.theta_true, qso_cont_true=self.qso_cont_true,
+    self.quasar_plot(iqso, self.samples, theta_true=self.theta_true, qso_cont_true=self.qso_cont_true,
                      flux_no_noise=self.flux_no_noise, specfile=specfile)
 
 if out_prefix is not None:
     mcmc_savefile = out_prefix + '.hdf5'
     self.mcmc_save(mcmc_savefile)
+
+def mcmc_save(self, mcmc_savefile):
+        """
+        Save the MCMC results to an HDF5 file
+        Args:
+            mcmc_savefile (str):
+                output file for MCMC results
+        Returns:
+        """
+
+    with h5py.File(mcmc_savefile, 'w') as f:
+            group = f.create_group('mcmc')
+            # Set the attribute parameters of the MCMC
+            group.attrs['mcmc_nsteps'] = self.mcmc_nsteps
+            group.attrs['mcmc_num_chains'] = self.mcmc_num_chains
+            group.attrs['mcmc_warmup'] = self.mcmc_warmup
+            group.attrs['mcmc_dense_mass'] = self.mcmc_dense_mass
+            group.attrs['mcmc_max_tree_depth'] = self.mcmc_max_tree_depth
+            group.attrs['mcmc_init_perturb'] = self.mcmc_init_perturb
+            group.attrs['mcmc_nsteps_tot'] = self.mcmc_nsteps_tot
+            # Some other parameters of the run
+            group.attrs['nqsos'] = self.nqsos
+            group.attrs['nspec'] = self.nspec
+            group.attrs['ndim'] = self.ndim
+            group.attrs['ndim_qso'] = self.ndim_qso
+            group.attrs['latent_dim'] = self.QSOmodel.latent_dim
+            group.attrs['dv_is_param'] = self.QSOmodel.dv_is_param
+            group.attrs['nastro'] = self.nastro
+            group.attrs['astro_only'] = self.astro_only
+            # MCMC results
+            group.create_dataset('neff', data=self.neff)
+            group.create_dataset('neff_mean', data=self.neff_mean)
+            group.create_dataset('sec_per_neff', data=self.sec_per_neff)
+            group.create_dataset('ms_per_step', data=self.ms_per_step)
+            group.create_dataset('r_hat', data=self.neff)
+            group.create_dataset('r_hat_mean', data=self.neff_mean)
+            group.create_dataset('hmc_num_steps', data=self.hmc_num_steps)
+            group.create_dataset('hmc_tree_depth', data=self.hmc_num_steps)
+            group.create_dataset('runtime', data=self.runtime)
+            group.create_dataset('samples', data=self.samples)
+            group.create_dataset('x_samples', data=self.x_samples)
+            group.create_dataset('ln_probs', data=self.ln_probs)
+            # Save the data
+            group.create_dataset('wave_rest', data=self.wave_rest)
+            group.create_dataset('flux', data=self.flux)
+            group.create_dataset('ivar', data=self.ivar)
+            group.create_dataset('gpm', data=self.gpm)
+            # Some other things related to truths
+            if self.theta_true is not None:
+                group.create_dataset('ln_prob_true', data=self.ln_prob_true)
+            if self.theta_true is not None:
+                group.create_dataset('theta_true', data=self.theta_true)
+            if self.qso_cont_true is not None:
+                group.create_dataset('qso_cont_true', data=self.qso_cont_true)
+            if self.flux_no_noise is not None:
+                group.create_dataset('flux_no_noise', data=self.flux_no_noise)
