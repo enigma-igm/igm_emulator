@@ -8,9 +8,9 @@ import optax
 from tqdm import trange
 from jax.config import config
 from sklearn.metrics import r2_score
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
+from igm_emulator.emulator.haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
 from igm_emulator.scripts.pytree_h5py import save, load
-from plotVis import *
+from igm_emulator.emulator.plotVis import *
 import h5py
 import IPython
 
@@ -122,61 +122,59 @@ if __name__ == "__main__":
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
+    '''
+    Prediction overplots: Training And Test
+    '''
+    preds = custom_forward.apply(params=best_params, x=X_train)
+    train_overplot(preds,X,Y,meanY,stdY)
 
-'''
-Prediction overplots: Training And Test
-'''
-preds = custom_forward.apply(params=best_params, x=X_train)
-train_overplot(preds,X,Y,meanY,stdY)
+    test_preds = custom_forward.apply(params, X_test)
+    test_loss = loss_fn(params, X_test, Y_test)
+    test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
-test_preds = custom_forward.apply(params, X_test)
-test_loss = loss_fn(params, X_test, Y_test)
-test_R2 = r2_score(test_preds.squeeze(), Y_test)
+    test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    '''
+    Accuracy + Results
+    '''
+    delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
+    print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
+    print(f'accuracy: {jnp.mean(delta)*100}')
 
-test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    plot_residue(delta)
+    bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
+    plot_error_distribution(delta)
 
-'''
-Accuracy + Results
-'''
-delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
-print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
-print(f'accuracy: {jnp.mean(delta)*100}')
+    IPython.embed()
+    '''
+    Save best emulated parameter
+    '''
 
-plot_residue(delta)
-bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
-plot_error_distribution(delta)
+    f = h5py.File(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
+    group1 = f.create_group('haiku_nn')
+    group1.attrs['redshift'] = redshift
+    group1.attrs['adamw_decay'] = decay
+    group1.attrs['epochs'] = n_epochs
+    group1.create_dataset('layers', data = output_size)
+    group1.attrs['activation_function'] = f'{activation}'
+    group1.attrs['learning_rate'] = lr
+    group1.attrs['L2_lambda'] = l2
 
-IPython.embed()
-'''
-Save best emulated parameter
-'''
+    group2 = f.create_group('data')
+    group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
+    group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
+    group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
+    group2.create_dataset('test_data', data = X_test)
+    group2.create_dataset('train_data', data = X_train)
+    group2.create_dataset('vali_data', data = X_vali)
 
-f = h5py.File(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
-group1 = f.create_group('haiku_nn')
-group1.attrs['redshift'] = redshift
-group1.attrs['adamw_decay'] = decay
-group1.attrs['epochs'] = n_epochs
-group1.create_dataset('layers', data = output_size)
-group1.attrs['activation_function'] = f'{activation}'
-group1.attrs['learning_rate'] = lr
-group1.attrs['L2_lambda'] = l2
+    group3 = f.create_group('performance')
+    group3.attrs['R2'] = test_R2
+    group3.attrs['test_loss'] = test_loss
+    group3.attrs['train_loss'] = batch_loss
+    group3.attrs['vali_loss'] = best_loss
+    group3.attrs['residuals_resulats'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
+    group3.create_dataset('residuals', data=delta)
 
-group2 = f.create_group('data')
-group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
-group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
-group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
-group2.create_dataset('test_data', data = X_test)
-group2.create_dataset('train_data', data = X_train)
-group2.create_dataset('vali_data', data = X_vali)
-
-group3 = f.create_group('performance')
-group3.attrs['R2'] = test_R2
-group3.attrs['test_loss'] = test_loss
-group3.attrs['train_loss'] = batch_loss
-group3.attrs['vali_loss'] = best_loss
-group3.attrs['residuals_resulats'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
-group3.create_dataset('residuals', data=delta)
-
-save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
-IPython.embed()
-f.close()
+    save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
+    IPython.embed()
+    f.close()

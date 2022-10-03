@@ -18,12 +18,12 @@ import matplotlib.pyplot as plt
 from numpyro.infer import MCMC, NUTS
 import arviz as az
 import h5py
-from dw_inference.inference.utils import walker_plot, corner_plot
+#from dw_inference.inference.utils import walker_plot, corner_plot
 
 import time
-from IPython import embed
+import IPython
 from igm_emulator.scripts.pytree_h5py import save, load
-from igm_emulator.scripts.grab_models import fobs,T0s,gammas, param_transform
+from igm_emulator.scripts.grab_models import param_transform
 from igm_emulator.emulator.emulator_train import custom_forward
 from igm_emulator.emulator.plotVis import v_bins
 
@@ -38,14 +38,23 @@ z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 f = f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'
+IPython.embed()
 best_params = load(f)
 print(f['performance']['residuals'])
 print(f['best_params']['custom_linear/~/linear_0']['w'])
 print(load(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'))
+
 in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
 n_path = n_paths[z_idx]
 vbins = v_bins
+param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
+param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+
+fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
+log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
+T0s = np.exp(log_T0s)
+gammas = param_dict['gammas']  # gamma from temperature - density relation
 
 T0_idx = 12 #0-14
 g_idx = 7 #0-8
@@ -182,5 +191,3 @@ if __name__ == '__main__':
     corner_plot(samples, var_label,
                 theta_true=self.theta_true if self.theta_true is not None else None,
                 cornerfile=cornerfile)
-    self.quasar_plot(iqso, self.samples, theta_true=self.theta_true, qso_cont_true=self.qso_cont_true,
-                     flux_no_noise=self.flux_no_noise, specfile=specfile)

@@ -16,6 +16,7 @@ def save(filepath, tree):
   """
   with h5py.File(filepath, 'a') as f:
     _savetree(tree, f, 'best_params')
+    f.close()
 
 
 def load(filepath):
@@ -25,7 +26,7 @@ def load(filepath):
   """
   with h5py.File(filepath, 'r') as f:
     return _loadtree(f['best_params'])
-
+  f.close()
 
 def _is_namedtuple(x):
   """Duck typing check if x is a namedtuple."""
@@ -37,8 +38,8 @@ def _savetree(tree, f, name):
   group = f.create_group(name)
   for row, module in enumerate(sorted(tree)):
     subgroup = group.create_group(module)
-    subgroup.create_dataset('w', data=tree[module]["w"])
-    subgroup.create_dataset('b', data=tree[module]["b"])
+    subgroup.create_dataset('w', data=tree[module]['w'])
+    subgroup.create_dataset('b', data=tree[module]['b'])
 
 
 def _loadtree(tree):
