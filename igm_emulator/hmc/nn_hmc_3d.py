@@ -37,12 +37,16 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-f = f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'
-IPython.embed()
-best_params = load(f)
-print(f['performance']['residuals'])
-print(f['best_params']['custom_linear/~/linear_0']['w'])
-print(load(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'))
+in_path_hdf5 = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/'
+f = in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5'
+emu_name = f'{z_string}_best_param_training_768.p'
+#IPython.embed()
+
+best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
+#best_params = load(f)
+#print(f['performance']['residuals'])
+#print(f['best_params']['custom_linear/~/linear_0']['w'])
+#print(load(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'))
 
 in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
@@ -110,24 +114,26 @@ dense_mass=True
 max_tree_depth=10
 num_warmup=1000
 num_samples=1000
-num_chains=4
+num_chains=3
 mcmc_nsteps_tot = num_samples*num_chains
 
 def mcmc_one(key, theta, flux):
     # Instantiate the NUTS kernel and the mcmc object
     nuts_kernel = NUTS(potential_fn=numpyro_potential_fun(flux),
-                       adapt_step_size=True, dense_mass=True, max_tree_depth=10)
-    mcmc = MCMC(nuts_kernel, num_warmup=1000, num_samples=1000, num_chains=4,
+                       adapt_step_size=True, dense_mass=True, max_tree_depth=max_tree_depth)
+    mcmc = MCMC(nuts_kernel, num_warmup=num_warmup, num_samples=num_samples, num_chains= num_chains,
                 chain_method='vectorized', jit_model_args=True)  # chain_method='sequential'
     # Initial position
     ave_f, temp, g = theta
+    theta = np.reshape(theta, (3,))
     T0_idx_closest = np.argmin(np.abs(T0s - temp))
     g_idx_closest = np.argmin(np.abs(gammas - g))
     f_idx_closest = np.argmin(np.abs(fobs - ave_f))
-    x_opt = T0_idx_closest, g_idx_closest, f_idx_closest
+    x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
     # Run the MCMC
     start_time = time.time()
-    mcmc.run(key, init_params=x_opt, extra_fields=('potential_energy', 'num_steps'))
+    IPython.embed()
+    mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
     total_time = time.time() - start_time
 
     # Compute the neff and summarize cost
@@ -139,9 +145,11 @@ def mcmc_one(key, theta, flux):
     sec_per_neff = (total_time / neff_mean)
     # Grab the samples and lnP
     x_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
-    theta_samples = param_transform(x_samples,
-                                    np.array([fobs[0], T0s[0], gammas[0]]),
-                                    np.array([fobs[-1], T0s[-1], gammas[-1]])) #real theta
+    #theta_samples = param_transform(x_samples,
+                                    #np.array([fobs[0], T0s[0], gammas[0]]),
+                                    #np.array([fobs[-1], T0s[-1], gammas[-1]])) #real theta
+    theta_samples = x_samples
+
     lnP = -mcmc.get_extra_fields()['potential_energy']
     hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
     hmc_tree_depth = np.log2(hmc_num_steps).astype(

@@ -1,4 +1,5 @@
 import dill
+import os
 import numpy as np
 import haiku as hk
 import jax.numpy as jnp
@@ -46,7 +47,10 @@ stdX = X.std(axis=0)
 X_train = (X - meanX) / stdX
 X_test = (X_test - meanX) / stdX
 X_vali = (X_vali - meanX) / stdX
-print(X_test.shape)
+print(f'meanX = {meanX}')
+print(f'stdX = {stdX}')
+print(f'train: {X_train.shape}')
+#print('test' + X_test.shape)
 
 Y = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
 Y_test = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
@@ -56,7 +60,7 @@ stdY = Y.std(axis=0)
 Y_train = (Y - meanY) / stdY
 Y_test = (Y_test - meanY) / stdY
 Y_vali = (Y_vali - meanY) / stdY
-print(Y_vali.shape)
+
 
 input_overplot(X_train,X_test,X_vali)
 
@@ -172,9 +176,11 @@ if __name__ == "__main__":
     group3.attrs['test_loss'] = test_loss
     group3.attrs['train_loss'] = batch_loss
     group3.attrs['vali_loss'] = best_loss
-    group3.attrs['residuals_resulats'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
+    group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
     group3.create_dataset('residuals', data=delta)
 
     save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
     IPython.embed()
+    dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params'
+    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
     f.close()
