@@ -38,11 +38,16 @@ z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 in_path_hdf5 = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/'
-f = in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5'
+f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
 emu_name = f'{z_string}_best_param_training_768.p'
 #IPython.embed()
 
 best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
+meanX = np.asarray(f['data']['meanX'])
+stdX = np.asarray(f['data']['stdX'])
+meanY = np.asarray(f['data']['meanY'])
+stdY =  np.asarray(f['data']['stdY'])
+print(meanX)
 #best_params = load(f)
 #print(f['performance']['residuals'])
 #print(f['best_params']['custom_linear/~/linear_0']['w'])
@@ -65,9 +70,10 @@ g_idx = 7 #0-8
 f_idx = 7 #0-8
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
-x_true = f_idx, T0_idx, g_idx
-theta = fobs[f_idx], T0s[T0_idx], gammas[g_idx]
+theta = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
+x_true = (theta - meanX)/ stdX
 flux = like_dict['mean_data']
+
 
 def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs):
     ave_f, temp, g  = theta
@@ -100,7 +106,7 @@ def eval_prior(theta):
     return prior
 
 @partial(jit, static_argnums=(0,))
-def potential_fun(theta,corr):
+def potential_fun(corr,theta):
     lnPrior = eval_prior(theta)
     lnlike = log_likelihood(theta, vbins, corr)
     lnP = lnlike + lnPrior

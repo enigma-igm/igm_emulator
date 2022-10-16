@@ -9,6 +9,8 @@ import h5py
 '''
 Visualization of hyperparameters
 '''
+notes = 'save_h5py'
+
 zstr = 'z54'
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
 num = '_training_768'
@@ -137,7 +139,7 @@ def train_overplot(preds, X, Y, meanY, stdY):
     plt.title('Train overplot in data space')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X.shape[0]}.png'))
+    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X.shape[0]}_{notes}.png'))
     plt.show()
 
 def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
@@ -161,7 +163,7 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
     plt.title('Test overplot in data space')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'test_overplot_{z}_{X_test.shape[0]}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test_overplot_{z}_{X_test.shape[0]}_{notes}.png'))
     plt.show()
 
 def plot_residue(new_delta):
@@ -174,7 +176,7 @@ def plot_residue(new_delta):
     plt.ylabel('Residual [%]')
     plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100}; std: {np.std(new_delta) * 100}')
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'test%error_{z}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test%error_{z}_{notes}.png'))
     plt.show()
 
 
@@ -209,7 +211,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY):
     plt.title(f'unlearned residue percentage: {unlearnt_idx.shape[0]} sets')
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'unlearnt_{z}.png'))
+    plt.savefig(os.path.join(dir_exp, f'unlearnt_{z}_{notes}.png'))
     plt.show()
 
 def plot_error_distribution(new_delta):

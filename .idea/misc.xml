@@ -5,11 +5,7 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1732" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="518" />
+          <option name="caretOffset" value="427" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -17,11 +13,22 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="679" />
+          <option name="caretOffset" value="585" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/pytree_h5py.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="5284" />
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/utils.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/EXP/test%error_z54_768_leaky_relu_l2+adamw_save_h5py.png" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="5326" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1097" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/hmc/nn_hmc_3d.py" />
         </OpenedFileInfo>
       </list>

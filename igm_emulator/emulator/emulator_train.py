@@ -39,6 +39,7 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
 
+
 X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
 X_test = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
 X_vali = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
@@ -50,7 +51,6 @@ X_vali = (X_vali - meanX) / stdX
 print(f'meanX = {meanX}')
 print(f'stdX = {stdX}')
 print(f'train: {X_train.shape}')
-#print('test' + X_test.shape)
 
 Y = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
 Y_test = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
@@ -60,9 +60,7 @@ stdY = Y.std(axis=0)
 Y_train = (Y - meanY) / stdY
 Y_test = (Y_test - meanY) / stdY
 Y_vali = (Y_vali - meanY) / stdY
-
-
-input_overplot(X_train,X_test,X_vali)
+print(Y_vali.shape)
 
 '''
 Build custom haiku Module
@@ -77,7 +75,7 @@ optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
                         optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
                         )
 opt_state = optimizer.init(init_params)
-train_overplot(preds,X,Y,meanY,stdY)
+#train_overplot(preds,X,Y,meanY,stdY)
 
 '''
 Training Loop + Visualization of params
@@ -170,7 +168,11 @@ if __name__ == "__main__":
     group2.create_dataset('test_data', data = X_test)
     group2.create_dataset('train_data', data = X_train)
     group2.create_dataset('vali_data', data = X_vali)
-
+    group2.create_dataset('meanX', data=meanX)
+    group2.create_dataset('stdX', data=stdX)
+    group2.create_dataset('meanY', data=meanY)
+    group2.create_dataset('stdY', data=stdY)
+    IPython.embed()
     group3 = f.create_group('performance')
     group3.attrs['R2'] = test_R2
     group3.attrs['test_loss'] = test_loss
@@ -184,3 +186,4 @@ if __name__ == "__main__":
     dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
     f.close()
+    IPython.embed()

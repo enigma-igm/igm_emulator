@@ -119,7 +119,7 @@ class haiku_nn:
         plt.ylabel('Correlation function')
         plt.title(f'Train Loss = {best_loss}')
         plt.legend()
-        dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
+        dir_exp = '/igm_emulator/emulator/EXP/'  # plot saving directory
         #plt.savefig(os.path.join(dir_exp, f'{self.layers}_overplot{self.comment}.png'))
         plt.show()
 
@@ -145,7 +145,7 @@ class haiku_nn:
         plt.xlabel(r'Will be changed to Velocity/ $km s^{-1}$')
         plt.ylabel('% error on Correlation function')
         plt.title(f'Test Loss = {test_loss:.6f}, R^2 Score = {test_R2:.4f}')
-        dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
+        dir_exp = '/igm_emulator/emulator/EXP/'  # plot saving directory
         #plt.savefig(os.path.join(dir_exp, f'{self.layers}_test%error{self.comment}.png'))
         plt.show()
 
