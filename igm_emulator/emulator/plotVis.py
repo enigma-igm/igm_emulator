@@ -9,7 +9,7 @@ import h5py
 '''
 Visualization of hyperparameters
 '''
-notes = 'save_h5py'
+notes = 'best'
 
 zstr = 'z54'
 dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
@@ -129,10 +129,10 @@ def train_overplot(preds, X, Y, meanY, stdY):
     corr_idx = np.random.randint(0, Y.shape[0], sample)  # randomly select correlation functions to compare
     preds = preds * stdY + meanY
     for i in range(sample):
-        axs.plot(ax, preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X[corr_idx[i], 0]:.2f},'
+        axs.plot(ax, preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X[corr_idx[i], 0]:.2f},'
                                                r'$T_0$='f'{X[corr_idx[i], 1]:.2f},'
                                                r'$\gamma$='f'{X[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs.plot(ax, Y[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
+        axs.plot(ax, Y[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Auto-Correlation')
@@ -140,6 +140,7 @@ def train_overplot(preds, X, Y, meanY, stdY):
     plt.legend()
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
     plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X.shape[0]}_{notes}.png'))
+    print('Train overplot saved')
     plt.show()
 
 def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
@@ -153,10 +154,10 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
     for i in range(sample):
-        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Preds {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
+        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                                                      r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
                                                      r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Real {i}', c=f'C{i}', linestyle='--')
+        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Auto-Correlation')
@@ -173,8 +174,8 @@ def plot_residue(new_delta):
     plt.plot(v_bins, jnp.ones([out]), c='r')
     plt.plot(v_bins, -jnp.ones([out]), c='r')
     plt.xlabel(r'Velocity [$km s^{-1}$]')
-    plt.ylabel('Residual [%]')
-    plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100}; std: {np.std(new_delta) * 100}')
+    plt.ylabel('[Residual] [%]')
+    plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100:.3f}%; std: {np.std(new_delta) * 100:.3f}%')
     dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/EXP/'  # plot saving directory
     plt.savefig(os.path.join(dir_exp, f'test%error_{z}_{notes}.png'))
     plt.show()

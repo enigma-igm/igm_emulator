@@ -73,7 +73,8 @@ like_dict = dill.load(open(in_path + like_name, 'rb'))
 theta = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 x_true = (theta - meanX)/ stdX
 flux = like_dict['mean_data']
-
+print(type(theta))
+print(type(x_true),x_true.shape)
 
 def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs):
     ave_f, temp, g  = theta
@@ -99,9 +100,12 @@ def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs
 def log_prior(x):
     return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 def eval_prior(theta):
+    print(theta)
+    theta = np.asarray(theta)
+    print(f'theta shape:{theta.shape}')
     prior = 0.0
     x_astro_priors= [log_prior,log_prior,log_prior]
-    for x, x_astro_pri in zip(theta, x_astro_priors):
+    for x, x_astro_pri in theta, x_astro_priors:
         prior += x_astro_pri(x)
     return prior
 
@@ -114,7 +118,7 @@ def potential_fun(corr,theta):
     return -lnP
 
 def numpyro_potential_fun(flux):
-    return partial(potential_fun, flux=flux)
+    return partial(potential_fun, flux)
 
 dense_mass=True
 max_tree_depth=10
@@ -130,15 +134,15 @@ def mcmc_one(key, theta, flux):
     mcmc = MCMC(nuts_kernel, num_warmup=num_warmup, num_samples=num_samples, num_chains= num_chains,
                 chain_method='vectorized', jit_model_args=True)  # chain_method='sequential'
     # Initial position
+    print(f'theta:{theta}')
     ave_f, temp, g = theta
-    theta = np.reshape(theta, (3,))
     T0_idx_closest = np.argmin(np.abs(T0s - temp))
     g_idx_closest = np.argmin(np.abs(gammas - g))
     f_idx_closest = np.argmin(np.abs(fobs - ave_f))
     x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
     # Run the MCMC
     start_time = time.time()
-    IPython.embed()
+    #IPython.embed()
     mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
     total_time = time.time() - start_time
 
@@ -186,7 +190,7 @@ if __name__ == '__main__':
     key, subkey = random.split(key)
     x_samples, samples, ln_probs, neff, neff_mean, \
     sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-    hmc_num_steps, hmc_tree_depth, runtime = mcmc_one(subkey, theta, flux)
+    hmc_num_steps, hmc_tree_depth, runtime = mcmc_one(subkey, x_true, flux)
 
     out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
     walkerfile = out_prefix + '_walkers_' +  '.pdf'
