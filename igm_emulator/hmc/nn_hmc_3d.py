@@ -18,8 +18,10 @@ import matplotlib.pyplot as plt
 from numpyro.infer import MCMC, NUTS
 import arviz as az
 import h5py
-#from dw_inference.inference.utils import walker_plot, corner_plot
 
+import sys
+sys.path.append('/home/zhenyujin/dw_inference')
+from dw_inference.inference.utils import walker_plot, corner_plot
 import time
 import IPython
 from igm_emulator.scripts.pytree_h5py import save, load
@@ -72,14 +74,20 @@ like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_nco
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 theta = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 x_true = (theta - meanX)/ stdX
+x_true = [x_true[0], x_true[1], x_true[2]]
 flux = like_dict['mean_data']
+theta = tuple(theta)
+x_true = tuple(x_true)
+flux = tuple(flux)
 print(type(theta))
-print(type(x_true),x_true.shape)
+print(type(x_true))
 
 def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs):
     ave_f, temp, g  = theta
-
+    theta = jnp.asarray(theta)
+    corr = jnp.asarray(corr)
     model = custom_forward.apply(params=best_params, x=theta)
+    model = model * stdY + meanY
     '''
     T0_idx_closest = np.argmin(np.abs(temps - temp))
     g_idx_closest = np.argmin(np.abs(gs - g))
@@ -95,21 +103,20 @@ def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs
     nbins = len(vbins)
     log_like = -(np.dot(diff, np.linalg.solve(new_covariance, diff)) + log_determinant + nbins * np.log(
         2.0 * np.pi)) / 2.0
+    print(f'Log_likelihood={log_like}')
     return log_like
 
 def log_prior(x):
     return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 def eval_prior(theta):
-    print(theta)
-    theta = np.asarray(theta)
-    print(f'theta shape:{theta.shape}')
+    print(f'prior theta:{theta}')
     prior = 0.0
-    x_astro_priors= [log_prior,log_prior,log_prior]
-    for x, x_astro_pri in theta, x_astro_priors:
-        prior += x_astro_pri(x)
+    for x in theta:
+        prior += log_prior(x)
+    print(f'Prior={prior}')
     return prior
 
-@partial(jit, static_argnums=(0,))
+#@partial(jit, static_argnums=(0,))
 def potential_fun(corr,theta):
     lnPrior = eval_prior(theta)
     lnlike = log_likelihood(theta, vbins, corr)
@@ -117,6 +124,7 @@ def potential_fun(corr,theta):
 
     return -lnP
 
+#@partial(jit, static_argnums=(0,))
 def numpyro_potential_fun(flux):
     return partial(potential_fun, flux)
 
@@ -136,13 +144,14 @@ def mcmc_one(key, theta, flux):
     # Initial position
     print(f'theta:{theta}')
     ave_f, temp, g = theta
+    theta = jnp.asarray(theta)
     T0_idx_closest = np.argmin(np.abs(T0s - temp))
     g_idx_closest = np.argmin(np.abs(gammas - g))
     f_idx_closest = np.argmin(np.abs(fobs - ave_f))
     x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
     # Run the MCMC
     start_time = time.time()
-    #IPython.embed()
+    IPython.embed()
     mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
     total_time = time.time() - start_time
 
