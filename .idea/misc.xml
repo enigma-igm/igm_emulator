@@ -5,31 +5,27 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1053" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="585" />
+          <option name="caretOffset" value="426" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/pytree_h5py.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/utils.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="4540" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_train.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="181" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/haiku_custom_forward.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="5197" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/plotVis.py" />
+          <option name="caretOffset" value="567" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/emulator/emulator_run.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3045" />
+          <option name="caretOffset" value="1979" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/hmc/hmc_run.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2409" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/scripts/grab_models.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1093" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/igm_emulator/hmc/nn_hmc_3d.py" />
         </OpenedFileInfo>
       </list>

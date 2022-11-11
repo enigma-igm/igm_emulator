@@ -1,0 +1,72 @@
+from nn_hmc_3d import NN_HMC
+import dill
+import numpy as np
+
+import jax.random as random
+import matplotlib
+import matplotlib.pyplot as plt
+import h5py
+from igm_emulator.emulator.plotVis import v_bins
+'''
+load model and auto-corr
+'''
+redshift = 5.4
+
+# get the appropriate string and pathlength for chosen redshift
+zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
+z_idx = np.argmin(np.abs(zs - redshift))
+z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+z_string = z_strings[z_idx]
+in_path_hdf5 = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/'
+f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
+emu_name = f'{z_string}_best_param_training_768.p'
+#IPython.embed()
+
+best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
+meanX = np.asarray(f['data']['meanX'])
+stdX = np.asarray(f['data']['stdX'])
+meanY = np.asarray(f['data']['meanY'])
+stdY =  np.asarray(f['data']['stdY'])
+print(meanX)
+#best_params = load(f)
+#print(f['performance']['residuals'])
+#print(f['best_params']['custom_linear/~/linear_0']['w'])
+#print(load(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'))
+
+in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
+n_path = n_paths[z_idx]
+vbins = v_bins
+param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
+param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+
+fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
+log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
+T0s = np.exp(log_T0s)
+gammas = param_dict['gammas']  # gamma from temperature - density relation
+
+T0_idx = 12 #0-14
+g_idx = 7 #0-8
+f_idx = 7 #0-8
+like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+like_dict = dill.load(open(in_path + like_name, 'rb'))
+theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
+x_true = (theta_true - meanX)/ stdX
+x_true = [x_true[0], x_true[1], x_true[2]]
+flux = like_dict['mean_data']
+#theta = tuple(theta)
+#x_true = tuple(x_true)
+#flux = tuple(flux)
+print(type(theta_true))
+print(type(x_true))
+
+'''
+Run HMC
+'''
+if __name__ == '__main__':
+    nn = NN_HMC(vbins,best_params,T0s,gammas,fobs,like_dict)
+    key = random.PRNGKey(42)
+    key, subkey = random.split(key)
+    x_samples, samples, ln_probs, neff, neff_mean, \
+    sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
+    hmc_num_steps, hmc_tree_depth, runtime = nn.mcmc_one(key, theta_true, flux)

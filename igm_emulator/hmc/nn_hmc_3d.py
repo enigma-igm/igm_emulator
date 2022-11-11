@@ -1,220 +1,169 @@
-import dill
 from jax.config import config
 config.update("jax_enable_x64", True)
-import json
-import os
 import numpy as np
 import jax.numpy as jnp
 import jax
 import jax.random as random
 from jax import jit
-import optax
 from functools import partial
-
-from tqdm.auto import trange
-
-import matplotlib
-import matplotlib.pyplot as plt
 from numpyro.infer import MCMC, NUTS
 import arviz as az
-import h5py
-
-import sys
-sys.path.append('/home/zhenyujin/dw_inference')
-from dw_inference.inference.utils import walker_plot, corner_plot
 import time
 import IPython
-from igm_emulator.scripts.pytree_h5py import save, load
-from igm_emulator.scripts.grab_models import param_transform
-from igm_emulator.emulator.emulator_train import custom_forward
-from igm_emulator.emulator.plotVis import v_bins
+from igm_emulator.emulator.emulator_run import nn_emulator
+import sys
+sys.path.insert(0,'/home/zhenyujin/dw_inference/dw_inference/inference')
+from utils import walker_plot, corner_plot
 
-'''
-load model and auto-corr
-'''
-redshift = 5.4
+class NN_HMC:
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=3):
+        self.vbins = vbins
+        self.best_params = best_params
+        self.like_dict = like_dict
+        self.max_tree_depth = max_tree_depth
+        self.num_chains = num_chains
+        self.num_warmup = num_warmup
+        self.dense_mass = dense_mass
+        self.mcmc_nsteps_tot = num_samples * num_chains
+        self.T0s = T0s
+        self.gammas = gammas
+        self.fobs = fobs
+        self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1],[self.gammas[0],self.gammas[-1]]]
 
-# get the appropriate string and pathlength for chosen redshift
-zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-z_idx = np.argmin(np.abs(zs - redshift))
-z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-z_string = z_strings[z_idx]
-in_path_hdf5 = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/'
-f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
-emu_name = f'{z_string}_best_param_training_768.p'
-#IPython.embed()
 
-best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
-meanX = np.asarray(f['data']['meanX'])
-stdX = np.asarray(f['data']['stdX'])
-meanY = np.asarray(f['data']['meanY'])
-stdY =  np.asarray(f['data']['stdY'])
-print(meanX)
-#best_params = load(f)
-#print(f['performance']['residuals'])
-#print(f['best_params']['custom_linear/~/linear_0']['w'])
-#print(load(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5'))
+    def log_likelihood(self, theta, corr):
+        ave_f, temp, g  = theta
+        theta = jnp.asarray(theta)
+        corr = jnp.asarray(corr)
+        model = nn_emulator(self.best_params,theta)
+        '''
+        T0_idx_closest = np.argmin(np.abs(temps - temp))
+        g_idx_closest = np.argmin(np.abs(gs - g))
+        f_idx_closest = np.argmin(np.abs(average_fluxes - ave_f))
+        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx_closest}_G{g_idx_closest}_SNR0_F{f_idx_closest}_ncovar_500000_P{n_path}_set_bins_4.p'
+        like_dict = dill.load(open(in_path + like_name, 'rb'))
+        model_autocorrelation = like_dict['mean_data']
+        '''
+        new_covariance = self.like_dict['covariance']
+        log_determinant = self.like_dict['log_determinant']
 
-in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
-n_path = n_paths[z_idx]
-vbins = v_bins
-param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
-param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+        diff = corr - model
+        nbins = len(self.vbins)
+        log_like = -(np.dot(diff, np.linalg.solve(new_covariance, diff)) + log_determinant + nbins * np.log(
+            2.0 * np.pi)) / 2.0
+        print(f'Log_likelihood={log_like}')
+        return log_like
 
-fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
-log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
-T0s = np.exp(log_T0s)
-gammas = param_dict['gammas']  # gamma from temperature - density relation
+    def theta_to_x(self,theta):
+        x_astro = []
+        for theta_i, theta_range in zip(theta, self.theta_ranges):
+            x_astro.append(jax.scipy.special.logit(
+                jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
+                         a_min=1e-7, a_max=1.0 - 1e-7)))
+        return jnp.array(x_astro)
 
-T0_idx = 12 #0-14
-g_idx = 7 #0-8
-f_idx = 7 #0-8
-like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
-like_dict = dill.load(open(in_path + like_name, 'rb'))
-theta = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
-x_true = (theta - meanX)/ stdX
-x_true = [x_true[0], x_true[1], x_true[2]]
-flux = like_dict['mean_data']
-theta = tuple(theta)
-x_true = tuple(x_true)
-flux = tuple(flux)
-print(type(theta))
-print(type(x_true))
+    def x_to_theta(self,x):
+        theta_astro = []
+        for x_i, theta_range in zip(x, self.theta_ranges):
+            theta_astro.append(
+                theta_astro_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
+        return jnp.array(theta_astro)
 
-def log_likelihood(theta, vbins, corr, temps=T0s, gs=gammas, average_fluxes=fobs):
-    ave_f, temp, g  = theta
-    theta = jnp.asarray(theta)
-    corr = jnp.asarray(corr)
-    model = custom_forward.apply(params=best_params, x=theta)
-    model = model * stdY + meanY
-    '''
-    T0_idx_closest = np.argmin(np.abs(temps - temp))
-    g_idx_closest = np.argmin(np.abs(gs - g))
-    f_idx_closest = np.argmin(np.abs(average_fluxes - ave_f))
-    like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx_closest}_G{g_idx_closest}_SNR0_F{f_idx_closest}_ncovar_500000_P{n_path}_set_bins_4.p'
-    like_dict = dill.load(open(in_path + like_name, 'rb'))
-    model_autocorrelation = like_dict['mean_data']
-    '''
-    new_covariance = like_dict['covariance']
-    log_determinant = like_dict['log_determinant']
 
-    diff = corr - model
-    nbins = len(vbins)
-    log_like = -(np.dot(diff, np.linalg.solve(new_covariance, diff)) + log_determinant + nbins * np.log(
-        2.0 * np.pi)) / 2.0
-    print(f'Log_likelihood={log_like}')
-    return log_like
+    def log_prior(x):
+        return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 
-def log_prior(x):
-    return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
-def eval_prior(theta):
-    print(f'prior theta:{theta}')
-    prior = 0.0
-    for x in theta:
-        prior += log_prior(x)
-    print(f'Prior={prior}')
-    return prior
+    def eval_prior(self,theta):
+        print(f'prior theta:{theta}')
+        prior = 0.0
+        x = self.theta_to_x(theta)
+        IPython.embed()
+        for i in x:
+            prior += self.log_prior(i)
+        print(f'Prior={prior}')
+        return prior
 
-#@partial(jit, static_argnums=(0,))
-def potential_fun(corr,theta):
-    lnPrior = eval_prior(theta)
-    lnlike = log_likelihood(theta, vbins, corr)
-    lnP = lnlike + lnPrior
+    @partial(jit, static_argnums=(0,))
+    def potential_fun(self,corr,theta):
+        lnPrior = self.eval_prior(theta)
+        lnlike = self.log_likelihood(self, theta, corr)
+        lnP = lnlike + lnPrior
 
-    return -lnP
-
-#@partial(jit, static_argnums=(0,))
-def numpyro_potential_fun(flux):
-    return partial(potential_fun, flux)
-
-dense_mass=True
-max_tree_depth=10
-num_warmup=1000
-num_samples=1000
-num_chains=3
-mcmc_nsteps_tot = num_samples*num_chains
-
-def mcmc_one(key, theta, flux):
-    # Instantiate the NUTS kernel and the mcmc object
-    nuts_kernel = NUTS(potential_fn=numpyro_potential_fun(flux),
-                       adapt_step_size=True, dense_mass=True, max_tree_depth=max_tree_depth)
-    mcmc = MCMC(nuts_kernel, num_warmup=num_warmup, num_samples=num_samples, num_chains= num_chains,
-                chain_method='vectorized', jit_model_args=True)  # chain_method='sequential'
-    # Initial position
-    print(f'theta:{theta}')
-    ave_f, temp, g = theta
-    theta = jnp.asarray(theta)
-    T0_idx_closest = np.argmin(np.abs(T0s - temp))
-    g_idx_closest = np.argmin(np.abs(gammas - g))
-    f_idx_closest = np.argmin(np.abs(fobs - ave_f))
-    x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
-    # Run the MCMC
-    start_time = time.time()
+        return -lnP
     IPython.embed()
-    mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
-    total_time = time.time() - start_time
 
-    # Compute the neff and summarize cost
-    az_summary = az.summary(az.from_numpyro(mcmc))
-    neff = az_summary["ess_bulk"].to_numpy()
-    neff_mean = np.mean(neff)
-    r_hat = az_summary["r_hat"].to_numpy()
-    r_hat_mean = np.mean(r_hat)
-    sec_per_neff = (total_time / neff_mean)
-    # Grab the samples and lnP
-    x_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
-    #theta_samples = param_transform(x_samples,
-                                    #np.array([fobs[0], T0s[0], gammas[0]]),
-                                    #np.array([fobs[-1], T0s[-1], gammas[-1]])) #real theta
-    theta_samples = x_samples
+    @partial(jit, static_argnums=(0,))
+    def numpyro_potential_fun(self,flux):
+        return partial(self.potential_fun,corr=flux)
 
-    lnP = -mcmc.get_extra_fields()['potential_energy']
-    hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
-    hmc_tree_depth = np.log2(hmc_num_steps).astype(
-        int) + 1  # Tree depth of the Hamiltonian trajectory (for diagnostics).
-    hit_max_tree_depth = np.sum(
+
+    def mcmc_one(self, key, theta, flux):
+        # Instantiate the NUTS kernel and the mcmc object
+        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
+                       adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
+        mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
+                chain_method='vectorized', jit_model_args=True)  # chain_method='sequential'
+        # Initial position
+        print(f'theta:{theta}')
+        ave_f, temp, g = theta
+        theta = jnp.asarray(theta)
+        T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
+        g_idx_closest = np.argmin(np.abs(self.gammas - g))
+        f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
+        x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
+        # Run the MCMC
+        start_time = time.time()
+        IPython.embed()
+        mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
+        total_time = time.time() - start_time
+
+        # Compute the neff and summarize cost
+        az_summary = az.summary(az.from_numpyro(mcmc))
+        neff = az_summary["ess_bulk"].to_numpy()
+        neff_mean = np.mean(neff)
+        r_hat = az_summary["r_hat"].to_numpy()
+        r_hat_mean = np.mean(r_hat)
+        sec_per_neff = (total_time / neff_mean)
+        # Grab the samples and lnP
+        x_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
+        theta_samples = x_samples
+
+        lnP = -mcmc.get_extra_fields()['potential_energy']
+        hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
+        hmc_tree_depth = np.log2(hmc_num_steps).astype(int) + 1  # Tree depth of the Hamiltonian trajectory (for diagnostics).
+        hit_max_tree_depth = np.sum(
         hmc_tree_depth == 10)  # Number of transitions that hit the maximum tree depth.
-    ms_per_step = 1e3 * total_time / np.sum(hmc_num_steps)
+        ms_per_step = 1e3 * total_time / np.sum(hmc_num_steps)
 
-    print(f"*** SUMMARY FOR HMC ***")
-    print(f"total_time = {total_time} seconds for the HMC")
-    print(f"total_steps = {np.sum(hmc_num_steps)} total steps")
-    print(f"ms_per_step = {ms_per_step} ms per step of the HMC")
-    print(f"n_eff_mean = {neff_mean} effective sample size, compared to ntot = {mcmc_nsteps_tot} total samples.")
-    print(f"sec_per_neff = {sec_per_neff:.3f} seconds per effective sample")
-    print(f"r_hat_mean = {r_hat_mean}")
-    print(f"max_tree_depth encountered = {hmc_tree_depth.max()} in chain")
-    print(f"There were {hit_max_tree_depth} transitions that exceeded the max_tree_depth = {max_tree_depth}")
-    print("*************************")
+        print(f"*** SUMMARY FOR HMC ***")
+        print(f"total_time = {total_time} seconds for the HMC")
+        print(f"total_steps = {np.sum(hmc_num_steps)} total steps")
+        print(f"ms_per_step = {ms_per_step} ms per step of the HMC")
+        print(f"n_eff_mean = {neff_mean} effective sample size, compared to ntot = {self.mcmc_nsteps_tot} total samples.")
+        print(f"sec_per_neff = {sec_per_neff:.3f} seconds per effective sample")
+        print(f"r_hat_mean = {r_hat_mean}")
+        print(f"max_tree_depth encountered = {hmc_tree_depth.max()} in chain")
+        print(f"There were {hit_max_tree_depth} transitions that exceeded the max_tree_depth = {self.max_tree_depth}")
+        print("*************************")
 
-    # Return the values needed
-    return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-           hmc_num_steps, hmc_tree_depth, total_time
+        # Return the values needed
+        return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
+            hmc_num_steps, hmc_tree_depth, total_time
 
-
-
-if __name__ == '__main__':
-    key = random.PRNGKey(42)
-    key, subkey = random.split(key)
-    x_samples, samples, ln_probs, neff, neff_mean, \
-    sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-    hmc_num_steps, hmc_tree_depth, runtime = mcmc_one(subkey, x_true, flux)
-
-    out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
-    walkerfile = out_prefix + '_walkers_' +  '.pdf'
-    cornerfile = out_prefix + '_corner_' +  '.pdf'
-    x_cornerfile = out_prefix + '_x-corner_' +  '.pdf'
-    specfile = out_prefix + '_spec_' + '.pdf'
-    _x_true = x_true
-    _theta_true = theta
-    walker_plot(np.swapaxes(x_samples, 0, 1), var_label,
-                truths=self.x_true[iqso, :] if self.x_true is not None else None,
-                walkerfile=walkerfile, linewidth=1.0)
-    # Raw x_params corner plot
-    corner_plot(x_samples, x_var_label,
-                theta_true=_x_true if self.x_true is not None else None,
-                cornerfile=x_cornerfile)
-    corner_plot(samples, var_label,
-                theta_true=self.theta_true if self.theta_true is not None else None,
-                cornerfile=cornerfile)
+    def plot_HMC(self,x_samples):
+        out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
+        var_label = ['fobs', 'T0s', 'gammas']
+        walkerfile = out_prefix + '_walkers_' + '.pdf'
+        cornerfile = out_prefix + '_corner_' + '.pdf'
+        x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
+        specfile = out_prefix + '_spec_' + '.pdf'
+        walker_plot(np.swapaxes(x_samples, 0, 1), var_label,
+                    truths=self.x_true if self.x_true is not None else None,
+                    walkerfile=walkerfile, linewidth=1.0)
+        # Raw x_params corner plot
+        corner_plot(x_samples, var_label,
+                    theta_true=self.x_true if self.x_true is not None else None,
+                    cornerfile=x_cornerfile)
+        corner_plot(x_samples, var_label,
+                    theta_true=self.theta_true if self.theta_true is not None else None,
+                    cornerfile=cornerfile)
