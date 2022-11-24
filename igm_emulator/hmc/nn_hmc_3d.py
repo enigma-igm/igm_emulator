@@ -32,10 +32,9 @@ class NN_HMC:
 
 
     def log_likelihood(self, theta, corr):
-        ave_f, temp, g  = theta
         theta = jnp.asarray(theta)
         corr = jnp.asarray(corr)
-        model = nn_emulator(self.best_params,theta)
+        model = nn_emulator(self.best_params,theta) #theta is standardized through nn_emulator here
         '''
         T0_idx_closest = np.argmin(np.abs(temps - temp))
         g_idx_closest = np.argmin(np.abs(gs - g))
@@ -68,7 +67,6 @@ class NN_HMC:
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
 
-
     def log_prior(x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 
@@ -96,7 +94,7 @@ class NN_HMC:
         return partial(self.potential_fun,corr=flux)
 
 
-    def mcmc_one(self, key, theta, flux):
+    def mcmc_one(self, key, theta, flux): #input theta instead of x
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
