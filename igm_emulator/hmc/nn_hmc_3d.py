@@ -28,7 +28,7 @@ class NN_HMC:
         self.T0s = T0s
         self.gammas = gammas
         self.fobs = fobs
-        self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1],[self.gammas[0],self.gammas[-1]]]
+        self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
 
     def log_likelihood(self, theta, corr):
@@ -65,8 +65,7 @@ class NN_HMC:
     def x_to_theta(self,x):
         theta_astro = []
         for x_i, theta_range in zip(x, self.theta_ranges):
-            theta_astro.append(
-                theta_astro_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
+            theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
 
 
@@ -126,7 +125,7 @@ class NN_HMC:
         sec_per_neff = (total_time / neff_mean)
         # Grab the samples and lnP
         x_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
-        theta_samples = x_samples
+        theta_samples = self.x_to_theta(x_samples)
 
         lnP = -mcmc.get_extra_fields()['potential_energy']
         hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
