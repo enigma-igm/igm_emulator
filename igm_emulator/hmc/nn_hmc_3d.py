@@ -25,6 +25,7 @@ class NN_HMC:
         self.num_warmup = num_warmup
         self.dense_mass = dense_mass
         self.mcmc_nsteps_tot = num_samples * num_chains
+        self.num_samples = num_samples
         self.T0s = T0s
         self.gammas = gammas
         self.fobs = fobs
