@@ -90,7 +90,7 @@ class NN_HMC:
 
     @partial(jit, static_argnums=(0,))
     def numpyro_potential_fun(self,flux):
-        return partial(self.potential_fun,corr=flux)
+        return jax.tree_util.Partial(self.potential_fun,corr=flux)
 
 
     def mcmc_one(self, key, theta, flux): #input theta instead of x
