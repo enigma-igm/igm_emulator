@@ -1,12 +1,13 @@
 from nn_hmc_3d import NN_HMC
 import dill
 import numpy as np
-
+import IPython
 import jax.random as random
 import matplotlib
 import matplotlib.pyplot as plt
 import h5py
 from igm_emulator.emulator.plotVis import v_bins
+from igm_emulator.emulator.emulator_run import nn_emulator
 '''
 load model and auto-corr
 '''
@@ -56,9 +57,12 @@ flux = like_dict['mean_data']
 #flux = tuple(flux)
 print(type(theta_true))
 
+model = nn_emulator(best_params, theta_true)
+print(model)
+IPython.embed()
 '''
 Run HMC
-'''
+
 if __name__ == '__main__':
     nn = NN_HMC(vbins,best_params,T0s,gammas,fobs,like_dict)
     key = random.PRNGKey(42)
@@ -66,3 +70,4 @@ if __name__ == '__main__':
     x_samples, samples, ln_probs, neff, neff_mean, \
     sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
     hmc_num_steps, hmc_tree_depth, runtime = nn.mcmc_one(key, theta_true, flux)
+'''

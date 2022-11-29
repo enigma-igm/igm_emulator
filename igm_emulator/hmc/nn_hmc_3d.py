@@ -30,7 +30,6 @@ class NN_HMC:
         self.fobs = fobs
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
-
     def log_likelihood(self, theta, corr):
         theta = jnp.asarray(theta)
         corr = jnp.asarray(corr)
