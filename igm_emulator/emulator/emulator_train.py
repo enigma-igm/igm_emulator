@@ -146,7 +146,6 @@ if __name__ == "__main__":
     bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
     plot_error_distribution(delta)
 
-    IPython.embed()
     '''
     Save best emulated parameter
     '''
