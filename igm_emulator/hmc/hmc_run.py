@@ -51,14 +51,10 @@ f_idx = 7 #0-8
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
-x_true = (theta_true - meanX)/ stdX
-x_true = [x_true[0], x_true[1], x_true[2]]
 flux = like_dict['mean_data']
 #theta = tuple(theta)
-#x_true = tuple(x_true)
 #flux = tuple(flux)
 print(type(theta_true))
-print(type(x_true))
 
 '''
 Run HMC
