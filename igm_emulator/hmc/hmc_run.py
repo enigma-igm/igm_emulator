@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import h5py
 from igm_emulator.emulator.plotVis import v_bins
 from igm_emulator.emulator.emulator_run import nn_emulator
+import os
 '''
 load model and auto-corr
 '''
@@ -67,6 +68,8 @@ axs2.plot(vbins, model, label=f'Emulated' r'$<F>$='f'{theta_true[0]:.2f},'
 axs2.plot(vbins, flux, label=f'Exact', linestyle='--')
 plt.title('Test overplot in data space')
 plt.legend()
+dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/'  # plot saving directory
+plt.savefig(os.path.join(dir_exp, f'model_overplot_{z_string}.png'))
 plt.show()
 IPython.embed()
 '''
