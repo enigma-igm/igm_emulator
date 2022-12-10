@@ -31,18 +31,11 @@ class NN_HMC:
         self.fobs = fobs
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
-    def log_likelihood(self, theta, corr):
+    def log_likelihood(self, theta):
         theta = jnp.asarray(theta)
-        corr = jnp.asarray(corr)
         model = nn_emulator(self.best_params,theta) #theta is standardized through nn_emulator here
-        '''
-        T0_idx_closest = np.argmin(np.abs(temps - temp))
-        g_idx_closest = np.argmin(np.abs(gs - g))
-        f_idx_closest = np.argmin(np.abs(average_fluxes - ave_f))
-        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx_closest}_G{g_idx_closest}_SNR0_F{f_idx_closest}_ncovar_500000_P{n_path}_set_bins_4.p'
-        like_dict = dill.load(open(in_path + like_name, 'rb'))
-        model_autocorrelation = like_dict['mean_data']
-        '''
+
+        corr = self.like_dict['mean_data']
         new_covariance = self.like_dict['covariance']
         log_determinant = self.like_dict['log_determinant']
 
@@ -81,22 +74,22 @@ class NN_HMC:
         return prior
 
     @partial(jit, static_argnums=(0,))
-    def potential_fun(self,corr,theta):
+    def potential_fun(self,theta):
         lnPrior = self.eval_prior(theta)
-        lnlike = self.log_likelihood(self, theta, corr)
+        lnlike = self.log_likelihood(self, theta)
         lnP = lnlike + lnPrior
 
         return -lnP
-    IPython.embed()
+    #IPython.embed()
 
     @partial(jit, static_argnums=(0,))
-    def numpyro_potential_fun(self,flux):
-        return jax.tree_util.Partial(self.potential_fun,corr=flux)
+    def numpyro_potential_fun(self):
+        return jax.tree_util.Partial(self.potential_fun)
 
 
     def mcmc_one(self, key, theta, flux): #input theta instead of x
         # Instantiate the NUTS kernel and the mcmc object
-        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
+        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
                 chain_method='vectorized', jit_model_args=True)  # chain_method='sequential'
