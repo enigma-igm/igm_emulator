@@ -171,7 +171,7 @@ if __name__ == "__main__":
     group2.create_dataset('stdX', data=stdX)
     group2.create_dataset('meanY', data=meanY)
     group2.create_dataset('stdY', data=stdY)
-    IPython.embed()
+    #IPython.embed()
     group3 = f.create_group('performance')
     group3.attrs['R2'] = test_R2
     group3.attrs['test_loss'] = test_loss
@@ -181,8 +181,8 @@ if __name__ == "__main__":
     group3.create_dataset('residuals', data=delta)
 
     save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
-    IPython.embed()
+    #IPython.embed()
     dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
     f.close()
-    IPython.embed()
+    #IPython.embed()
