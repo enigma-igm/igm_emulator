@@ -49,6 +49,7 @@ gammas = param_dict['gammas']  # gamma from temperature - density relation
 T0_idx = 12 #0-14
 g_idx = 7 #0-8
 f_idx = 7 #0-8
+
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
@@ -58,6 +59,16 @@ flux = like_dict['mean_data']
 print(type(theta_true))
 
 model = nn_emulator(best_params, theta_true)
+
+fig2, axs2 = plt.subplots(1, 1)
+axs2.plot(vbins, model, label=f'Emulated' r'$<F>$='f'{theta_true[0]:.2f},'
+                                                     r'$T_0$='f'{theta_true[1]:.2f},'
+                                                     r'$\gamma$='f'{theta_true[2]:.2f}', alpha=0.3)
+axs2.plot(vbins, flux, label=f'Exact', linestyle='--')
+plt.title('Test overplot in data space')
+plt.legend()
+plt.show()
+IPython.embed()
 '''
 Run HMC
 '''
@@ -65,6 +76,7 @@ if __name__ == '__main__':
     nn = NN_HMC(vbins,best_params,T0s,gammas,fobs,like_dict)
     key = random.PRNGKey(42)
     key, subkey = random.split(key)
+    IPython.embed()
     x_samples, samples, ln_probs, neff, neff_mean, \
     sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
     hmc_num_steps, hmc_tree_depth, runtime = nn.mcmc_one(key, theta_true, flux)
