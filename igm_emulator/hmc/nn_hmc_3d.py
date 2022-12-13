@@ -11,7 +11,7 @@ import arviz as az
 import time
 import IPython
 from igm_emulator.emulator.emulator_run import nn_emulator
-import sys_
+import sys
 sys.path.insert(0,'/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
