@@ -47,8 +47,8 @@ log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
 T0s = np.exp(log_T0s)
 gammas = param_dict['gammas']  # gamma from temperature - density relation
 
-T0_idx = 12 #0-14
-g_idx = 7 #0-8
+T0_idx = 11 #0-14
+g_idx = 4 #0-8
 f_idx = 7 #0-8
 
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
@@ -60,7 +60,7 @@ flux = like_dict['mean_data']
 print(type(theta_true))
 
 model = nn_emulator(best_params, theta_true)
-'''
+
 fig2, axs2 = plt.subplots(1, 1)
 axs2.plot(vbins, model, label=f'Emulated' r'$<F>$='f'{theta_true[0]:.2f},'
                                                      r'$T_0$='f'{theta_true[1]:.2f},'
@@ -71,7 +71,7 @@ plt.legend()
 dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/'  # plot saving directory
 plt.savefig(os.path.join(dir_exp, f'model_overplot_{z_string}.png'))
 plt.show()
-'''
+
 
 '''
 Run HMC
