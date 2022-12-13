@@ -59,7 +59,7 @@ class NN_HMC:
         theta_astro = []
         for x_i, theta_range in zip(x, self.theta_ranges):
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
-        return jnp.array(theta_astro)f
+        return jnp.array(theta_astro)
 
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
