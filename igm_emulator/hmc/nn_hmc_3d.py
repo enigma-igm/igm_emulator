@@ -11,7 +11,7 @@ import arviz as az
 import time
 import IPython
 from igm_emulator.emulator.emulator_run import nn_emulator
-import sys
+import sys_
 sys.path.insert(0,'/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
@@ -48,7 +48,6 @@ class NN_HMC:
 
     def theta_to_x(self,theta):
         x_astro = []
-        theta = np.reshape(theta, )
         for theta_i, theta_range in zip(theta, self.theta_ranges):
             x_astro.append(jax.scipy.special.logit(
                 jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
