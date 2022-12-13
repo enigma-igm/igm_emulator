@@ -70,14 +70,14 @@ class NN_HMC:
         IPython.embed()
         for i in x:
             prior += self.log_prior(i)
-            print(f'i={i}')
+            #print(f'i={i}')
         print(f'Prior={prior}')
         return prior
 
     @partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
         lnPrior = self.eval_prior(theta)
-        lnlike = self.log_likelihood(self, theta)
+        lnlike = self.log_likelihood(theta)
         lnP = lnlike + lnPrior
 
         return -lnP
