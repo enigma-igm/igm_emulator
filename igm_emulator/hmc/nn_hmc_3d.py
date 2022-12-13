@@ -41,8 +41,8 @@ class NN_HMC:
 
         diff = corr - model
         nbins = len(self.vbins)
-        log_like = -(np.dot(diff, np.linalg.solve(new_covariance, diff)) + log_determinant + nbins * np.log(
-            2.0 * np.pi)) / 2.0
+        log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
+            2.0 * jnp.pi)) / 2.0
         print(f'Log_likelihood={log_like}')
         return log_like
 
@@ -74,7 +74,7 @@ class NN_HMC:
         print(f'Prior={prior}')
         return prior
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
         lnPrior = self.eval_prior(theta)
         lnlike = self.log_likelihood(theta)
