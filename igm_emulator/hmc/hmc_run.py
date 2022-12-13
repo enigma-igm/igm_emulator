@@ -60,7 +60,7 @@ flux = like_dict['mean_data']
 print(type(theta_true))
 
 model = nn_emulator(best_params, theta_true)
-
+'''
 fig2, axs2 = plt.subplots(1, 1)
 axs2.plot(vbins, model, label=f'Emulated' r'$<F>$='f'{theta_true[0]:.2f},'
                                                      r'$T_0$='f'{theta_true[1]:.2f},'
@@ -71,7 +71,7 @@ plt.legend()
 dir_exp = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/'  # plot saving directory
 plt.savefig(os.path.join(dir_exp, f'model_overplot_{z_string}.png'))
 plt.show()
-
+'''
 
 '''
 Run HMC
