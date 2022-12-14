@@ -108,7 +108,7 @@ class NN_HMC:
         x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
         # Run the MCMC
         start_time = time.time()
-        IPython.embed()
+        #IPython.embed()
         mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
         total_time = time.time() - start_time
 
