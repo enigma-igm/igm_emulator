@@ -97,7 +97,7 @@ class NN_HMC:
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
-                 jit_model_args=True)  # chain_method='sequential' chain_method='vectorized'
+                 jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
         print(f'theta:{theta}')
         ave_f, temp, g = theta
