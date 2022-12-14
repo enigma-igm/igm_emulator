@@ -46,23 +46,30 @@ class NN_HMC:
         print(f'Log_likelihood={log_like}')
         return log_like
 
-    def theta_to_x(self,theta):
+    @partial(jit, static_argnums=(0,))
+    def _theta_to_x(self,theta):
         x_astro = []
-        for i in range(3):
+        for theta_i, theta_range in zip(theta, self.theta_ranges):
             x_astro.append(jax.scipy.special.logit(
-                jnp.clip((theta[i] - self.theta_ranges[i][0]) / (self.theta_ranges[i][1] - self.theta_ranges[i][0]),
-                        a_min=1e-7, a_max=1.0 - 1e-7)))
-        #for theta_i, theta_range in zip(theta, self.theta_ranges):
-            #x_astro.append(jax.scipy.special.logit(
-                #jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
-                         #a_min=1e-7, a_max=1.0 - 1e-7)))
+                jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
+                         a_min=1e-7, a_max=1.0 - 1e-7)))
         return jnp.array(x_astro)
 
-    def x_to_theta(self,x):
+    @partial(jit, static_argnums=(0,))
+    def theta_to_x(self, theta):
+
+        x_astro = jax.vmap(
+            self._theta_to_x, in_axes=0, out_axes=0)(jnp.atleast_2d(theta))
+
+        return x_astro.squeeze()
+
+    @partial(jit, static_argnums=(0,))
+    def _x_to_theta(self,x):
         theta_astro = []
         for x_i, theta_range in zip(x, self.theta_ranges):
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
+
 
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
