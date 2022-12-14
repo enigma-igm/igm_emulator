@@ -48,7 +48,7 @@ class NN_HMC:
 
     def theta_to_x(self,theta):
         x_astro = []
-        for theta_i, theta_range in zip(theta, self.theta_ranges):
+        for theta_i, theta_range in zip(list(theta), self.theta_ranges):
             x_astro.append(jax.scipy.special.logit(
                 jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
                          a_min=1e-7, a_max=1.0 - 1e-7)))
