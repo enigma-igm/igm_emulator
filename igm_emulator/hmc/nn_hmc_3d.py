@@ -46,23 +46,30 @@ class NN_HMC:
         print(f'Log_likelihood={log_like}')
         return log_like
 
-    def theta_to_x(self,theta):
+    @partial(jit, static_argnums=(0,))
+    def _theta_to_x(self,theta):
         x_astro = []
-        for i in range(3):
+        for theta_i, theta_range in zip(theta, self.theta_ranges):
             x_astro.append(jax.scipy.special.logit(
-                jnp.clip((theta[i] - self.theta_ranges[i][0]) / (self.theta_ranges[i][1] - self.theta_ranges[i][0]),
-                        a_min=1e-7, a_max=1.0 - 1e-7)))
-        #for theta_i, theta_range in zip(theta, self.theta_ranges):
-            #x_astro.append(jax.scipy.special.logit(
-                #jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
-                         #a_min=1e-7, a_max=1.0 - 1e-7)))
+                jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
+                         a_min=1e-7, a_max=1.0 - 1e-7)))
         return jnp.array(x_astro)
 
-    def x_to_theta(self,x):
+    @partial(jit, static_argnums=(0,))
+    def theta_to_x(self, theta):
+
+        x_astro = jax.vmap(
+            self._theta_to_x, in_axes=0, out_axes=0)(jnp.atleast_2d(theta))
+
+        return x_astro.squeeze()
+
+    @partial(jit, static_argnums=(0,))
+    def _x_to_theta(self,x):
         theta_astro = []
         for x_i, theta_range in zip(x, self.theta_ranges):
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
+
 
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
@@ -97,7 +104,7 @@ class NN_HMC:
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
-                 jit_model_args=True)  # chain_method='sequential' chain_method='vectorized'
+                 jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
         print(f'theta:{theta}')
         ave_f, temp, g = theta
@@ -108,7 +115,7 @@ class NN_HMC:
         x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
         # Run the MCMC
         start_time = time.time()
-        IPython.embed()
+        #IPython.embed()
         mcmc.run(key, init_params=theta, extra_fields=('potential_energy', 'num_steps'))
         total_time = time.time() - start_time
 
