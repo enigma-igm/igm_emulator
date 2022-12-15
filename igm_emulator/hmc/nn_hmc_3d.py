@@ -84,6 +84,7 @@ class NN_HMC:
         print(f'prior theta:{theta}')
         prior = 0.0
         x = self.theta_to_x(theta)
+        print(f'x={x}')
         #IPython.embed()
         for i in x:
             prior += self.log_prior(i)
