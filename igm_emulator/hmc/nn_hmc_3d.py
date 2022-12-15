@@ -70,6 +70,12 @@ class NN_HMC:
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
 
+    @partial(jit, static_argnums=(0,))
+    def x_to_theta_astro(self, x):
+
+        theta_astro = jax.vmap(self._x_to_theta, in_axes=0, out_axes=0)(jnp.atleast_2d(x))
+
+        return theta_astro.squeeze()
 
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
@@ -78,6 +84,7 @@ class NN_HMC:
         print(f'prior theta:{theta}')
         prior = 0.0
         x = self.theta_to_x(theta)
+        print(f'x={x}')
         #IPython.embed()
         for i in x:
             prior += self.log_prior(i)
