@@ -80,6 +80,7 @@ class NN_HMC:
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 
+    @partial(jit, static_argnums=(0,))
     def eval_prior(self,theta):
         print(f'prior theta:{theta}')
         prior = 0.0
@@ -92,7 +93,7 @@ class NN_HMC:
         print(f'Prior={prior}')
         return prior
 
-    #@partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
         lnPrior = self.eval_prior(theta)
         lnlike = self.log_likelihood(theta)
@@ -115,7 +116,6 @@ class NN_HMC:
         # Initial position
         print(f'theta:{theta}')
         ave_f, temp, g = theta
-        theta = jnp.asarray(theta)
         T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
         g_idx_closest = np.argmin(np.abs(self.gammas - g))
         f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
