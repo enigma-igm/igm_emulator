@@ -123,7 +123,7 @@ class NN_HMC:
         # Run the MCMC
         start_time = time.time()
         #IPython.embed()
-        mcmc.run(key, init_params=theta.squeeze(), extra_fields=('potential_energy', 'num_steps'))
+        mcmc.run(key, init_params=jnp.array(theta).squeeze(), extra_fields=('potential_energy', 'num_steps'))
         total_time = time.time() - start_time
 
         # Compute the neff and summarize cost
