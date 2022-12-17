@@ -95,6 +95,7 @@ class NN_HMC:
 
     @partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
+        print(f'theta draw={theta}')
         lnPrior = self.eval_prior(theta)
         lnlike = self.log_likelihood(theta)
         lnP = lnlike + lnPrior
