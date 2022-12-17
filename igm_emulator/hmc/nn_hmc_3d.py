@@ -119,7 +119,8 @@ class NN_HMC:
         T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
         g_idx_closest = np.argmin(np.abs(self.gammas - g))
         f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
-        x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
+        x_opt = jnp.array([T0_idx_closest, g_idx_closest, f_idx_closest])
+        theta = jnp.array(theta)
         # Run the MCMC
         start_time = time.time()
         #IPython.embed()
