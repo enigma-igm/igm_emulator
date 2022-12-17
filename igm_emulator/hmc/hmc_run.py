@@ -3,6 +3,7 @@ import dill
 import numpy as np
 import IPython
 import jax.random as random
+import jax.numpy as jnp
 import matplotlib
 import matplotlib.pyplot as plt
 import h5py

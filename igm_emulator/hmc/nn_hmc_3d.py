@@ -119,11 +119,12 @@ class NN_HMC:
         T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
         g_idx_closest = np.argmin(np.abs(self.gammas - g))
         f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
-        x_opt = np.asarray([T0_idx_closest, g_idx_closest, f_idx_closest])
+        x_opt = jnp.array([T0_idx_closest, g_idx_closest, f_idx_closest])
+        theta = jnp.array(theta)
         # Run the MCMC
         start_time = time.time()
         #IPython.embed()
-        mcmc.run(key, init_params=jnp.array(theta).squeeze(), extra_fields=('potential_energy', 'num_steps'))
+        mcmc.run(key, init_params=theta.squeeze(), extra_fields=('potential_energy', 'num_steps'))
         total_time = time.time() - start_time
 
         # Compute the neff and summarize cost
