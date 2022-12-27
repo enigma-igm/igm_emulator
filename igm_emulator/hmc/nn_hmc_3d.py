@@ -71,7 +71,7 @@ class NN_HMC:
         return jnp.array(theta_astro)
 
     #@partial(jit, static_argnums=(0,))
-    def x_to_theta_astro(self, x):
+    def x_to_theta(self, x):
 
         theta_astro = jax.vmap(self._x_to_theta, in_axes=0, out_axes=0)(jnp.atleast_2d(x))
 
