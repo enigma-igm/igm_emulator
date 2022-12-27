@@ -13,7 +13,7 @@ import IPython
 from igm_emulator.emulator.emulator_run import nn_emulator
 import sys
 sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
-from inference.utils import walker_plot, corner_plot
+from utils import walker_plot, corner_plot
 
 class NN_HMC:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=1):
