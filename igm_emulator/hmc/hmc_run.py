@@ -86,4 +86,4 @@ if __name__ == '__main__':
     sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
     hmc_num_steps, hmc_tree_depth, runtime = nn.mcmc_one(key, theta_true, flux)
     IPython.embed()
-    nn.plot_HMC(x_samples)
+    nn.plot_HMC(x_samples,samples,theta_true)

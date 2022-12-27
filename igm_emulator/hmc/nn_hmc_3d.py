@@ -161,7 +161,7 @@ class NN_HMC:
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-    def plot_HMC(self,x_samples):
+    def plot_HMC(self,x_samples,theta_samples,theta):
         out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
         var_label = ['fobs', 'T0s', 'gammas']
         walkerfile = out_prefix + '_walkers_' + '.pdf'
@@ -169,12 +169,12 @@ class NN_HMC:
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
         walker_plot(np.swapaxes(x_samples, 0, 1), var_label,
-                    truths=self.x_true if self.x_true is not None else None,
+                    truths= self.theta_to_x(theta),
                     walkerfile=walkerfile, linewidth=1.0)
         # Raw x_params corner plot
         corner_plot(x_samples, var_label,
-                    theta_true=self.x_true if self.x_true is not None else None,
+                    theta_true=self.theta_to_x(theta),
                     cornerfile=x_cornerfile)
-        corner_plot(x_samples, var_label,
-                    theta_true=self.theta_true if self.theta_true is not None else None,
+        corner_plot(theta_samples, var_label,
+                    theta_true=theta,
                     cornerfile=cornerfile)
