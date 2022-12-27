@@ -16,7 +16,7 @@ sys.path.insert(0,'/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
 class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=3):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=1):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -46,7 +46,7 @@ class NN_HMC:
         print(f'Log_likelihood={log_like}')
         return log_like
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def _theta_to_x(self,theta):
         x_astro = []
         for theta_i, theta_range in zip(theta, self.theta_ranges):
@@ -55,7 +55,7 @@ class NN_HMC:
                          a_min=1e-7, a_max=1.0 - 1e-7)))
         return jnp.array(x_astro)
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def theta_to_x(self, theta):
 
         x_astro = jax.vmap(
@@ -63,14 +63,14 @@ class NN_HMC:
 
         return x_astro.squeeze()
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def _x_to_theta(self,x):
         theta_astro = []
         for x_i, theta_range in zip(x, self.theta_ranges):
             theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
         return jnp.array(theta_astro)
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def x_to_theta_astro(self, x):
 
         theta_astro = jax.vmap(self._x_to_theta, in_axes=0, out_axes=0)(jnp.atleast_2d(x))
@@ -80,7 +80,7 @@ class NN_HMC:
     def log_prior(self,x):
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def eval_prior(self,theta):
         print(f'prior theta:{theta}')
         prior = 0.0
@@ -93,7 +93,7 @@ class NN_HMC:
         print(f'Prior={prior}')
         return prior
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
         print(f'theta draw={theta}')
         lnPrior = self.eval_prior(theta)
@@ -103,7 +103,7 @@ class NN_HMC:
         return -lnP
     #IPython.embed()
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def numpyro_potential_fun(self):
         return jax.tree_util.Partial(self.potential_fun)
 
