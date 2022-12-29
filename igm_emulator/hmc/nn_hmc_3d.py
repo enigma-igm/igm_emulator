@@ -168,7 +168,7 @@ class NN_HMC:
         cornerfile = out_prefix + '_corner_' + '.pdf'
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
-        walker_plot(np.swapaxes(jnp.asarrau(x_samples), 0, 1), var_label,
+        walker_plot(np.swapaxes(jnp.asarray(x_samples), 0, 1), var_label,
                     truths= self.theta_to_x(theta),
                     walkerfile=walkerfile, linewidth=1.0)
         # Raw x_params corner plot
