@@ -16,7 +16,7 @@ sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
 class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=100, num_samples=100, num_chains=1):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=100, num_samples=1000, num_chains=1):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -168,13 +168,13 @@ class NN_HMC:
         cornerfile = out_prefix + '_corner_' + '.pdf'
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
-        walker_plot(np.swapaxes(x_samples, 0, 1), var_label,
+        walker_plot(np.swapaxes(jnp.asarrau(x_samples), 0, 1), var_label,
                     truths= self.theta_to_x(theta),
                     walkerfile=walkerfile, linewidth=1.0)
         # Raw x_params corner plot
-        corner_plot(x_samples, var_label,
-                    theta_true=self.theta_to_x(theta),
-                    cornerfile=x_cornerfile)
+        #corner_plot(x_samples, var_label,
+                    #theta_true=self.theta_to_x(theta),
+                    #cornerfile=x_cornerfile)
         corner_plot(theta_samples, var_label,
-                    theta_true=theta,
+                    theta_true=jnp.asarray(theta),
                     cornerfile=cornerfile)
