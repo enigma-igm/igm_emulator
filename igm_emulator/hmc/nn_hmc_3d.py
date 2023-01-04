@@ -26,7 +26,6 @@ class NN_HMC:
         self.dense_mass = dense_mass
         self.mcmc_nsteps_tot = num_samples * num_chains
         self.num_samples = num_samples
-        self.mcmc_init_perturb = perturb
         self.T0s = T0s
         self.gammas = gammas
         self.fobs = fobs
@@ -45,7 +44,7 @@ class NN_HMC:
         nbins = len(self.vbins)
         log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
             2.0 * jnp.pi)) / 2.0
-        print(f'Log_likelihood={log_like}')
+        #print(f'Log_likelihood={log_like}')
         return log_like
 
     @partial(jit, static_argnums=(0,))
@@ -84,20 +83,19 @@ class NN_HMC:
 
     @partial(jit, static_argnums=(0,))
     def eval_prior(self,theta):
-        print(f'prior theta:{theta}')
+        #print(f'prior theta:{theta}')
         prior = 0.0
         x = self.theta_to_x(theta)
-        print(f'x={x}')
         #IPython.embed()
         for i in x:
             prior += self.log_prior(i)
             #print(f'i={i}')
-        print(f'Prior={prior}')
+        #print(f'Prior={prior}')
         return prior
 
     @partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
-        print(f'theta draw={theta}')
+        #print(f'theta draw={theta}')
         lnPrior = self.eval_prior(theta)
         lnlike = self.log_likelihood(theta)
         lnP = lnlike + lnPrior
@@ -115,7 +113,7 @@ class NN_HMC:
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
-                 jit_model_args=True, chain_method='parallel')  # chain_method='sequential' chain_method='vectorized'
+                 jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
         print(f'true theta:{theta}')
         print(f'true x:{self.theta_to_x(theta)}')
@@ -124,7 +122,8 @@ class NN_HMC:
         g_idx_closest = np.argmin(np.abs(self.gammas - g))
         f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
         theta_init = theta + 1e-4 * np.random.randn(self.num_chains, 3)
-
+        print(f'init pos:{theta_init}')
+        
         # Run the MCMC
         start_time = time.time()
         #IPython.embed()
@@ -164,11 +163,11 @@ class NN_HMC:
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-    def plot_HMC(self,x_samples,theta_samples,theta):
+    def plot_HMC(self,x_samples,theta_samples,theta,note):
         out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
         var_label = ['fobs', 'T0s', 'gammas']
-        walkerfile = out_prefix + '_walkers_' + '.pdf'
-        cornerfile = out_prefix + '_corner_' + '.pdf'
+        walkerfile = out_prefix + '_walkers_' + note + '.pdf'
+        cornerfile = out_prefix + '_corner_' + note + '.pdf'
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
         walker_plot(np.swapaxes(jnp.asarray(x_samples), 0, 1), var_label,
