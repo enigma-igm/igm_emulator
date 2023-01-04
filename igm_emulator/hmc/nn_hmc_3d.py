@@ -16,7 +16,7 @@ sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
 class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=3):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, perturb=0.05, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=3):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -26,6 +26,7 @@ class NN_HMC:
         self.dense_mass = dense_mass
         self.mcmc_nsteps_tot = num_samples * num_chains
         self.num_samples = num_samples
+        self.mcmc_init_perturb = perturb
         self.T0s = T0s
         self.gammas = gammas
         self.fobs = fobs
@@ -33,7 +34,7 @@ class NN_HMC:
 
     def log_likelihood(self, theta):
         theta = jnp.asarray(theta)
-        model = nn_emulator(self.best_params,theta) #theta is standardized through nn_emulator here
+        model = nn_emulator(self.best_params,theta) #theta is in physical dimension
 
         corr = self.like_dict['mean_data']
         new_covariance = self.like_dict['covariance']
@@ -120,12 +121,12 @@ class NN_HMC:
         T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
         g_idx_closest = np.argmin(np.abs(self.gammas - g))
         f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
-        x_opt = jnp.array([T0_idx_closest, g_idx_closest, f_idx_closest])
-        theta = jnp.array(theta)
+        theta_init = jnp.array([theta, theta, theta])
+
         # Run the MCMC
         start_time = time.time()
         #IPython.embed()
-        mcmc.run(key, init_params=theta.squeeze(), extra_fields=('potential_energy', 'num_steps'))
+        mcmc.run(key, init_params=theta_init.squeeze(), extra_fields=('potential_energy', 'num_steps'))
         total_time = time.time() - start_time
 
         # Compute the neff and summarize cost
@@ -136,8 +137,8 @@ class NN_HMC:
         r_hat_mean = np.mean(r_hat)
         sec_per_neff = (total_time / neff_mean)
         # Grab the samples and lnP
-        x_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
-        theta_samples = self.x_to_theta(x_samples)
+        theta_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
+        x_samples = self.theta_to_x(theta_samples)
 
         lnP = -mcmc.get_extra_fields()['potential_energy']
         hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
