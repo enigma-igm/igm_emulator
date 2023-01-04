@@ -16,7 +16,7 @@ sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
 class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, perturb=0.05, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=3):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, perturb=0.05, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=1):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
