@@ -179,4 +179,4 @@ class NN_HMC:
                     #cornerfile=x_cornerfile)
         corner_plot(theta_samples, var_label,
                     theta_true=jnp.asarray(theta),
-                    cornerfile=cornerfile)
+                    cornerfile=cornerfile,overlay_color = ['k','k','k'])
