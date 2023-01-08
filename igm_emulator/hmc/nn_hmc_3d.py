@@ -15,6 +15,7 @@ import sys
 sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
+#running in physical space
 class NN_HMC:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=4000, num_chains=16):
         self.vbins = vbins
@@ -34,7 +35,7 @@ class NN_HMC:
     @partial(jit, static_argnums=(0,))
     def log_likelihood(self, theta):
         theta = jnp.asarray(theta)
-        model = nn_emulator(self.best_params,theta) #theta is in physical dimension
+        model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
         corr = self.like_dict['mean_data']
         new_covariance = self.like_dict['covariance']
@@ -83,19 +84,14 @@ class NN_HMC:
 
     @partial(jit, static_argnums=(0,))
     def eval_prior(self,theta):
-        #print(f'prior theta:{theta}')
         prior = 0.0
-        x = self.theta_to_x(theta)
         #IPython.embed()
-        for i in x:
+        for i in theta: #everthing in physical space
             prior += self.log_prior(i)
-            #print(f'i={i}')
-        #print(f'Prior={prior}')
         return prior
 
     @partial(jit, static_argnums=(0,))
     def potential_fun(self,theta):
-        #print(f'theta draw={theta}')
         lnPrior = self.eval_prior(theta)
         lnlike = self.log_likelihood(theta)
         lnP = lnlike + lnPrior
@@ -137,9 +133,10 @@ class NN_HMC:
         r_hat = az_summary["r_hat"].to_numpy()
         r_hat_mean = np.mean(r_hat)
         sec_per_neff = (total_time / neff_mean)
+
         # Grab the samples and lnP
-        theta_samples = mcmc.get_samples(group_by_chain=True) #normalized theta
-        x_samples = self.theta_to_x(theta_samples)
+        theta_samples = mcmc.get_samples() #(mcmc_nsteps_tot, ndim)
+        samples = mcmc.get_samples(group_by_chain=True) #(num_chain, num_samples, ndim)
 
         lnP = -mcmc.get_extra_fields()['potential_energy']
         hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
@@ -160,18 +157,18 @@ class NN_HMC:
         print("*************************")
 
         # Return the values needed
-        return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
+        return samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-    def plot_HMC(self,x_samples,theta_samples,theta,note):
+    def plot_HMC(self,samples,theta_samples,theta,note):
         out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
         var_label = ['fobs', 'T0s', 'gammas']
         walkerfile = out_prefix + '_walkers_' + note + '.pdf'
         cornerfile = out_prefix + '_corner_' + note + '.pdf'
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
-        walker_plot(np.swapaxes(jnp.asarray(x_samples), 0, 1), var_label,
-                    truths= self.theta_to_x(theta),
+        walker_plot(np.swapaxes(jnp.asarray(samples), 0, 1), var_label,
+                    truths= jnp.asarray(theta,
                     walkerfile=walkerfile, linewidth=1.0)
         # Raw x_params corner plot
         #corner_plot(x_samples, var_label,
@@ -179,4 +176,4 @@ class NN_HMC:
                     #cornerfile=x_cornerfile)
         corner_plot(theta_samples, var_label,
                     theta_true=jnp.asarray(theta),
-                    cornerfile=cornerfile,overlay_color = ['k','k','k'])
+                    cornerfile=cornerfile)
