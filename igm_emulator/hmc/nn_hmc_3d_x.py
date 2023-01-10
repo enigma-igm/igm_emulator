@@ -16,8 +16,8 @@ sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
 #running everything in dimensionless parameter space (x)
-class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=3000, num_chains=16):
+class NN_HMC_X:
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=1000, num_chains=16):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -112,7 +112,7 @@ class NN_HMC:
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
-                 jit_model_args=True, chain_method='parallel')  # chain_method='sequential' chain_method='vectorized'
+                 jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
         print(f'true theta:{self.x_to_theta(x)}')
         print(f'true x:{x}')

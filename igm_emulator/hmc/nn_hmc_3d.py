@@ -17,7 +17,7 @@ from utils import walker_plot, corner_plot
 
 #running in physical space
 class NN_HMC:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=4000, num_chains=16):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=10, num_warmup=1000, num_samples=1000, num_chains=16):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -86,7 +86,8 @@ class NN_HMC:
     def eval_prior(self,theta):
         prior = 0.0
         #IPython.embed()
-        for i in theta: #everthing in physical space
+        x = self.theta_to_x(theta)
+        for i in x: #everthing in physical space
             prior += self.log_prior(i)
         return prior
 
@@ -168,7 +169,7 @@ class NN_HMC:
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
         specfile = out_prefix + '_spec_' + '.pdf'
         walker_plot(np.swapaxes(jnp.asarray(samples), 0, 1), var_label,
-                    truths= jnp.asarray(theta,
+                    truths= jnp.asarray(theta),
                     walkerfile=walkerfile, linewidth=1.0)
         # Raw x_params corner plot
         #corner_plot(x_samples, var_label,
