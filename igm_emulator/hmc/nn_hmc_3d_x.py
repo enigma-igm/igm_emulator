@@ -17,7 +17,7 @@ from utils import walker_plot, corner_plot
 
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=1000, num_chains=16):
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=1000, num_chains=4):
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict

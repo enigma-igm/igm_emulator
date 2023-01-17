@@ -45,7 +45,7 @@ param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
 
 fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
 log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
-T0s = np.exp(log_T0s)
+T0s = np.power(10,log_T0s)
 gammas = param_dict['gammas']  # gamma from temperature - density relation
 
 T0_idx = 11 #0-14
