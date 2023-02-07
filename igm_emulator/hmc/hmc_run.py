@@ -88,8 +88,8 @@ plt.show()
 Run HMC
 '''
 if __name__ == '__main__':
-    nn = NN_HMC(vbins, best_params, T0s, gammas, fobs, like_dict)
-    x_true = nn.theta_to_x(theta_true)
+    nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
+    x_true = nn_x.theta_to_x(theta_true)
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
@@ -98,7 +98,6 @@ if __name__ == '__main__':
     for mock_idx in pbar(range(5)):
         note = f"jit_2000_4_test13_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
-        nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
