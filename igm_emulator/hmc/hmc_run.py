@@ -95,7 +95,7 @@ if __name__ == '__main__':
     var_label = ['fobs', 'T0s', 'gammas']
     n_inference = 5
     pbar = ProgressBar()
-    for mock_idx in pbar(range(5)):
+    for mock_idx in pbar(range(n_inference)):
         note = f"jit_2000_4_test13_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
