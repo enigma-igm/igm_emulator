@@ -114,7 +114,7 @@ if __name__ == '__main__':
         molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
 
         corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
-                                   fig=corner_fig, truths=np.array(theta_true), truth_color='red', show_titles=True,
+                                   truths=np.array(theta_true), truth_color='red', show_titles=True,
                                    title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                    data_kwargs={'ms': 1.0, 'alpha': 0.1}, )
         corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue')
