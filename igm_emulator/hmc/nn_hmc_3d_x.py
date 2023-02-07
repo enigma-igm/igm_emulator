@@ -33,11 +33,11 @@ class NN_HMC_X:
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
     @partial(jit, static_argnums=(0,))
-    def log_likelihood(self, x):
+    def log_likelihood(self, x, flux):
         theta = self.x_to_theta(x)
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
-        corr = self.like_dict['mean_data']
+        corr = flux
         new_covariance = self.like_dict['covariance']
         log_determinant = self.like_dict['log_determinant']
 
@@ -85,8 +85,6 @@ class NN_HMC_X:
     @partial(jit, static_argnums=(0,))
     def eval_prior(self,x):
         prior = 0.0
-        #x = self.theta_to_x(theta)
-        #IPython.embed()
         for i in x:
             prior += self.log_prior(i)
             #print(f'i={i}')
@@ -94,22 +92,22 @@ class NN_HMC_X:
         return prior
 
     @partial(jit, static_argnums=(0,))
-    def potential_fun(self,x):
+    def potential_fun(self,x,flux):
         #in physical space
         lnPrior = self.eval_prior(x)
-        lnlike = self.log_likelihood(x)
+        lnlike = self.log_likelihood(x, flux)
         lnP = lnlike + lnPrior
 
         return -lnP
 
     @partial(jit, static_argnums=(0,))
-    def numpyro_potential_fun(self):
-        return jax.tree_util.Partial(self.potential_fun)
+    def numpyro_potential_fun(self, flux):
+        return jax.tree_util.Partial(self.potential_fun, flux=flux)
 
 
     def mcmc_one(self, key, x, flux): #input dimensionless paramter x
         # Instantiate the NUTS kernel and the mcmc object
-        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(),
+        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
                  jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
