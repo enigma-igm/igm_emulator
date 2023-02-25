@@ -6,6 +6,8 @@ import jax.random as random
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 import jax.numpy as jnp
+from jax.config import config
+config.update("jax_enable_x64", True)
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     var_label = ['fobs', 'T0s', 'gammas']
     n_inference = 5
     pbar = ProgressBar()
-    for mock_idx in pbar(np.arange(3,5)):
+    for mock_idx in pbar(range(5)):
         note = f"jit_2000_4_test13_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
