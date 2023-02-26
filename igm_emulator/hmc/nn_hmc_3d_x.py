@@ -18,6 +18,23 @@ from utils import walker_plot, corner_plot
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=1000, num_chains=4):
+'''
+Args:
+    vbins: velocity bins
+    best_params: best parameters from the neural network
+    T0s: temperature array
+    gammas: gamma array
+    fobs: frequency array
+    like_dict: dictionary containing the covariance matrix, log determinant, and inverse covariance matrix
+    dense_mass: whether to use dense mass matrix
+    max_tree_depth: maximum tree depth
+    num_warmup: number of warmup steps
+    num_samples: number of samples
+    num_chains: number of chains
+
+Returns:
+    samples: samples from the posterior
+'''
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -34,6 +51,14 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def log_likelihood(self, x, flux):
+    '''
+    Args:
+        x: dimensionless parameters
+        flux: observed flux
+
+    Returns:
+        log_likelihood: log likelihood
+    '''
         theta = self.x_to_theta(x)
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
@@ -49,7 +74,7 @@ class NN_HMC_X:
         return log_like
 
     @partial(jit, static_argnums=(0,))
-    def _theta_to_x(self,theta):
+    def _theta_to_x(self,theta): #theta is in physical dimension
         x_astro = []
         for theta_i, theta_range in zip(theta, self.theta_ranges):
             x_astro.append(jax.scipy.special.logit(
@@ -58,7 +83,7 @@ class NN_HMC_X:
         return jnp.array(x_astro)
 
     @partial(jit, static_argnums=(0,))
-    def theta_to_x(self, theta, axis=0):
+    def theta_to_x(self, theta, axis=0): #x is in dimensionless parameter space
 
         x_astro = jax.vmap(
             self._theta_to_x, in_axes=axis, out_axes=axis)(jnp.atleast_2d(theta))
@@ -80,6 +105,13 @@ class NN_HMC_X:
         return theta_astro.squeeze()
 
     def log_prior(self,x):
+        '''
+        Args:
+            x: dimensionless parameters
+
+        Returns:
+            log_prior: log prior
+        '''
         return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
 
     @partial(jit, static_argnums=(0,))
@@ -93,6 +125,17 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def potential_fun(self,x,flux):
+        '''
+        Parameters
+        ----------
+        self
+        x: dimensionless parameters
+        flux: observed flux
+
+        Returns
+        -------
+        lnP: log posterior
+        '''
         #in physical space
         lnPrior = self.eval_prior(x)
         lnlike = self.log_likelihood(x, flux)
@@ -101,11 +144,35 @@ class NN_HMC_X:
         return -lnP
 
     @partial(jit, static_argnums=(0,))
-    def numpyro_potential_fun(self, flux):
+    def numpyro_potential_fun(self, flux): #potential function for numpyro
         return jax.tree_util.Partial(self.potential_fun, flux=flux)
 
 
     def mcmc_one(self, key, x, flux): #input dimensionless paramter x
+        '''
+
+        Parameters
+        ----------
+        self
+        key: random key
+        x: dimensionless parameters
+        flux: observed flux
+
+        Returns
+        -------
+        x_samples: samples from the posterior
+        theta_samples: samples from the posterior in physical space
+        lnP: log posterior
+        neff: effective sample size
+        neff_mean: mean effective sample size
+        sec_per_neff: time per effective sample
+        ms_per_step: time per step
+        r_hat: Gelman-Rubin statistic
+        r_hat_mean : mean Gelman-Rubin statistic
+        hmc_num_steps: number of steps in the HMC
+        hmc_tree_depth: depth of the tree in the HMC
+        total_time: total time
+        '''
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
