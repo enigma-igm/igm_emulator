@@ -14,7 +14,6 @@ l2 =0.0001
 Build custom haiku Module
 '''
 class MyModuleCustom(hk.Module):
-'''Custom Haiku Module for a fully connected network with variable number of layers'''
   def __init__(self,
                output_size=[100,100,100,276],
                activation: Callable[[jnp.ndarray], jnp.ndarray] = jax.nn.relu,
