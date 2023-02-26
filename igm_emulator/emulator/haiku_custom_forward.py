@@ -14,12 +14,27 @@ l2 =0.0001
 Build custom haiku Module
 '''
 class MyModuleCustom(hk.Module):
+'''Custom Haiku Module for a fully connected network with variable number of layers'''
   def __init__(self,
                output_size=[100,100,100,276],
                activation: Callable[[jnp.ndarray], jnp.ndarray] = jax.nn.relu,
                activate_final: bool = False,
                dropout_rate: Optional[float] = None,
                name='custom_linear'):
+    '''
+
+    Parameters
+    ----------
+    output_size: list of ints
+    activation: activation function
+    activate_final: bool
+    dropout_rate: float
+    name: str
+
+    Returns
+    -------
+
+    '''
     super().__init__(name=name)
     self.activate_final = activate_final
     self.activation = activation
