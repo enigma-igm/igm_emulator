@@ -179,10 +179,11 @@ if __name__ == "__main__":
     group3.attrs['vali_loss'] = best_loss
     group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
     group3.create_dataset('residuals', data=delta)
-
+    print("training directories and hyperparameters saved")
     save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
     #IPython.embed()
     dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
+    print("trained parameter saved")
     f.close()
     #IPython.embed()
