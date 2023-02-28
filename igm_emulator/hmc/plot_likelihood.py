@@ -4,7 +4,7 @@ from igm_emulator.emulator.plotVis import v_bins
 import h5py
 from nn_hmc_3d_x import NN_HMC_X
 from progressbar import ProgressBar
-
+import IPython
 '''
 load models and grid
 '''
@@ -64,19 +64,20 @@ Compute likelihood in the same grid
 '''
 nn_x = NN_HMC_X(vbins,best_params,T0s,gammas,fobs,like_dict)
 x_true = nn_x.theta_to_x(theta_true)
-n_inference = 5
+n_inference = 1
 linda_loglike_grid = np.empty([n_inference, len(fobs_grid), len(temps_grid), len(gammas_grid)])
 pbar = ProgressBar()
+print("START RUNNING")
 
 for mock_idx in pbar(range(n_inference)):
     flux = mocks[mock_idx, :]
-    print("START RUNNING")
     for f_plot_idx, f_plot in enumerate(fobs_grid):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood([f_plot, t_plot, g_plot], flux)
 print('DONE')
-
+out_path = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/inference_test/'
+dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 '''
 Plotting the likelihood grid in temperature
 '''
@@ -114,12 +115,12 @@ for mock_idx in range(n_inference):
     axes.plot(temps_grid, linda_loglike_grid[mock_idx, f_plot_idx, :, g_plot_idx])
 
     axes.set_ylabel('log(likelihood)')
-    axes.set_title(f'mock {mock_idx}')
-
+    axes.set_title(f'mock {mock_idx}'
+IPython.embed()
 axes.set_xlabel('$T_0$ (K)')
 axes.show()
+
 save_name = f'temperature_log_like_linda'
-out_path = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/inference_test/'
 slice_fig.savefig(out_path + f'{save_name}.pdf')
 dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 print('PLOT AND LIKELIHOOD GRID SAVED')
