@@ -115,7 +115,7 @@ for mock_idx in range(n_inference):
     axes.plot(temps_grid, linda_loglike_grid[mock_idx, f_plot_idx, :, g_plot_idx])
 
     axes.set_ylabel('log(likelihood)')
-    axes.set_title(f'mock {mock_idx}'
+    axes.set_title(f'mock {mock_idx}')
 
 axes.set_xlabel('$T_0$ (K)')
 axes.show()
