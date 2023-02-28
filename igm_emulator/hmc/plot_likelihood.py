@@ -116,7 +116,7 @@ for mock_idx in range(n_inference):
 
     axes.set_ylabel('log(likelihood)')
     axes.set_title(f'mock {mock_idx}'
-IPython.embed()
+
 axes.set_xlabel('$T_0$ (K)')
 axes.show()
 
