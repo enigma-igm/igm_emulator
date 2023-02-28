@@ -18,23 +18,23 @@ from utils import walker_plot, corner_plot
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True, max_tree_depth=(8,10), num_warmup=1000, num_samples=1000, num_chains=4):
-'''
-Args:
-    vbins: velocity bins
-    best_params: best parameters from the neural network
-    T0s: temperature array
-    gammas: gamma array
-    fobs: frequency array
-    like_dict: dictionary containing the covariance matrix, log determinant, and inverse covariance matrix
-    dense_mass: whether to use dense mass matrix
-    max_tree_depth: maximum tree depth
-    num_warmup: number of warmup steps
-    num_samples: number of samples
-    num_chains: number of chains
+        '''
+        Args:
+            vbins: velocity bins
+            best_params: best parameters from the neural network
+            T0s: temperature array
+            gammas: gamma array
+            fobs: frequency array
+            like_dict: dictionary containing the covariance matrix, log determinant, and inverse covariance matrix
+            dense_mass: whether to use dense mass matrix
+            max_tree_depth: maximum tree depth
+            num_warmup: number of warmup steps
+        num_samples: number of samples
+                num_chains: number of chains
 
-Returns:
-    samples: samples from the posterior
-'''
+        Returns:
+            samples: samples from the posterior
+        '''
         self.vbins = vbins
         self.best_params = best_params
         self.like_dict = like_dict
@@ -50,19 +50,18 @@ Returns:
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
     @partial(jit, static_argnums=(0,))
-    def log_likelihood(self, x, flux):
-    '''
-    Args:
-        x: dimensionless parameters
-        flux: observed flux
+    def log_likelihood(self, x, corr):
+        '''
+        Args:
+            x: dimensionless parameters
+            flux: observed flux
 
-    Returns:
-        log_likelihood: log likelihood
-    '''
+        Returns:
+            log_likelihood: log likelihood
+        '''
         theta = self.x_to_theta(x)
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
-        corr = flux
         new_covariance = self.like_dict['covariance']
         log_determinant = self.like_dict['log_determinant']
 
