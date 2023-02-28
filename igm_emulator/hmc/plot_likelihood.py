@@ -55,7 +55,6 @@ Load molly likelihood grid
 fobs_grid = one_cov_dict['fobs_grid']
 gammas_grid = one_cov_dict['gammas_grid']
 temps_grid = one_cov_dict['temps_grid']
-print(fobs_grid,temps_grid,gammas_grid)
 
 molly_loglike_grid = one_cov_dict['log_likelihood_grid']
 print(molly_loglike_grid)
@@ -76,7 +75,11 @@ for mock_idx in pbar(range(n_inference)):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood([f_plot, t_plot, g_plot], flux)
+print('DONE')
 
+'''
+Plotting the likelihood grid in temperature
+'''
 x_size = 3.5
 dpi_value = 200
 plt_params = {'legend.fontsize': 7,
@@ -116,8 +119,9 @@ for mock_idx in range(n_inference):
 axes.set_xlabel('$T_0$ (K)')
 axes.show()
 save_name = f'temperature_log_like_linda'
-out_path = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
+out_path = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/inference_test/'
 slice_fig.savefig(out_path + f'{save_name}.pdf')
 dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
+print('PLOT AND LIKELIHOOD GRID SAVED')
 
 
