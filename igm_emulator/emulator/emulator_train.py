@@ -37,7 +37,7 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-dir_lhs = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID/'
+dir_lhs = '~/igm_emulator/igm_emulator/emulator/GRID/'
 
 
 X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     Save best emulated parameter
     '''
 
-    f = h5py.File(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
+    f = h5py.File(f'~/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
     group1 = f.create_group('haiku_nn')
     group1.attrs['redshift'] = redshift
     group1.attrs['adamw_decay'] = decay
@@ -181,9 +181,12 @@ if __name__ == "__main__":
     group3.create_dataset('residuals', data=delta)
     f.close()
     print("training directories and hyperparameters saved")
-    save(f'/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
+    save(f'~/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
+    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_paramss/z{redshift}_nn_savefile.hdf5', best_params)
     #IPython.embed()
-    dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params'
+    dir = '~/igm_emulator/igm_emulator/emulator/best_params'
+    dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
+    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_best_param{train_num}.p'), 'wb'))
     print("trained parameter saved")
     IPython.embed()
