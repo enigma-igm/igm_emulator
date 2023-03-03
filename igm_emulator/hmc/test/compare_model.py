@@ -125,6 +125,10 @@ if __name__ == "__main__":
 
         return model, covar, log_det
 
+    true_temp_idx = 11
+    true_gamma_idx = 4
+    true_fobs_idx = 7
+
     n_inference = 5
     run_tag = f'data_nearest_model{bin_label}'
     prior_tag = f'one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}'
@@ -154,10 +158,6 @@ if __name__ == "__main__":
         return model
 
     # read in the mock data
-    true_temp_idx = 11
-    true_gamma_idx = 4
-    true_fobs_idx = 7
-
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{skewers_per_data}{bin_label}.p'
     mocks = dill.load(open(in_path_hdf5 + mock_name, 'rb'))
 
