@@ -3,6 +3,7 @@ import jax.numpy as jnp
 import dill
 from igm_emulator.emulator.emulator_run import nn_emulator
 import matplotlib.pyplot as plt
+import h5py
 
 
 if __name__ == "__main__":
