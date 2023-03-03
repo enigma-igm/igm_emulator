@@ -20,9 +20,9 @@ from igm_emulator.emulator.emulator_run import nn_emulator
 import os
 from progressbar import ProgressBar
 import sys
-sys.path.append('~/dw_inference/dw_inference/inference')
+sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
-sys.path.append('~/wdm/correlation/')
+sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
 
 '''
@@ -35,7 +35,7 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-in_path_hdf5 = '~/igm_emulator/igm_emulator/emulator/best_params/'
+in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
 f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
 emu_name = f'{z_string}_best_param_training_768.p'
 #IPython.embed()
@@ -203,7 +203,7 @@ if __name__ == '__main__':
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
         fit_axis.legend()
-        out_path = '~/igm_emulator/igm_emulator/hmc/plots/'
+        out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
         fit_fig.savefig(out_path + f'model_fit_{note}.pdf')
         corner_fig.savefig(out_path + f'corner_{note}.pdf')
         print('Figures saved.')
