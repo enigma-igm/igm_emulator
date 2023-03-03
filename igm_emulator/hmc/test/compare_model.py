@@ -13,6 +13,20 @@ if __name__ == "__main__":
     bin_label = '_set_bins_4'
 
     in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+
+    # get initial grid
+    in_name_h5py = f'correlation_temp_fluct_skewers_{skewers_use}_R_{int(R_value)}_nf_{n_f}_dict{bin_label}.hdf5'
+    with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
+        params = dict(f['params'].attrs.items())
+
+    fobs = params['average_observed_flux']
+    R_value = params['R']
+    v_bins = params['v_bins']
+    t_0s = 10.**params['logT_0']
+    gammas = params['gamma']
+    n_f = len(fobs)
+    noise_idx = 0
+
     in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_500000_' \
                          f'P{skewers_per_data}{bin_label}_params.p'
     new_param_dict = dill.load(open(in_path_molly + in_name_new_params, 'rb'))
@@ -100,19 +114,6 @@ if __name__ == "__main__":
         log_det = fine_log_dets[temp_idx, gamma_idx, fobs_idx]
 
         return model, covar, log_det
-
-    # get initial grid
-    in_name_h5py = f'correlation_temp_fluct_skewers_{skewers_use}_R_{int(R_value)}_nf_{n_f}_dict{bin_label}.hdf5'
-    with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
-        params = dict(f['params'].attrs.items())
-
-    fobs = params['average_observed_flux']
-    R_value = params['R']
-    v_bins = params['v_bins']
-    t_0s = 10.**params['logT_0']
-    gammas = params['gamma']
-    n_f = len(fobs)
-    noise_idx = 0
 
     run_tag = f'data_nearest_model{bin_label}'
     out_file_tag = f'log_like_on_grid_{int(n_inference)}_{prior_tag}_R_{int(R_value)}_one_covariance'
