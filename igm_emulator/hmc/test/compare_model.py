@@ -136,7 +136,7 @@ if __name__ == "__main__":
     in_name_inference = f'{zstr}_{run_tag}_{out_file_tag}.hdf5'
 
     print('reading in')
-    with h5py.File(in_path_hdf5 + in_name_inference, 'r') as f:
+    with h5py.File(in_path_molly + in_name_inference, 'r') as f:
         # IPython.embed()
         true_theta = f['true_theta'][:, :]
         temps_grid = f['temps_grid'][:]
@@ -158,8 +158,8 @@ if __name__ == "__main__":
         return model
 
     # read in the mock data
-    mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{skewers_per_data}{bin_label}.p'
-    mocks = dill.load(open(in_path_hdf5 + mock_name, 'rb'))
+    mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
+    mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
 
     x_size = 3.5
     dpi_value = 200
