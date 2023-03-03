@@ -192,11 +192,11 @@ if __name__ == "__main__":
                                     dpi=dpi_value,
                                     )
     # one_correlation_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
-    grid = slice_fig.add_gridspec(
+    grid = model_fig.add_gridspec(
         nrows=1, ncols=1, # width_ratios=[20, 20, 20, 20, 20, 1],
     )
 
-    axes = slice_fig.add_subplot(grid[0])
+    axes = model_fig.add_subplot(grid[0])
 
     axes.plot(v_bins, model_molly, label='molly')
     axes.plot(v_bins, model_linda, label='linda')
