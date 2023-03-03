@@ -125,7 +125,9 @@ if __name__ == "__main__":
 
         return model, covar, log_det
 
+    n_inference = 5
     run_tag = f'data_nearest_model{bin_label}'
+    prior_tag = f'one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}'
     out_file_tag = f'log_like_on_grid_{int(n_inference)}_{prior_tag}_R_{int(R_value)}_one_covariance'
     in_name_inference = f'{zstr}_{run_tag}_{out_file_tag}.hdf5'
 
@@ -141,7 +143,7 @@ if __name__ == "__main__":
 
     # get Linda's model
     in_path_linda = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
-    emu_name = f'{z_string}_best_param_training_768.p'
+    emu_name = f'{zstr}_best_param_training_768.p'
     best_params = dill.load(open(in_path_linda + emu_name, 'rb'))
 
     linda_loglike_grid = dill.load(open(f'linda_loglike_grid_{emu_name}.p', 'rb'))
