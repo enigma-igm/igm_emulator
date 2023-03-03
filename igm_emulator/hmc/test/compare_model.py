@@ -41,6 +41,10 @@ if __name__ == "__main__":
     new_gammas = new_param_dict['new_gammas']
     new_fobs = new_param_dict['new_fobs']
 
+    n_new_t = (len(new_temps) - 1)/(len(t_0s) - 1) - 1
+    n_new_g = (len(new_gammas) - 1)/(len(gammas) - 1) - 1
+    n_new_f = (len(new_fobs) - 1)/(len(fobs) - 1) - 1
+
     new_models = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins)])
     new_covariances = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins), len(v_bins)])
     new_log_dets = np.empty([len(new_temps), len(new_gammas), len(new_fobs)])
