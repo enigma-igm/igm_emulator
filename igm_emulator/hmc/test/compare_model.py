@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
 
     # read in Molly's nearest grid models
+    zstr = 'z54'
+
     in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_{int(n_temps*n_gammas)}/'
     in_name_new_params = f'new_covariances_dict_R_{int(R_value)}_nf_{n_f}_ncovar_{n_covar}_' \
                          f'P{skewers_per_data}{bin_label}_params.p'
@@ -112,7 +114,6 @@ if __name__ == "__main__":
     skewers_per_data = 17
     bin_label = '_set_bins_4'
 
-    zstr = 'z54'
     run_tag = f'data_nearest_model{bin_label}'
     out_file_tag = f'log_like_on_grid_{int(n_inference)}_{prior_tag}_R_{int(R_value)}_one_covariance'
     in_name_inference = f'{zstr}_{run_tag}_{out_file_tag}.hdf5'
