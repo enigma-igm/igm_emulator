@@ -201,4 +201,6 @@ if __name__ == "__main__":
     axes.plot(v_bins, model_molly, label='molly')
     axes.plot(v_bins, model_linda, label='linda')
 
+    axes.legend()
+
     plt.show()
