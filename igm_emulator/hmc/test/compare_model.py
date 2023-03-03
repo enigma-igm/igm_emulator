@@ -25,7 +25,11 @@ if __name__ == "__main__":
     v_bins = params['v_bins']
     t_0s = 10.**params['logT_0']
     gammas = params['gamma']
+
+    n_temps = len(t_0s)
+    n_gammas = len(gammas)
     n_f = len(fobs)
+
     noise_idx = 0
 
     in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_500000_' \
