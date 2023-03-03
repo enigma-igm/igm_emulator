@@ -20,9 +20,9 @@ from igm_emulator.emulator.emulator_run import nn_emulator
 import os
 from progressbar import ProgressBar
 import sys
-sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
+sys.path.append('~/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
-sys.path.append('/home/zhenyujin/wdm/correlation/')
+sys.path.append('~/wdm/correlation/')
 from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
 
 '''

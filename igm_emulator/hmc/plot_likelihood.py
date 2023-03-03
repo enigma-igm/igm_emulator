@@ -15,7 +15,7 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-in_path_hdf5 = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/best_params/'
+in_path_hdf5 = '~/igm_emulator/igm_emulator/emulator/best_params/'
 f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
 emu_name = f'{z_string}_best_param_training_768.p'
 
@@ -76,7 +76,7 @@ for mock_idx in pbar(range(n_inference)):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood([f_plot, t_plot, g_plot], flux)
 print('DONE')
-out_path = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/inference_test/'
+out_path = '~/igm_emulator/igm_emulator/hmc/inference_test/'
 dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 '''
 Plotting the likelihood grid in temperature
