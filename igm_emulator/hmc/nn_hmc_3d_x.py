@@ -230,7 +230,7 @@ class NN_HMC_X:
             hmc_num_steps, hmc_tree_depth, total_time
 
     def plot_HMC(self,x_samples,theta_samples,theta,note):
-        out_prefix = '/home/zhenyujin/igm_emulator/igm_emulator/hmc/plots/'
+        out_prefix = '~/igm_emulator/igm_emulator/hmc/plots/'
         var_label = ['fobs', 'T0s', 'gammas']
         walkerfile = out_prefix + '_walkers_' + note + '.pdf'
         cornerfile = out_prefix + '_corner_' + note + '.pdf'
