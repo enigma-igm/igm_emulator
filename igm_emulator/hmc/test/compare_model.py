@@ -9,9 +9,11 @@ if __name__ == "__main__":
 
     # read in Molly's nearest grid models
     zstr = 'z54'
+    skewers_per_data = 17
+    bin_label = '_set_bins_4'
 
-    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_{int(n_temps*n_gammas)}/'
-    in_name_new_params = f'new_covariances_dict_R_{int(R_value)}_nf_{n_f}_ncovar_{n_covar}_' \
+    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+    in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_500000_' \
                          f'P{skewers_per_data}{bin_label}_params.p'
     new_param_dict = dill.load(open(in_path_molly + in_name_new_params, 'rb'))
 
@@ -111,8 +113,6 @@ if __name__ == "__main__":
     gammas = params['gamma']
     n_f = len(fobs)
     noise_idx = 0
-    skewers_per_data = 17
-    bin_label = '_set_bins_4'
 
     run_tag = f'data_nearest_model{bin_label}'
     out_file_tag = f'log_like_on_grid_{int(n_inference)}_{prior_tag}_R_{int(R_value)}_one_covariance'
