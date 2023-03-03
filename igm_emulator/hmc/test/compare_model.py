@@ -15,7 +15,7 @@ if __name__ == "__main__":
     in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
 
     # get initial grid
-    in_name_h5py = f'correlation_temp_fluct_skewers_{skewers_use}_R_30000_nf_9_dict{bin_label}.hdf5'
+    in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
     with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
         params = dict(f['params'].attrs.items())
 
