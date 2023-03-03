@@ -150,7 +150,7 @@ if __name__ == "__main__":
     emu_name = f'{zstr}_best_param_training_768.p'
     best_params = dill.load(open(in_path_linda + emu_name, 'rb'))
 
-    linda_loglike_grid = dill.load(open(f'linda_loglike_grid_{emu_name}.p', 'rb'))
+    # linda_loglike_grid = dill.load(open(f'linda_loglike_grid_{emu_name}.p', 'rb'))
 
     def get_linda_model(theta, best_params_function=best_params):
         theta_linda = (theta[2], theta[0], theta[1])
