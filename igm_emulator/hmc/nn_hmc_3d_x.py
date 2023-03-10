@@ -10,8 +10,9 @@ from numpyro.infer import MCMC, NUTS
 import arviz as az
 import time
 import IPython
-from igm_emulator.emulator.emulator_run import nn_emulator
 import sys
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_run import nn_emulator
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 
@@ -230,7 +231,6 @@ class NN_HMC_X:
             hmc_num_steps, hmc_tree_depth, total_time
 
     def plot_HMC(self,x_samples,theta_samples,theta,note):
-        out_prefix = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
         var_label = ['fobs', 'T0s', 'gammas']
         walkerfile = out_prefix + '_walkers_' + note + '.pdf'
         cornerfile = out_prefix + '_corner_' + note + '.pdf'
