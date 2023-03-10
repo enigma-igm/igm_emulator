@@ -4,6 +4,7 @@ import dill
 from igm_emulator.emulator.emulator_run import nn_emulator
 import matplotlib.pyplot as plt
 import h5py
+import IPython
 
 
 if __name__ == "__main__":
@@ -113,7 +114,7 @@ if __name__ == "__main__":
 
         scaled_value = (value - the_min_value) / the_range * (len(all_values) - 1)
 
-        nearest_idx = int(np.round(scaled_value))
+        nearest_idx = int(jnp.round(scaled_value))
 
         return nearest_idx
 
@@ -137,11 +138,11 @@ if __name__ == "__main__":
     def log_likelihood_molly(theta, corr, theta_covariance=like_dict_0['covariance'], true_log_det=like_dict_0['log_determinant']):
         # temp, g, ave_f = theta
 
-        model, covar, log_det = get_model_covar_nearest(theta)
+        model, covar, log_det = get_molly_model_covar_nearest(theta)
 
         diff = corr - model
         nbins = len(corr)
-        log_like = -(np.dot(diff, np.linalg.solve(theta_covariance, diff)) + true_log_det + nbins * np.log(2.0 * np.pi)) / 2.0
+        log_like = -(jnp.dot(diff, jnp.linalg.solve(theta_covariance, diff)) + true_log_det + nbins * jnp.log(2.0 * jnp.pi)) / 2.0
 
         return log_like
 
@@ -230,3 +231,5 @@ if __name__ == "__main__":
     axes.legend()
 
     plt.show()
+
+    IPython.embed()
