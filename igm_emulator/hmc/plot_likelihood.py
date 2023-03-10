@@ -143,7 +143,7 @@ save_name = f'temperature_log_like_linda'
 slice_fig.savefig(out_path + f'{save_name}.pdf')
 '''
 out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/test/'
-dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
+dill.dump(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 print('PLOT AND LIKELIHOOD GRID SAVED')
 
 
