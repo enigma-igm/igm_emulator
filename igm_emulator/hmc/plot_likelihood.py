@@ -94,9 +94,10 @@ for mock_idx in pbar(range(n_inference)):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood((f_plot, t_plot, g_plot), flux)
 '''
 print('DONE')
-
+print(linda_loglike_grid.shape)
 '''
 Plotting the likelihood grid in temperature
+'''
 '''
 x_size = 3.5
 dpi_value = 200
@@ -140,6 +141,8 @@ axes.show()
 out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/test/'
 save_name = f'temperature_log_like_linda'
 slice_fig.savefig(out_path + f'{save_name}.pdf')
+'''
+out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/test/'
 dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 print('PLOT AND LIKELIHOOD GRID SAVED')
 
