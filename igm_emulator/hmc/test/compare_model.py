@@ -8,6 +8,12 @@ import h5py
 
 if __name__ == "__main__":
 
+    true_temp_idx = 11
+    true_gamma_idx = 4
+    true_fobs_idx = 7
+
+    n_inference = 5
+
     # read in Molly's nearest grid models
     zstr = 'z54'
     skewers_per_data = 17
@@ -33,6 +39,9 @@ if __name__ == "__main__":
 
     noise_idx = 0
 
+    like_name_0 = f'likelihood_dicts_R_30000_nf_9_T{true_temp_idx}_G{true_gamma_idx}_SNR0_F{true_fobs_idx}_ncovar_500000_P{skewers_per_data}_set_bins_4.p'
+    like_dict_0 = dill.load(open(in_path_molly + like_name_0, 'rb'))
+
     in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{n_covar}_' \
                          f'P{skewers_per_data}{bin_label}_params.p'
     new_param_dict = dill.load(open(in_path_molly + in_name_new_params, 'rb'))
@@ -45,9 +54,9 @@ if __name__ == "__main__":
     n_new_g = (len(new_gammas) - 1)/(len(gammas) - 1) - 1
     n_new_f = (len(new_fobs) - 1)/(len(fobs) - 1) - 1
 
-    new_models = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins)])
-    new_covariances = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins), len(v_bins)])
-    new_log_dets = np.empty([len(new_temps), len(new_gammas), len(new_fobs)])
+    new_models = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins)])
+    new_covariances = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins), len(v_bins)])
+    new_log_dets = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs)])
 
     for old_t_below_idx in range(n_temps - 1):
         print(f'{old_t_below_idx / (n_temps - 1) * 100}%')
@@ -99,8 +108,8 @@ if __name__ == "__main__":
 
     def return_idx(value, all_values):
 
-        the_min_value = np.min(all_values)
-        the_range = np.max(all_values) - the_min_value
+        the_min_value = jnp.min(all_values)
+        the_range = jnp.max(all_values) - the_min_value
 
         scaled_value = (value - the_min_value) / the_range * (len(all_values) - 1)
 
@@ -125,11 +134,18 @@ if __name__ == "__main__":
 
         return model, covar, log_det
 
-    true_temp_idx = 11
-    true_gamma_idx = 4
-    true_fobs_idx = 7
+    def log_likelihood_molly(theta, corr, theta_covariance=like_dict_0['covariance'], true_log_det=like_dict_0['log_determinant']):
+        # temp, g, ave_f = theta
 
-    n_inference = 5
+        model, covar, log_det = get_model_covar_nearest(theta)
+
+        diff = corr - model
+        nbins = len(corr)
+        log_like = -(np.dot(diff, np.linalg.solve(theta_covariance, diff)) + true_log_det + nbins * np.log(2.0 * np.pi)) / 2.0
+
+        return log_like
+
+
     run_tag = f'data_nearest_model{bin_label}'
     prior_tag = f'one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}'
     out_file_tag = f'log_like_on_grid_{int(n_inference)}_{prior_tag}_R_{int(R_value)}_one_covariance'
@@ -150,12 +166,22 @@ if __name__ == "__main__":
     emu_name = f'{zstr}_best_param_training_768.p'
     best_params = dill.load(open(in_path_linda + emu_name, 'rb'))
 
+    nn_x = NN_HMC_X(v_bins, best_params, t_0s, gammas, fobs, like_dict_0)
+
     # linda_loglike_grid = dill.load(open(f'linda_loglike_grid_{emu_name}.p', 'rb'))
 
     def get_linda_model(theta, best_params_function=best_params):
         theta_linda = (theta[2], theta[0], theta[1])
         model = nn_emulator(best_params_function, theta_linda)
         return model
+
+
+    def log_likelihood_linda(theta, corr):
+        theta_linda = (theta[2], theta[0], theta[1])
+
+        ll_linda = nn_x.log_likelihood(theta_linda, corr)
+
+        return ll_linda
 
     # read in the mock data
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
