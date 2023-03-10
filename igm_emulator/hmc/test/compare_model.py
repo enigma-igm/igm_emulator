@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import h5py
 import IPython
 from nn_hmc_3d_x import NN_HMC_X
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
 
 
 if __name__ == "__main__":
