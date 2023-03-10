@@ -116,9 +116,9 @@ if __name__ == "__main__":
         return nearest_idx
 
 
-    def get_molly_model_covar_nearest(theta,
+    def get_molly_model_nearest(theta,
                                       fine_temps=new_temps, fine_gammas=new_gammas, fine_fobs=new_fobs,
-                                      fine_models=new_models, fine_covars=new_covariances, fine_log_dets=new_log_dets):
+                                      fine_models=new_models):
 
         temp, gamma, ave_f = theta
 
@@ -127,15 +127,13 @@ if __name__ == "__main__":
         fobs_idx = return_idx(ave_f, fine_fobs)
 
         model = fine_models[temp_idx, gamma_idx, fobs_idx, :]
-        covar = fine_covars[temp_idx, gamma_idx, fobs_idx, :, :]
-        log_det = fine_log_dets[temp_idx, gamma_idx, fobs_idx]
 
-        return model, covar, log_det
+        return model
 
     def log_likelihood_molly(theta, corr, theta_covariance=like_dict_0['covariance'], true_log_det=like_dict_0['log_determinant']):
         # temp, g, ave_f = theta
 
-        model, covar, log_det = get_molly_model_covar_nearest(theta)
+        model = get_molly_model_nearest(theta)
 
         diff = corr - model
         nbins = len(corr)
@@ -209,7 +207,7 @@ if __name__ == "__main__":
 
     theta_want = (temperature_want, gammas[true_gamma_idx], fobs[true_fobs_idx])
 
-    model_molly, covar_molly, log_det_molly = get_molly_model_covar_nearest(theta_want)
+    model_molly = get_molly_model_nearest(theta_want)
     model_linda = get_linda_model(theta_want)
 
     model_fig = plt.figure(figsize=(x_size, x_size*.77*.5), constrained_layout=True,
