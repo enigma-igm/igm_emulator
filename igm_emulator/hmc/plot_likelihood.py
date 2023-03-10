@@ -73,16 +73,25 @@ Compute likelihood in the same grid
 nn_x = NN_HMC_X(vbins,best_params,T0s,gammas,fobs,like_dict)
 x_true = nn_x.theta_to_x(theta_true)
 n_inference = 5
-linda_loglike_grid = np.empty([n_inference, len(fobs_grid), len(temps_grid), len(gammas_grid)])
+linda_loglike_grid = np.zeros([n_inference, len(fobs_grid), len(temps_grid), len(gammas_grid)])
 pbar = ProgressBar()
 print("START RUNNING")
 
+g_plot_idx = int(np.floor(len(gammas_grid)/2.))
+f_plot_idx = int(np.floor(len(fobs_grid)/2.))
+for mock_idx in pbar(range(n_inference)):
+    flux = mocks[mock_idx, :]
+    for t_plot_idx, t_plot in enumerate(temps_grid):
+        linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] = nn_x.log_likelihood((fobs_grid[f_plot_idx], t_plot, gammas_grid[g_plot_idx]),
+                                                                                               flux)
+'''
 for mock_idx in pbar(range(n_inference)):
     flux = mocks[mock_idx, :]
     for f_plot_idx, f_plot in enumerate(fobs_grid):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood((f_plot, t_plot, g_plot), flux)
+'''
 print('DONE')
 
 '''
