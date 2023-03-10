@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 import dill
 import numpy as np
-from igm_emulator.emulator.plotVis import v_bins
 import h5py
 from nn_hmc_3d_x import NN_HMC_X
 from progressbar import ProgressBar
@@ -24,9 +21,18 @@ emu_name = f'{z_string}_best_param_training_768.p'
 in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
 n_path = n_paths[z_idx]
-vbins = v_bins
 param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
 param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+
+R_value = 30000.
+skewers_use = 2000
+n_flux = 9
+bin_label = '_set_bins_4'
+added_label = ''
+temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
+with h5py.File(in_path + temp_param_dict_name, 'r') as f:
+    params = dict(f['params'].attrs.items())
+vbins = params['v_bins']
 
 fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
 log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
@@ -59,14 +65,13 @@ gammas_grid = one_cov_dict['gammas_grid']
 temps_grid = one_cov_dict['temps_grid']
 
 molly_loglike_grid = one_cov_dict['log_likelihood_grid']
-print(molly_loglike_grid)
 
 '''
 Compute likelihood in the same grid
 '''
 nn_x = NN_HMC_X(vbins,best_params,T0s,gammas,fobs,like_dict)
 x_true = nn_x.theta_to_x(theta_true)
-n_inference = 1
+n_inference = 5
 linda_loglike_grid = np.empty([n_inference, len(fobs_grid), len(temps_grid), len(gammas_grid)])
 pbar = ProgressBar()
 print("START RUNNING")
@@ -76,10 +81,9 @@ for mock_idx in pbar(range(n_inference)):
     for f_plot_idx, f_plot in enumerate(fobs_grid):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
-                        linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood([f_plot, t_plot, g_plot], flux)
+                        linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood((f_plot, t_plot, g_plot), flux)
 print('DONE')
-out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/inference_test/'
-dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
+
 '''
 Plotting the likelihood grid in temperature
 '''
@@ -122,10 +126,10 @@ for mock_idx in range(n_inference):
 axes.set_xlabel('$T_0$ (K)')
 axes.show()
 
+out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/test/'
 save_name = f'temperature_log_like_linda'
 slice_fig.savefig(out_path + f'{save_name}.pdf')
 dill.save(linda_loglike_grid, open(out_path + f'linda_loglike_grid_{emu_name}.p', 'wb'))
 print('PLOT AND LIKELIHOOD GRID SAVED')
 
 
->>>>>>> parent of 027c45f... edit plot_likelihood
