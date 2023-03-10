@@ -55,9 +55,7 @@ if __name__ == "__main__":
     n_new_g = (len(new_gammas) - 1)/(len(gammas) - 1) - 1
     n_new_f = (len(new_fobs) - 1)/(len(fobs) - 1) - 1
 
-    new_models = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins)])
-    new_covariances = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins), len(v_bins)])
-    new_log_dets = jnp.empty([len(new_temps), len(new_gammas), len(new_fobs)])
+    new_models_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(v_bins)])
 
     for old_t_below_idx in range(n_temps - 1):
         print(f'{old_t_below_idx / (n_temps - 1) * 100}%')
@@ -102,10 +100,9 @@ if __name__ == "__main__":
                             final_g_idx = int((old_g_below_idx * (n_new_g + 1)) + added_g_idx)
                             final_f_idx = int((old_f_below_idx * (n_new_f + 1)) + added_f_idx)
 
-                            new_models[final_t_idx, final_g_idx, final_f_idx, :] = new_models_small[added_t_idx, added_g_idx, added_f_idx, :]
-                            new_covariances[final_t_idx, final_g_idx, final_f_idx, :, :] = new_covariances_small[added_t_idx, added_g_idx, added_f_idx, :, :]
-                            new_log_dets[final_t_idx, final_g_idx, final_f_idx] = new_log_dets_small[added_t_idx, added_g_idx, added_f_idx]
+                            new_models_np[final_t_idx, final_g_idx, final_f_idx, :] = new_models_small[added_t_idx, added_g_idx, added_f_idx, :]
 
+    new_models = jnp.array(new_models_np)
 
     def return_idx(value, all_values):
 
