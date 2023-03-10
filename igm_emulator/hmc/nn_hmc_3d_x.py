@@ -10,6 +10,7 @@ from numpyro.infer import MCMC, NUTS
 import arviz as az
 import time
 import IPython
+import os
 import sys
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_run import nn_emulator
