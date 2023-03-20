@@ -90,7 +90,7 @@ for mock_idx in pbar(range(n_inference)):
 '''
 for mock_idx in pbar(range(n_inference)):
     flux = mocks[mock_idx, :]
-    for f_plot_idx, f_plot in enumerate(tdqm(fobs_grid)):
+    for f_plot_idx, f_plot in enumerate(tqdm(fobs_grid)):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood((f_plot, t_plot, g_plot), flux)
