@@ -3,7 +3,7 @@ import numpy as np
 import h5py
 from nn_hmc_3d_x import NN_HMC_X
 from progressbar import ProgressBar
-import tdqm
+from tqdm import tqdm
 import os
 import matplotlib.pyplot as plt
 import IPython
