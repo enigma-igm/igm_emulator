@@ -118,8 +118,8 @@ if __name__ == '__main__':
         corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                    truths=np.array(theta_true), truth_color='red', show_titles=True,
                                    title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
-                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_args=dict(normed=True))
-        corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_args=dict(normed=True))
+                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+        corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
         plt_params = {'legend.fontsize': 7,
                       'legend.frameon': False,
                       'axes.labelsize': 12,
