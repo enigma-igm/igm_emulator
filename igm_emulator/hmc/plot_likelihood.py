@@ -3,6 +3,7 @@ import numpy as np
 import h5py
 from nn_hmc_3d_x import NN_HMC_X
 from progressbar import ProgressBar
+import tdqm
 import os
 import matplotlib.pyplot as plt
 import IPython
@@ -89,7 +90,7 @@ for mock_idx in pbar(range(n_inference)):
 '''
 for mock_idx in pbar(range(n_inference)):
     flux = mocks[mock_idx, :]
-    for f_plot_idx, f_plot in enumerate(fobs_grid):
+    for f_plot_idx, f_plot in enumerate(tdqm(fobs_grid)):
         for t_plot_idx, t_plot in enumerate(temps_grid):
                 for g_plot_idx, g_plot in enumerate(gammas_grid):
                         linda_loglike_grid[mock_idx, f_plot_idx, t_plot_idx, g_plot_idx] =  nn_x.log_likelihood((f_plot, t_plot, g_plot), flux)
