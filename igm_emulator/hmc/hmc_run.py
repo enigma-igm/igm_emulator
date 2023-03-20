@@ -95,10 +95,10 @@ if __name__ == '__main__':
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
-    n_inference = 5
+    n_inference = 2
     pbar = ProgressBar()
-    for mock_idx in pbar(range(5)):
-        note = f"jit_2000_4_test13_compare_molly_mock{mock_idx}"
+    for mock_idx in pbar(range(n_inference)):
+        note = f"jit_2000_4_test14_compare_molly_mock{mock_idx}_normalize"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
@@ -118,8 +118,8 @@ if __name__ == '__main__':
         corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                    truths=np.array(theta_true), truth_color='red', show_titles=True,
                                    title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
-                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, )
-        corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue')
+                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_args=dict(normed=True))
+        corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_args=dict(normed=True))
         plt_params = {'legend.fontsize': 7,
                       'legend.frameon': False,
                       'axes.labelsize': 12,
