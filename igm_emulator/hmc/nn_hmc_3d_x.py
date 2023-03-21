@@ -3,6 +3,7 @@ config.update("jax_enable_x64", True)
 import numpy as np
 import jax.numpy as jnp
 import jax
+import h5py
 import jax.random as random
 from jax import jit
 from functools import partial
