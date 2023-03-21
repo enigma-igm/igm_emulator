@@ -95,7 +95,7 @@ if __name__ == '__main__':
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
-    n_inference = 2
+    n_inference = 5
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
         note = f"jit_2000_4_test14_compare_molly_mock{mock_idx}_normalize"
@@ -104,6 +104,9 @@ if __name__ == '__main__':
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
+        nn_x.save_HMC(z_string,mock_idx,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
+                 hmc_num_steps, hmc_tree_depth, total_time)
+
         y_error = np.sqrt(np.diag(new_covariance))
         molly_sample = molly_model['samples'][mock_idx, :, :]
         molly_flip = np.zeros(shape=molly_sample.shape)

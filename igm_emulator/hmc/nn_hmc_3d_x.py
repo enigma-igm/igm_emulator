@@ -242,3 +242,25 @@ class NN_HMC_X:
         corner_plot(theta_samples, var_label,
                     theta_true=jnp.asarray(theta),
                     cornerfile=cornerfile)
+
+    def save_HMC(self,zstr,mock_idx,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
+                 hmc_num_steps, hmc_tree_depth, total_time):
+        # Save the results
+        with h5py.File('/mnt/quasar2/zhenyujin/igm_emulator/hmc' + f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_hmc_results_mock{mock_idx}.hdf5', 'a') as f:
+            f.create_dataset('x_samples', data=x_samples)
+            f.create_dataset('theta_samples', data=theta_samples)
+            f.create_dataset('lnP', data=lnP)
+            f.create_dataset('neff', data=neff)
+            f.create_dataset('neff_mean', data=neff_mean)
+            f.create_dataset('sec_per_neff', data=sec_per_neff)
+            f.create_dataset('ms_per_step', data=ms_per_step)
+            f.create_dataset('r_hat', data=r_hat)
+            f.create_dataset('r_hat_mean', data=r_hat_mean)
+            f.create_dataset('hmc_num_steps', data=hmc_num_steps)
+            f.create_dataset('hmc_tree_depth', data=hmc_tree_depth)
+            f.create_dataset('total_time', data=total_time)
+            f.create_dataset('f_infer', data=f_mcmc)
+            f.create_dataset('t_infer', data=t_mcmc)
+            f.create_dataset('g_infer', data=g_mcmc)
+            f.close()
+            print(f"hmc results saved for mock {mock_idx} corr")
