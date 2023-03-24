@@ -6,6 +6,9 @@ config.update("jax_enable_x64", True)
 from typing import Callable, Iterable, Optional
 import optax
 import itertools
+import struct
+
+print(struct.calcsize("P") * 8)
 
 output_size=[100,100,100,276]
 activation= jax.nn.leaky_relu
