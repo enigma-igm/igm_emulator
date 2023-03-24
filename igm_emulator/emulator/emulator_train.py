@@ -9,9 +9,13 @@ import optax
 from tqdm import trange
 from jax.config import config
 from sklearn.metrics import r2_score
-from igm_emulator.emulator.haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
-from igm_emulator.scripts.pytree_h5py import save, load
-from igm_emulator.emulator.plotVis import *
+import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
+from plotVis import *
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
+from pytree_h5py import save, load
 import h5py
 import IPython
 

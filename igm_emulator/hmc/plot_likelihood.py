@@ -74,7 +74,7 @@ Compute likelihood in the same grid
 '''
 nn_x = NN_HMC_X(vbins,best_params,T0s,gammas,fobs,like_dict)
 x_true = nn_x.theta_to_x(theta_true)
-n_inference = 5
+n_inference = 1
 linda_loglike_grid = np.zeros([n_inference, len(fobs_grid), len(temps_grid), len(gammas_grid)])
 pbar = ProgressBar()
 print("START RUNNING")
