@@ -75,7 +75,7 @@ class NN_HMC_X:
         log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
             2.0 * jnp.pi)) / 2.0
         #print(f'Log_likelihood={log_like}')
-        return log_like
+        return diff, log_like
 
     @partial(jit, static_argnums=(0,))
     def _theta_to_x(self,theta): #theta is in physical dimension
