@@ -18,7 +18,7 @@ from emulator_run import nn_emulator
 #sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
 #from utils import walker_plot, corner_plot
 import struct
-print(struct.calcsize("P") * 8 + "-bit")
+print(struct.calcsize("P") * 8)
 
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
