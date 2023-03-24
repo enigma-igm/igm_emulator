@@ -15,8 +15,8 @@ import os
 import sys
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_run import nn_emulator
-sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
-from utils import walker_plot, corner_plot
+#sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
+#from utils import walker_plot, corner_plot
 import struct
 print(struct.calcsize("P") * 8 + "-bit")
 
