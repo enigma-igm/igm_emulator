@@ -1,4 +1,6 @@
-from igm_emulator.emulator.emulator_train import custom_forward
+import sys
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_train import custom_forward
 import h5py
 import numpy as np
 import dill
