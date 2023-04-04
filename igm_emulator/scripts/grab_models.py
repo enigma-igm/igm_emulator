@@ -4,7 +4,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 import dill
 from astropy.table import Table
-from igm_emulator.emulator.utils import lhs
+import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from utils import lhs
 
 
 def param_transform(x, mins, maxs):
