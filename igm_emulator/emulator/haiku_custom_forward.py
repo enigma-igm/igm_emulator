@@ -11,9 +11,9 @@ import struct
 print(struct.calcsize("P") * 8)
 
 #smaller bins
-output_size=[100,100,100,59]
+#output_size=[100,100,100,59]
 #larger bins
-#output_size=[100,100,100,276]
+output_size=[100,100,100,276]
 activation= jax.nn.leaky_relu
 l2 =0.0001
 '''
