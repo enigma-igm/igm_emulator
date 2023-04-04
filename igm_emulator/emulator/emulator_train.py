@@ -33,9 +33,9 @@ dtype=jnp.float64
 Load Train and Test Data
 '''
 redshift = 5.4 #choose redshift from
-train_num = '_training_768'
-test_num = '_test_89'
-vali_num = '_vali_358'
+train_num = '_training_768_bin59'
+test_num = '_test_89_bin59'
+vali_num = '_vali_358_bin59'
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     Save best emulated parameter
     '''
 
-    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
+    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'w')
     group1 = f.create_group('haiku_nn')
     group1.attrs['redshift'] = redshift
     group1.attrs['adamw_decay'] = decay
@@ -185,12 +185,12 @@ if __name__ == "__main__":
     group3.create_dataset('residuals', data=delta)
     f.close()
     print("training directories and hyperparameters saved")
-    save(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', best_params)
-    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_paramss/z{redshift}_nn_savefile.hdf5', best_params)
+    save(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', best_params)
+    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_paramss/z{redshift}_nn_bin59_savefile.hdf5', best_params)
     #IPython.embed()
     dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
     dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
     dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_best_param{train_num}.p'), 'wb'))
-    print("trained parameter saved")
+    print("trained parameter for smaller bins saved")
     IPython.embed()
