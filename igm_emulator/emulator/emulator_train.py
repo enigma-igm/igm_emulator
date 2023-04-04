@@ -186,7 +186,7 @@ if __name__ == "__main__":
     f.close()
     print("training directories and hyperparameters saved")
     save(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', best_params)
-    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_paramss/z{redshift}_nn_bin59_savefile.hdf5', best_params)
+    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', best_params)
     #IPython.embed()
     dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
     dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
