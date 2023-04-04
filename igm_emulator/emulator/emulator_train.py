@@ -132,13 +132,13 @@ if __name__ == "__main__":
     Prediction overplots: Training And Test
     '''
     preds = custom_forward.apply(params=best_params, x=X_train)
-    train_overplot(preds,X,Y,meanY,stdY)
+    #train_overplot(preds,X,Y,meanY,stdY)
 
     test_preds = custom_forward.apply(params, X_test)
     test_loss = loss_fn(params, X_test, Y_test)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
-    test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    #test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
     '''
     Accuracy + Results
     '''
@@ -146,9 +146,9 @@ if __name__ == "__main__":
     print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
     print(f'accuracy: {jnp.mean(delta)*100}')
 
-    plot_residue(delta)
-    bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
-    plot_error_distribution(delta)
+    #plot_residue(delta)
+    #bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
+    #plot_error_distribution(delta)
 
     '''
     Save best emulated parameter
@@ -193,4 +193,3 @@ if __name__ == "__main__":
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))
     dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")
-    IPython.embed()
