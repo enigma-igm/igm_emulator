@@ -1,4 +1,7 @@
-from igm_emulator.scripts.grab_models import param_transform
+import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
+from grab_models import param_transform
 import dill
 import os
 import numpy as np
