@@ -4,7 +4,10 @@ import collections
 import h5py
 import jax
 import numpy as np
-from igm_emulator.emulator.haiku_custom_forward import _custom_forward_fn
+import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from haiku_custom_forward import _custom_forward_fn
 import haiku as hk
 
 def save(filepath, tree):
