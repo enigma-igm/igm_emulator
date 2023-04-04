@@ -6,21 +6,27 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 
 # redshift to get models for -- can make this an input to this script if desired
-num = '1'
-redshift = 5.6
+num = 'bin59'
+redshift = 5.4
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
-n_path = n_paths[z_idx]
+#smaller bins
+n_path = 20
+#larger bins
+#n_path = n_paths[z_idx]
 
 # read in the parameter grid at given z
 param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
 param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
 # get the path to the autocorrelation function results from the simulations
-in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+#smaller bins
+in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+#larger bins
+#in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
 fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI -9
 log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation -15
@@ -71,7 +77,10 @@ for sample_idx, sample in enumerate(sample_params):
     final_samples[sample_idx, 2] = gammas[gamma_idx]
 
     # get the corresponding model autocorrelation for each parameter location
-    like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+    #smaller bins
+    like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_3.p'
+    #larger bins
+    #like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
     like_dict = dill.load(open(in_path + like_name, 'rb'))
     model_autocorrelation = like_dict['mean_data']
     if sample_idx == 0:
@@ -126,7 +135,10 @@ for idx, data in enumerate(all_data):
         gamma_idx = np.argmin(np.abs(gammas - data[2]))
 
         # get the corresponding model autocorrelation for each parameter location
-        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+        #smaller bins
+        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_3.p'
+        #larger bins
+        #like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
         like_dict = dill.load(open(in_path + like_name, 'rb'))
         model_autocorrelation = like_dict['mean_data']
         test_corr.append(model_autocorrelation)

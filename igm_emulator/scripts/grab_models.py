@@ -38,7 +38,8 @@ if __name__ == '__main__':
     z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
     z_string = z_strings[z_idx]
     n_paths = np.array([17, 16, 16, 15, 15, 15, 14])
-    n_path = n_paths[z_idx]
+    n_path = 20
+    #n_path = n_paths[z_idx]
 
     # read in the parameter grid at given z
     param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
@@ -50,7 +51,10 @@ if __name__ == '__main__':
     gammas = param_dict['gammas']  # gamma from temperature - density relation
 
     # get the path to the autocorrelation function results from the simulations
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+    #in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+    #smaller bins
+    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+
 
     seed = 12345
     # random number generator
@@ -78,7 +82,8 @@ if __name__ == '__main__':
         final_samples[sample_idx, 2] = gammas[gamma_idx]
 
         # get the corresponding model autocorrelation for each parameter location
-        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+        #smaller bin 4 -> 3
+        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_3.p'
         like_dict = dill.load(open(in_path + like_name, 'rb'))
         model_autocorrelation = like_dict['mean_data']
         if sample_idx == 0:
