@@ -23,7 +23,7 @@ if small_bin_bool==True:
 else:
     f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
     emu_name = f'{z_string}_best_param_training_768.p'
-
+print(f.keys())
 meanX = np.asarray(f['data']['meanX'])
 stdX = np.asarray(f['data']['stdX'])
 meanY = np.asarray(f['data']['meanY'])
