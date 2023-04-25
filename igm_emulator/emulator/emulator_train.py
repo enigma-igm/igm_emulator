@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2
+from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -23,6 +23,7 @@ max_grad_norm = 0.1
 n_epochs = 1000
 lr = 1e-3
 decay = 5e-3
+print(f'Training for small bin: {small_bin_bool}')
 print(f'Layers: {output_size}')
 print(f'Activation: {activation}')
 print(f'L2 regularization lambda: {l2}')
@@ -33,9 +34,16 @@ dtype=jnp.float64
 Load Train and Test Data
 '''
 redshift = 5.4 #choose redshift from
-train_num = '_training_768_bin59'
-test_num = '_test_89_bin59'
-vali_num = '_vali_358_bin59'
+
+if small_bin_bool==True:
+    train_num = '_training_768_bin59'
+    test_num = '_test_89_bin59'
+    vali_num = '_vali_358_bin59'
+else:
+    train_num = '_training_768'
+    test_num = '_test_89'
+    vali_num = '_vali_358'
+
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -153,8 +161,11 @@ if __name__ == "__main__":
     '''
     Save best emulated parameter
     '''
-
-    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'w')
+    #small bin size
+    if small_bin_bool==True:
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'w')
+    else:
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
     group1 = f.create_group('haiku_nn')
     group1.attrs['redshift'] = redshift
     group1.attrs['adamw_decay'] = decay
@@ -185,9 +196,7 @@ if __name__ == "__main__":
     group3.create_dataset('residuals', data=delta)
     f.close()
     print("training directories and hyperparameters saved")
-    save(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', best_params)
-    save(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', best_params)
-    #IPython.embed()
+
     dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
     dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_best_param{train_num}.p'), 'wb'))

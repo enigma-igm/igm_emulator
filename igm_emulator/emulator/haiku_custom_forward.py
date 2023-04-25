@@ -7,13 +7,17 @@ from typing import Callable, Iterable, Optional
 import optax
 import itertools
 import struct
-
 print(struct.calcsize("P") * 8)
 
-#smaller bins
-#output_size=[100,100,100,59]
-#larger bins
-output_size=[100,100,100,276]
+
+small_bin_bool = True
+if small_bin_bool==True:
+    #smaller bins
+    output_size=[100,100,100,59]
+else:
+    #larger bins
+    output_size=[100,100,100,276]
+
 activation= jax.nn.leaky_relu
 l2 =0.0001
 '''
