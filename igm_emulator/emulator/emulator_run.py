@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_train import custom_forward
+from haiku_custom_forward import small_bin_bool
 import h5py
 import numpy as np
 import dill
@@ -16,8 +17,12 @@ z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
-f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
-emu_name = f'{z_string}_best_param_training_768.p'
+if small_bin_bool==True:
+    f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_bin59_savefile.hdf5', 'r')
+    emu_name = f'{z_string}_best_param_training_768_bin59.p'
+else:
+    f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
+    emu_name = f'{z_string}_best_param_training_768.p'
 
 meanX = np.asarray(f['data']['meanX'])
 stdX = np.asarray(f['data']['stdX'])
