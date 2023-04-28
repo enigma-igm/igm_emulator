@@ -18,7 +18,7 @@ import h5py
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from emulator_run import nn_emulator,small_bin_bool,activation,output_size,l2
+from emulator_run import nn_emulator,small_bin_bool
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
