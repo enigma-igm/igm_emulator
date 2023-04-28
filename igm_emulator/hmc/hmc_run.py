@@ -29,7 +29,7 @@ from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_c
 load model and auto-corr
 '''
 redshift = 5.4
-
+test_id = 14
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     n_inference = 5
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
-        note = f"jit_2000_4_test14_compare_molly_mock{mock_idx}_normalize"
+        note = f"jit_2000_4_test{test_id}_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
