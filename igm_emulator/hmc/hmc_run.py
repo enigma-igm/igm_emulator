@@ -22,7 +22,6 @@ from emulator_run import nn_emulator,small_bin_bool
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
-from utils import walker_plot, corner_plot
 sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
 
