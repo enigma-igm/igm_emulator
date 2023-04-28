@@ -182,18 +182,17 @@ if __name__ == '__main__':
         inferred_model_plot = nn_emulator(best_params, [f_mcmc[0], t_mcmc[0], g_mcmc[0]])
         max_P_model = nn_emulator(best_params, theta_samples[max_P_idx, :][0])
         mean_flux = like_dict['mean_data']
-        fit_axis.plot(v_bins, inferred_model_plot, c="r", label='Inferred Model', zorder=5, lw=1,
+        fit_axis.plot(vbins, inferred_model_plot, c="r", label='Inferred Model', zorder=5, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        fit_axis.plot(v_bins, mean_flux, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
+        fit_axis.plot(vbins, mean_flux, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
-        fit_axis.plot(v_bins, max_P_model, c="gold", label='Max Probability Model', zorder=3, lw=1,
+        fit_axis.plot(vbins, max_P_model, c="gold", label='Max Probability Model', zorder=3, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        fit_axis.errorbar(v_bins, flux,
+        fit_axis.errorbar(vbins, flux,
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=1, capsize=0,
                           label='Mock Data')
-        fit_axis.plot(v_bins, molly_infer, c="m", label='Old Model', zorder=4, lw=1,
-                      path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+        #fit_axis.plot(vbins, molly_infer, c="m", label='Old Model', zorder=4, lw=1, path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.text(
             500, 0.0248,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
