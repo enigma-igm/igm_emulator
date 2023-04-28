@@ -84,7 +84,7 @@ mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 
-in_path_model = f'/mnt/quasar2/mawolfson/nn_data/nn_data/{z_string}/final_135/'
+in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
 molly_model = h5py.File(in_path_model + molly_name, 'r')
 
