@@ -15,8 +15,7 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 import corner
 import h5py
-from igm_emulator.emulator.plotVis import v_bins
-from igm_emulator.emulator.emulator_run import nn_emulator
+from igm_emulator.emulator.emulator_run import nn_emulator,small_bin_bool,activation,output_size,l2
 import os
 from progressbar import ProgressBar
 import sys
@@ -30,6 +29,11 @@ load model and auto-corr
 '''
 redshift = 5.4
 test_id = 14
+
+T0_idx = 11 #0-14
+g_idx = 4 #0-8
+f_idx = 7 #0-8
+
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -37,7 +41,10 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
 in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
 f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
-emu_name = f'{z_string}_best_param_training_768.p'
+if small_bin_bool==True:
+    emu_name = f'{z_string}_best_param_training_768_bin59.p'
+else:
+    emu_name = f'{z_string}_best_param_training_768.p'
 #IPython.embed()
 
 best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
@@ -46,25 +53,33 @@ stdX = np.asarray(f['data']['stdX'])
 meanY = np.asarray(f['data']['meanY'])
 stdY =  np.asarray(f['data']['stdY'])
 
-in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
-n_path = n_paths[z_idx]
-vbins = v_bins
-param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
-param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+if small_bin_bool==True:
+    n_path = 20  # 17->20
+    n_covar = 500000
+    bin_label = '_set_bins_3'
+    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+else:
+    #n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
+    #n_path = n_paths[z_idx]
+    n_path = 17
+    n_covar = 500000
+    bin_label = '_set_bins_4'
+    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
-fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI
-log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation
-T0s = np.power(10,log_T0s)
-gammas = param_dict['gammas']  # gamma from temperature - density relation
+in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
+with h5py.File(in_path + in_name_h5py, 'r') as f:
+    params = dict(f['params'].attrs.items())
+fobs = params['average_observed_flux']
+R_value = params['R']
+vbins = params['v_bins']
+T0s = 10. ** params['logT_0']
+gammas = params['gamma']
+n_f = len(fobs)
 
-T0_idx = 11 #0-14
-g_idx = 4 #0-8
-f_idx = 7 #0-8
-
-like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+noise_idx = 0
+like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
-mock_name = f'mocks_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_P{n_path}_set_bins_4.p'
+mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 
