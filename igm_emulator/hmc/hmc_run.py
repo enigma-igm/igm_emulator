@@ -15,10 +15,12 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 import corner
 import h5py
-from igm_emulator.emulator.emulator_run import nn_emulator,small_bin_bool,activation,output_size,l2
-import os
-from progressbar import ProgressBar
 import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_run import nn_emulator,small_bin_bool,activation,output_size,l2
+print(f'Training for small bin: {small_bin_bool}')
+from progressbar import ProgressBar
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
 sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
