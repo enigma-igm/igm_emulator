@@ -10,7 +10,7 @@ import struct
 print(struct.calcsize("P") * 8)
 
 
-small_bin_bool = False
+small_bin_bool = True
 if small_bin_bool==True:
     #smaller bins
     output_size=[100,100,100,59]
