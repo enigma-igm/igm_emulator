@@ -29,7 +29,7 @@ from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_c
 load model and auto-corr
 '''
 redshift = 5.4
-test_id = 14
+test_id = 15
 
 T0_idx = 11 #0-14
 g_idx = 4 #0-8
@@ -84,8 +84,9 @@ mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 
+in_path_model = f'/mnt/quasar2/mawolfson/nn_data/nn_data/{z_string}/final_135/'
 molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
-molly_model = h5py.File(in_path + molly_name, 'r')
+molly_model = h5py.File(in_path_model + molly_name, 'r')
 
 mock_flux = mocks[0:5,:]
 mean_flux = like_dict['mean_data']
@@ -114,7 +115,7 @@ if __name__ == '__main__':
     n_inference = 5
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
-        note = f"jit_2000_4_test{test_id}_compare_molly_mock{mock_idx}"
+        note = f"jit_2000_4_test{test_id}_small_bins_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
