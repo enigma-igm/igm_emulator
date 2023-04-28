@@ -171,10 +171,10 @@ if __name__ == '__main__':
             molly, co, log_d = get_model_covar_nearest(molly_sample[ind])
             if idx == 0:
                 fit_axis.plot(vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
-                fit_axis.plot(vbins, molly, c="yellow", lw=.7, alpha=0.1, zorder=1, label='Old Posterior Draws')
+                #fit_axis.plot(vbins, molly, c="yellow", lw=.7, alpha=0.1, zorder=1, label='Old Posterior Draws')
             else:
                 fit_axis.plot(vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
-                fit_axis.plot(vbins, molly, c="yellow", lw=.7, alpha=0.1, zorder=1)
+                #fit_axis.plot(vbins, molly, c="yellow", lw=.7, alpha=0.1, zorder=1)
         max_P = max(lnP)
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
         print(f'max_P:{theta_samples[max_P_idx, :][0]}')
