@@ -247,10 +247,10 @@ class NN_HMC_X:
                     theta_true=jnp.asarray(theta),
                     cornerfile=cornerfile)
 
-    def save_HMC(self,zstr,mock_idx,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
+    def save_HMC(self,zstr,note,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time):
         # Save the results
-        with h5py.File('/mnt/quasar2/zhenyujin/igm_emulator/hmc' + f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_hmc_results_mock{mock_idx}.hdf5', 'w') as f:
+        with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{note}_hmc_results.hdf5', 'w') as f:
             f.create_dataset('x_samples', data=x_samples)
             f.create_dataset('theta_samples', data=theta_samples)
             f.create_dataset('lnP', data=lnP)
@@ -267,4 +267,4 @@ class NN_HMC_X:
             f.create_dataset('t_infer', data=t_mcmc)
             f.create_dataset('g_infer', data=g_mcmc)
             f.close()
-        print(f"hmc results saved for mock {mock_idx} corr")
+        print(f"hmc results saved for {note}")
