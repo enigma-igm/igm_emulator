@@ -209,12 +209,12 @@ if __name__ == '__main__':
 
         fit_axis.text(
             1510, 0.026,
-            tabulate([[r' $R_2$', np.round(r2_score(flux, molly_infer), decimals=4),
+            tabulate([[r' $R_2$', #np.round(r2_score(flux, molly_infer), decimals=4),
                        np.round(r2_score(flux, max_P_model), decimals=4)],
-                      ['MSE', np.format_float_scientific(mean_squared_error(flux, molly_infer), precision=3),
+                      ['MSE', #np.format_float_scientific(mean_squared_error(flux, molly_infer), precision=3),
                        np.format_float_scientific(mean_squared_error(flux, max_P_model), precision=3)],
-                      ['Distance', np.format_float_scientific(minkowski(flux, molly_infer), precision=3),
-                       np.format_float_scientific(minkowski(flux, molly_infer), precision=3)]],
+                      ['Distance', #np.format_float_scientific(minkowski(flux, molly_infer), precision=3),
+                       np.format_float_scientific(minkowski(flux, max_P_model), precision=3)]],
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 10},
         )
