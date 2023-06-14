@@ -115,7 +115,7 @@ if __name__ == '__main__':
     n_inference = 5
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
-        note = f"jit_2000_4_test{test_id}_small_bins_compare_molly_mock{mock_idx}"
+        note = f"jit_2000_4_test{test_id}_small_bins_retrain_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
