@@ -163,9 +163,9 @@ if __name__ == "__main__":
     '''
     #small bin size
     if small_bin_bool==True:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'w')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'a')
     else:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'w')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'a')
     group1 = f.create_group('haiku_nn')
     group1.attrs['redshift'] = redshift
     group1.attrs['adamw_decay'] = decay

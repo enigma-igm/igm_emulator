@@ -7,6 +7,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 import tensorflow as tf
+import h5py
 
 # redshift to get models for -- can make this an input to this script if desired
 num = 'bin59'
@@ -22,19 +23,30 @@ n_path = 20
 #larger bins
 #n_path = n_paths[z_idx]
 
-# read in the parameter grid at given z
-param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
-param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
-# get the path to the autocorrelation function results from the simulations
-#smaller bins
-in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
-#larger bins
-#in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
-fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI -9
-log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation -15
-T0s = np.power(10,log_T0s)
-gammas = param_dict['gammas']  # gamma from temperature - density relation -9
+# get the path to the autocorrelation function results from the simulations and parameters grid
+'''
+smaller bins
+'''
+in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict_set_bins_3.hdf5'
+with h5py.File(in_path + in_name_h5py, 'r') as f:
+    param_dict = dict(f['params'].attrs.items())
+fobs = param_dict['average_observed_flux']
+T0s = 10.**param_dict['logT_0']
+gammas = param_dict['gamma']
+    
+''' 
+larger bins
+'''
+#in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+#param_in_path = '/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/'
+#param_dict = dill.load(open(param_in_path + f'{z_string}_params.p', 'rb'))
+#fobs = param_dict['fobs']  # average observed flux <F> ~ Gamma_HI -9
+#log_T0s = param_dict['log_T0s']  # log(T_0) from temperature - density relation -15
+#T0s = np.power(10,log_T0s)
+#gammas = param_dict['gammas']  # gamma from temperature - density relation -9
+
 print(f'fobs:{fobs}')
 print(f'T0s: {T0s}')
 print(f'gammas:{gammas}')
