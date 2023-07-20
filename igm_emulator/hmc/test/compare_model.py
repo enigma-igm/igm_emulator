@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
         return log_like
 
-'''
+    '''
     in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
     run_tag = f'data_nearest_model{bin_label}'
     prior_tag = f'one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}'
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         gammas_grid = f['gammas_grid'][:]
         fobs_grid = f['fobs_grid'][:]
         molly_log_likelihood_grid = f['log_likelihood_grid'][:, :, :, :]  # mocks (5), t_0s (57), gammas (33), <F> (33)
-'''
+    '''
 
     # get Linda's model
     in_path_linda = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
