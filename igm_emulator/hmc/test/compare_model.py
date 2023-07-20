@@ -164,7 +164,8 @@ if __name__ == "__main__":
 
     # get Linda's model
     in_path_linda = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
-    emu_name = f'{zstr}_best_param_training_768.p'
+    emu_name = f'{zstr}_best_param_training_768_bin59.p'
+    #emu_name = f'{zstr}_best_param_training_768.p'
     best_params = dill.load(open(in_path_linda + emu_name, 'rb'))
 
     nn_x = NN_HMC_X(v_bins, best_params, t_0s, gammas, fobs, like_dict_0)
