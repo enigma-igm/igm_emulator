@@ -20,23 +20,21 @@ if __name__ == "__main__":
 
     n_inference = 5
 
-    # read in Molly's nearest grid models
     zstr = 'z54'
-    skewers_per_data = 17
+    skewers_per_data = 20  # 17->20
     n_covar = 500000
-    bin_label = '_set_bins_4'
-
-    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+    bin_label = '_set_bins_3'
+    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{zstr}/'
+    # change path from f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
     # get initial grid
     in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
     with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
         params = dict(f['params'].attrs.items())
-
     fobs = params['average_observed_flux']
     R_value = params['R']
     v_bins = params['v_bins']
-    t_0s = 10.**params['logT_0']
+    t_0s = 10. ** params['logT_0']
     gammas = params['gamma']
 
     n_temps = len(t_0s)
@@ -232,5 +230,7 @@ if __name__ == "__main__":
     axes.legend()
 
     plt.show()
+    out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
+    model_fig.savefig(out_path + f'compare_model_T10000.pdf')
 
     IPython.embed()
