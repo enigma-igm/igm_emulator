@@ -33,7 +33,7 @@ dtype=jnp.float64
 '''
 Load Train and Test Data
 '''
-redshift = 5.4 #choose redshift from
+redshift = 5.4 #choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
 
 if small_bin_bool==True:
     train_num = '_training_768_bin59'
@@ -152,8 +152,6 @@ if __name__ == "__main__":
     '''
     delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
     print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
-    print(f'accuracy: {jnp.mean(delta)*100}')
-
     #plot_residue(delta)
     #bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
     #plot_error_distribution(delta)
