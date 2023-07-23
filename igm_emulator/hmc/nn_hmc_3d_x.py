@@ -143,7 +143,7 @@ class NN_HMC_X:
         #in physical space
         lnPrior = self.eval_prior(x)
         lnlike = self.log_likelihood(x, flux)
-        lnP = lnlike #+ lnPrior
+        lnP = lnlike + lnPrior
         print('test no prior')
         return -lnP
 
