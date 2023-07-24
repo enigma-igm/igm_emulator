@@ -11,10 +11,9 @@ import h5py
 import IPython
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
 from nn_hmc_3d_x import NN_HMC_X
-
+from matplotlib import cm
 
 # ## Read in smaller bin parameters and mock data
-
 true_temp_idx = 11
 true_gamma_idx = 4
 true_fobs_idx = 7
@@ -269,12 +268,6 @@ with h5py.File(emu_path+'z5.4_nn_savefile.hdf5', 'r') as f:
     print(f['performance'].attrs['R2'])
 
 
-# print(chi.shape, rel_err_molly.shape)
-# rel_molly_mean = np.mean(rel_err_molly,axis=0)
-# print(np.where(rel_molly_mean==rel_molly_mean.min()))
-
-# In[22]:
-
 
 x_size = 4
 dpi_value = 200
@@ -332,8 +325,6 @@ plt.plot(v_bins,Y_test.T,label='test')
 
 plt.legend()
 
-
-from matplotlib import cm
 colormap = cm.Reds
 n = 3
 percentiles = [68,95,99]
@@ -355,141 +346,6 @@ ax[0].set_ylabel(r'Relative error Emulator(%)', fontsize=10)
 ax[1].set_ylabel(r'Relative error Molly(%)', fontsize=10)
 fig.tight_layout()
 fig.legend()
-
-
-# ## Plot likelihood slice shape in smaller bin retrained emulator
-n_inference = 5
-temps_grid = temps_plot #(57,)
-gammas_grid = gammas_plot #(33,)
-fobs_grid = fobs_plot #(33,)
-
-# plot one 1d slice of likelihood - temps only
-g_plot_idx = int(np.floor(len(gammas_grid)/2.))
-f_plot_idx = int(np.floor(len(fobs_grid)/2.))
-t_plot_idx = int(np.floor(len(temps_grid)/2.))
-print(g_plot_idx,f_plot_idx)
-
-
-molly_log_likelihood_temp=np.empty([n_inference,len(temps_grid)])
-linda_log_likelihood_temp=np.empty([n_inference,len(temps_grid)])
-for mock_idx in range(n_inference):
-    for i,temp in enumerate(temps_grid):
-        molly_log_likelihood_temp[mock_idx,i] = log_likelihood_molly([temp, gammas_grid[g_plot_idx],fobs_grid[f_plot_idx]],mocks[mock_idx])[1]
-        linda_log_likelihood_temp[mock_idx,i] = log_likelihood([temp, gammas_grid[g_plot_idx],fobs_grid[f_plot_idx]],mocks[mock_idx])[1]
-
-molly_log_likelihood_gamma=np.empty([n_inference,len(gammas_grid)])
-linda_log_likelihood_gamma=np.empty([n_inference,len(gammas_grid)])
-for mock_idx in range(n_inference):
-    for i,g in enumerate(gammas_grid):
-        molly_log_likelihood_gamma[mock_idx,i] = log_likelihood_molly([temps_grid[t_plot_idx], g,fobs_grid[f_plot_idx]],mocks[mock_idx])[1]
-        linda_log_likelihood_gamma[mock_idx,i] = log_likelihood([temps_grid[t_plot_idx], g,fobs_grid[f_plot_idx]],mocks[mock_idx])[1]
-
-molly_log_likelihood_fob=np.empty([n_inference,len(fobs_grid)])
-linda_log_likelihood_fob=np.empty([n_inference,len(fobs_grid)])
-for mock_idx in range(n_inference):
-    for i,f in enumerate(fobs_grid):
-        molly_log_likelihood_fob[mock_idx,i] = log_likelihood_molly([temps_grid[t_plot_idx], gammas_grid[g_plot_idx],f],mocks[mock_idx])[1]
-        linda_log_likelihood_fob[mock_idx,i] = log_likelihood([temps_grid[t_plot_idx], gammas_grid[g_plot_idx],f],mocks[mock_idx])[1]
-        
-
-# IPython.embed()
-likelihood_fig = plt.figure(figsize=(x_size, x_size*.77*5.*.5), constrained_layout=True,
-                                dpi=dpi_value,
-                                )
-grid = likelihood_fig.add_gridspec(
-    nrows=5, ncols=3
-)
-for mock_idx in range(n_inference):
-    axes1 = likelihood_fig.add_subplot(grid[mock_idx,0])
-    axes1.plot(temps_grid, linda_log_likelihood_temp[mock_idx,:],'r')
-    axes1.plot(temps_grid, molly_log_likelihood_temp[mock_idx,:],'--')
-    axes1.set_ylabel('log likelihood')
-    axes1.set_title(f'mock {mock_idx}')
-axes1.set_xlabel('$T_0$ (K)')
-
-for mock_idx in range(n_inference):
-    axes2 = likelihood_fig.add_subplot(grid[mock_idx,1])
-    axes2.plot(gammas_grid, linda_log_likelihood_gamma[mock_idx,:],'r')
-    axes2.plot(gammas_grid, molly_log_likelihood_gamma[mock_idx,:],'--')
-    axes2.set_ylabel('log likelihood')
-    axes2.set_title(f'mock {mock_idx}')
-axes2.set_xlabel('$Gamma$')
-
-for mock_idx in range(n_inference):
-    axes3 = likelihood_fig.add_subplot(grid[mock_idx,2])
-    axes3.plot(fobs_grid, linda_log_likelihood_fob[mock_idx,:],'r')
-    axes3.plot(fobs_grid, molly_log_likelihood_fob[mock_idx,:],'--')
-    axes3.set_ylabel('log likelihood')
-    axes3.set_title(f'mock {mock_idx}')
-axes3.set_xlabel('$<F>$')
-
-
-# ## Plot models at peak points
-t_idx_1 = int(np.floor(len(temps_grid)/4.))
-t_idx_2 = int(np.floor(len(temps_grid)*3/4.))
-temperature_want = 10000.
-theta_want_1 = (temps_grid[t_idx_1], gammas_grid[g_plot_idx],fobs_grid[f_plot_idx])
-theta_want_2 = (temps_grid[t_idx_2], gammas_grid[g_plot_idx],fobs_grid[f_plot_idx])
-theta_want_3 = (10000, gammas_grid[g_plot_idx],fobs_grid[f_plot_idx])
-
-
-model_molly_1 = get_molly_model_nearest(theta_want_1)
-model_linda_1 = get_linda_model(theta_want_1)
-model_molly_2 = get_molly_model_nearest(theta_want_2)
-model_linda_2 = get_linda_model(theta_want_2)
-model_molly_3 = get_molly_model_nearest(theta_want_3)
-model_linda_3 = get_linda_model(theta_want_3)
-
-model_fig = plt.figure(figsize=(x_size, x_size*.77*.5), constrained_layout=True,
-                                dpi=dpi_value,
-                                )
-# one_correlation_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
-grid = model_fig.add_gridspec(
-    nrows=1, ncols=1, # width_ratios=[20, 20, 20, 20, 20, 1],
-)
-axes = model_fig.add_subplot(grid[0])
-axes.plot(v_bins, model_molly_1, label='molly_1')
-axes.plot(v_bins, model_linda_1,label='linda_1')
-axes.plot(v_bins, model_molly_2,'--', label='molly_2')
-axes.plot(v_bins, model_linda_2, '--',label='linda_2')
-axes.plot(v_bins, get_molly_model_nearest(theta_want_3),'--', label='molly_3')
-axes.plot(v_bins, get_linda_model(theta_want_3), '--',label='linda_3')
-axes.plot(v_bins, mocks[1], label='mock_1')
-
-axes.legend()
-plt.show()
-
-
-chi_1=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_linda_1)
-chi_2=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_linda_2)
-chi_3=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_linda_3)
-
-chi_1_=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_molly_1)
-chi_2_=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_molly_2)
-chi_3_=jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), mocks[1]-model_molly_3)
-plt.figure(figsize=(10, 10))
-plt.plot(v_bins,chi_1,color='b',label='l1',alpha=0.3)
-plt.plot(v_bins,chi_2,color='g',label='l2',alpha=0.3)
-plt.plot(v_bins,chi_3,color='r',label='l3',alpha=0.3)
-plt.plot(v_bins,chi_1_,'--',color='b', label='m1')
-plt.plot(v_bins,chi_2_,'--',color='g',label='m2')
-plt.plot(v_bins,chi_3_,'--',color='r',label='m3')
-plt.xscale('log')
-plt.legend()
-plt.show()
-
-
-plt.figure(figsize=(10, 10))
-plt.plot(v_bins,100*(mocks[1]-model_linda_1)/mocks[1],color='b',label='l1',alpha=0.3)
-plt.plot(v_bins,100*(mocks[1]-model_linda_2)/mocks[1],color='g',label='l2',alpha=0.3)
-plt.plot(v_bins,100*(mocks[1]-model_linda_3)/mocks[1],color='r',label='l3',alpha=0.3)
-plt.plot(v_bins,100*(mocks[1]-model_molly_1)/mocks[1],'--',color='b', label='m1')
-plt.plot(v_bins,100*(mocks[1]-model_molly_2)/mocks[1],'--',color='g',label='m2')
-plt.plot(v_bins,100*(mocks[1]-model_molly_3)/mocks[1],'--',color='r',label='m3')
-plt.xscale('log')
-plt.ylabel('percentage relative error (%)')
-plt.legend()
-plt.show()
 
 
 # ## Print evidence of HMC
