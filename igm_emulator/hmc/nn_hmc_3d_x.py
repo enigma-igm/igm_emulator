@@ -144,7 +144,6 @@ class NN_HMC_X:
         lnPrior = self.eval_prior(x)
         lnlike = self.log_likelihood(x, flux)
         lnP = lnlike + lnPrior
-        print('test no prior')
         return -lnP
 
     @partial(jit, static_argnums=(0,))
