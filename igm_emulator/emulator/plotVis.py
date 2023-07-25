@@ -7,6 +7,7 @@ import os
 import dill
 import h5py
 import os
+from haiku_custom_forward import small_bin_bool
 '''
 Visualization of hyperparameters
 '''
@@ -19,18 +20,28 @@ Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
 out = Y.shape[1]
 z= f'{zstr}_768_leaky_relu_l2+adamw'
 
-in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+if small_bin_bool==True:
+    zstr = 'z54'
+    skewers_per_data = 20  # 17->20
+    n_covar = 500000
+    bin_label = '_set_bins_3'
+    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{zstr}/'
+    # change path from f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
-R_value = 30000.
-skewers_use = 2000
-n_flux = 9
-bin_label = '_set_bins_4'
-added_label = ''
-
-
-temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
-with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
-    params = dict(f['params'].attrs.items())
+    # get initial grid
+    in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
+    with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
+        params = dict(f['params'].attrs.items())
+else:
+    in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+    R_value = 30000.
+    skewers_use = 2000
+    n_flux = 9
+    bin_label = '_set_bins_4'
+    added_label = ''
+    temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
+    with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
+        params = dict(f['params'].attrs.items())
 
 v_bins = params['v_bins']
 fig = {'legend.fontsize': 16,
