@@ -15,13 +15,10 @@ notes = 'best'
 
 zstr = 'z54'
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-num = '_training_768'
-Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
-out = Y.shape[1]
 z= f'{zstr}_768_leaky_relu_l2+adamw'
 
 if small_bin_bool==True:
-    zstr = 'z54'
+    num = '_training_768_bin59'
     skewers_per_data = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
@@ -33,6 +30,7 @@ if small_bin_bool==True:
     with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
         params = dict(f['params'].attrs.items())
 else:
+    num = '_training_768'
     in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
     R_value = 30000.
     skewers_use = 2000
@@ -42,7 +40,9 @@ else:
     temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
     with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
         params = dict(f['params'].attrs.items())
-
+        
+Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
+out = Y.shape[1]
 v_bins = params['v_bins']
 fig = {'legend.fontsize': 16,
        'legend.frameon': False,
