@@ -131,7 +131,7 @@ if __name__ == "__main__":
     best_params = params
     print(f'Model saved.')
     print(f'early_stopping_counter: {early_stopping_counter}')
-    print(f'accuracy: {jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY))}')
+    print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY)**2))}')
     print(f'Test Loss: {loss_fn(params, X_test, Y_test)}')
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
@@ -140,21 +140,21 @@ if __name__ == "__main__":
     Prediction overplots: Training And Test
     '''
     preds = custom_forward.apply(params=best_params, x=X_train)
-    #train_overplot(preds,X,Y,meanY,stdY)
+    train_overplot(preds,X,Y,meanY,stdY)
 
     test_preds = custom_forward.apply(params, X_test)
     test_loss = loss_fn(params, X_test, Y_test)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
-    #test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
     '''
     Accuracy + Results
     '''
     delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
     print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
-    #plot_residue(delta)
-    #bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
-    #plot_error_distribution(delta)
+    plot_residue(delta)
+    bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
+    plot_error_distribution(delta)
 
     '''
     Save best emulated parameter
