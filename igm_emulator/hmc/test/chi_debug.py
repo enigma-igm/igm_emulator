@@ -32,48 +32,48 @@ Y_test = dill.load(open(dir_lhs + f'{zstr}_model{test_num}.p', 'rb'))
 X_test = dill.load(open(dir_lhs + f'{zstr}_param{test_num}.p', 'rb'))
 X_train = dill.load(open(dir_lhs + f'{zstr}_param{train_num}.p', 'rb'))
 
+'''
+Comput chi2 and chi
+'''
+chi2 = 0
+chi = []
+rel_err = []  # in percentage
+model_linda = []
+
+chi2_molly = 0
+chi_molly = []
+rel_err_molly = []  # in percentage
+model_molly = []
+count = 0
+for d_i in range(Y_test.shape[0]):
+    d = Y_test[d_i, :] - get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
+    model_linda.append(get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
+    chi2 = +jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
+    # chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
+    chi.append(np.multiply(np.diagonal(like_dict_0['covariance']), d))
+    rel_err.append(d / Y_test[d_i, :] * 100)
+
+    diff_molly = Y_test[d_i, :] - get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
+    model_molly.append(get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
+    chi2_molly = +(jnp.dot(diff_molly, jnp.linalg.solve(like_dict_0['covariance'], diff_molly)))
+    # chi_molly.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), diff_molly))
+    chi_molly.append(np.multiply(np.diagonal(like_dict_0['covariance']), diff_molly))
+    rel_err_molly.append(diff_molly / Y_test[d_i, :] * 100)
+    # print(diff_molly/Y_test[d_i,:]<=0)
+chi = np.array(chi).T
+chi_molly = np.array(chi_molly).T
+rel_err = np.array(rel_err).T
+rel_err_molly = np.array(rel_err_molly).T
+model_linda = np.array(model_linda).T
+model_molly = np.array(model_molly).T
+
+rel_err_rms = jnp.sqrt(jnp.mean(jnp.square(rel_err)))
+rel_err_std = jnp.std(rel_err)
+chi2_dof = chi2 / Y_test.shape[1]
+chi2_molly_dof = chi2_molly / Y_test.shape[1]
+print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
+
 if __name__ == '__main__':
-    '''
-    Comput chi2 and chi
-    '''
-    chi2 = 0
-    chi = []
-    rel_err = []  # in percentage
-    model_linda = []
-
-    chi2_molly = 0
-    chi_molly = []
-    rel_err_molly = []  # in percentage
-    model_molly = []
-    count = 0
-    for d_i in range(Y_test.shape[0]):
-        d = Y_test[d_i, :] - get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
-        model_linda.append(get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
-        chi2 = +jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
-        # chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
-        chi.append(np.multiply(np.diagonal(like_dict_0['covariance']), d))
-        rel_err.append(d / Y_test[d_i, :] * 100)
-
-        diff_molly = Y_test[d_i, :] - get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
-        model_molly.append(get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
-        chi2_molly = +(jnp.dot(diff_molly, jnp.linalg.solve(like_dict_0['covariance'], diff_molly)))
-        # chi_molly.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), diff_molly))
-        chi_molly.append(np.multiply(np.diagonal(like_dict_0['covariance']), diff_molly))
-        rel_err_molly.append(diff_molly / Y_test[d_i, :] * 100)
-        # print(diff_molly/Y_test[d_i,:]<=0)
-    chi = np.array(chi).T
-    chi_molly = np.array(chi_molly).T
-    rel_err = np.array(rel_err).T
-    rel_err_molly = np.array(rel_err_molly).T
-    model_linda = np.array(model_linda).T
-    model_molly = np.array(model_molly).T
-
-    rel_err_rms = jnp.sqrt(jnp.mean(jnp.square(rel_err)))
-    rel_err_std = jnp.std(rel_err)
-    chi2_dof = chi2 / Y_test.shape[1]
-    chi2_molly_dof = chi2_molly / Y_test.shape[1]
-    print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
-
     '''
     Plot chi and rel_err
     '''

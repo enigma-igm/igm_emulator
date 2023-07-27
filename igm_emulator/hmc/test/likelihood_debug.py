@@ -200,20 +200,21 @@ def log_likelihood_linda(theta, corr):
     theta_linda_x = nn_x.theta_to_x(theta_linda)
     return nn_x.log_likelihood(theta_linda_x, corr)
 
-'''
-Compare Likelihood functions line by line at sample points
-'''
-# read in the mock data
-mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
-mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
+if __name__ == '__main__':
+    '''
+    Compare Likelihood functions line by line at sample points
+    '''
+    # read in the mock data
+    mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
+    mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
 
-# load sample theta
-sample = [t_0s[true_temp_idx],gammas[true_gamma_idx],fobs[true_fobs_idx]]
-sample_linda = [fobs[true_fobs_idx],t_0s[true_temp_idx],gammas[true_gamma_idx]]
-n_samples = 5
-for mock_idx in range(n_samples):
-    print(f'Likelihood in theta vs. nn_x transformation for mock data{mock_idx}: {log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx])}')
-print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
-print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
-print('Covariance matrix and determinant compare:')
-print(nn_x.like_dict['covariance']==like_dict_0['covariance'],nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
+    # load sample theta
+    sample = [t_0s[true_temp_idx],gammas[true_gamma_idx],fobs[true_fobs_idx]]
+    sample_linda = [fobs[true_fobs_idx],t_0s[true_temp_idx],gammas[true_gamma_idx]]
+    n_samples = 5
+    for mock_idx in range(n_samples):
+        print(f'Likelihood in theta vs. nn_x transformation for mock data{mock_idx}: {log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx])}')
+    print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
+    print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
+    print('Covariance matrix and determinant compare:')
+    print(nn_x.like_dict['covariance']==like_dict_0['covariance'],nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
