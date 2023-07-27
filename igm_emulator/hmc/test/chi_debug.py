@@ -40,7 +40,7 @@ chi2 = 0
 chi = []
 rel_err = []  # in percentage
 model_linda = []
-
+rel_precision = []
 chi2_molly = 0
 chi_molly = []
 rel_err_molly = []  # in percentage
@@ -51,7 +51,8 @@ for d_i in range(Y_test.shape[0]):
     model_linda.append(get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
     chi2 = +jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
     # chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
-    chi.append(np.multiply(np.sqrt(np.diagonal(like_dict_0['covariance'])), d))
+    chi.append(d/np.sqrt(np.diagonal(like_dict_0['covariance'])))
+    rel_precision.append(Y_test[d_i, :]/np.sqrt(np.diagonal(like_dict_0['covariance'])))
     rel_err.append(d / Y_test[d_i, :] * 100)
 
     diff_molly = Y_test[d_i, :] - get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
