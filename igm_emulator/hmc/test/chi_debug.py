@@ -98,7 +98,7 @@ if __name__ == '__main__':
     plt.figure(figsize=(x_size, x_size*4), constrained_layout=True,
                                     dpi=dpi_value)
 
-    figchi, fig1 = plt.subplot(3,1,1)
+    figchi, fig1 = plt.subplots()
     fig1.plot(v_bins, chi, linewidth=0.5, color = 'b', alpha=0.2
             )
 
@@ -106,12 +106,12 @@ if __name__ == '__main__':
     fig1.set_ylabel(r'$\chi$')
     fig1.legend()
 
-    fig_rel_err, fig2 = plt.subplot(3,1,2)
+    fig_rel_err, fig2 = plt.subplots()
     fig2.plot(v_bins, rel_err, linewidth=0.5, color = 'b', alpha=0.2
             )
     fig2.set_xlabel(r'Velocity [$km s^{-1}$]')
     fig2.set_ylabel(r'Relative error (%)')
-    plt.title(f'rms: {rel_err_rms}; std: {rel_err_std}')
+    fig2.set_title(f'rms: {rel_err_rms}; std: {rel_err_std}')
     out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
     figchi.savefig(out_path + f'chi_{test_num}.pdf')
     fig_rel_err.savefig(out_path + f'rel_err_{test_num}.pdf')
