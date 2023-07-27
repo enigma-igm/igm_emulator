@@ -75,9 +75,9 @@ chi2_dof = chi2 / Y_test.shape[1]
 chi2_molly_dof = chi2_molly / Y_test.shape[1]
 print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
 
-bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
-bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
-bad_param=np.append(np.reshape(X_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[3,8]),np.reshape(X_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[3,9]),axis=1)
+#bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
+#bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
+#bad_param=np.append(np.reshape(X_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[3,8]),np.reshape(X_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[3,9]),axis=1)
 
 if __name__ == '__main__':
     '''
@@ -148,6 +148,7 @@ if __name__ == '__main__':
     '''
     Largest chi model
     '''
+    '''
     plt.figure(figsize=(10,10))
     plt.plot(v_bins,bad_emu,'r')
     plt.plot(v_bins,bad_corr,'b',ls='-.',alpha=0.5)
@@ -159,6 +160,7 @@ if __name__ == '__main__':
     plt.ylabel('Relative err [%]')
     plt.show()
     plt.savefig(out_path + f'largest_chi_rel_err_{test_num}.pdf')
+    '''
 
 '''
 Plot of error in parameter space
@@ -178,5 +180,3 @@ def plot_3d_rel_err(rel_err):
     ax3d.view_init(35, 20)
     plt.show()
     fig3d.savefig(out_path + f'param_3d_rel_err_{test_num}.pdf')
-
-plot_3d_rel_err(rel_err)
