@@ -68,6 +68,8 @@ if __name__ == '__main__':
     model_linda = np.array(model_linda).T
     model_molly = np.array(model_molly).T
 
+    rel_err_rms = jnp.sqrt(jnp.mean(jnp.square(rel_err)))
+    rel_err_std = jnp.std(rel_err)
     chi2_dof = chi2 / Y_test.shape[1]
     chi2_molly_dof = chi2_molly / Y_test.shape[1]
     print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
@@ -109,7 +111,7 @@ if __name__ == '__main__':
             )
     fig2.set_xlabel(r'Velocity [$km s^{-1}$]')
     fig2.set_ylabel(r'Relative error (%)')
-    fig2.title(f'RMS: {jnp.sqrt(jnp.mean(rel_err**2))}; std: {jnp.std(rel_err)}')
+    fig2.title(f'rms: {rel_err_rms}; std: {rel_err_std}')
     out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
     fig1.savefig(out_path + f'chi_{test_num}.pdf')
     fig2.savefig(out_path + f'rel_err_{test_num}.pdf')
