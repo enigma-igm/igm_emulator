@@ -204,6 +204,9 @@ if __name__ == '__main__':
     '''
     Compare Likelihood functions line by line at sample points
     '''
+    print('Covariance matrix and determinant compare:')
+    print(nn_x.like_dict['covariance']==like_dict_0['covariance'],nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
+
     # read in the mock data
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
@@ -214,7 +217,12 @@ if __name__ == '__main__':
     n_samples = 5
     for mock_idx in range(n_samples):
         print(f'Likelihood in theta vs. nn_x transformation for mock data{mock_idx}: {log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx])}')
-    print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
-    print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
-    print('Covariance matrix and determinant compare:')
-    print(nn_x.like_dict['covariance']==like_dict_0['covariance'],nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
+    ranind = np.random.randint(0,high=[len(temps_plot)+1,len(gammas_plot)+1,len(fobs_plot)+1],size=(20,3))
+    for i in range(20):
+        sample = [temps_plot[ranind[i,0]],gammas_plot[ranind[i,1]],fobs_plot[ranind[i,2]]]
+        sample_linda = [fobs_plot[ranind[i,2]],temps_plot[ranind[i,0]],gammas_plot[ranind[i,1]]]
+        print(f'Likelihood in theta vs. nn_x transformation for mock data{i}: {log_likelihood(sample,mocks[i])[1]==log_likelihood_linda(sample,mocks[i])}')
+        print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
+        print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
+
+
