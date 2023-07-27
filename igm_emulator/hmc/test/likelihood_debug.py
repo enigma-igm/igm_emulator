@@ -223,7 +223,7 @@ if __name__ == '__main__':
         sample_linda = [fobs_plot[ranind[i,2]],temps_plot[ranind[i,0]],gammas_plot[ranind[i,1]]]
         print(f'Sample [T0, gamma, ave_f]: {sample}')
         print(f'Likelihood in theta vs. nn_x transformation for mock data{i}: {log_likelihood(sample,mocks[i])[1]==log_likelihood_linda(sample,mocks[i])}')
-        print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
+        print(f'NN_X parameter transformation [avg_f, T0, gamma]: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
         print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
 
 

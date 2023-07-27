@@ -51,7 +51,7 @@ for d_i in range(Y_test.shape[0]):
     model_linda.append(get_linda_model([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]]))
     chi2 = +jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
     # chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
-    chi.append(np.multiply(np.diagonal(like_dict_0['covariance']), d))
+    chi.append(np.multiply(np.sqrt(np.diagonal(like_dict_0['covariance'])), d))
     rel_err.append(d / Y_test[d_i, :] * 100)
 
     diff_molly = Y_test[d_i, :] - get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
