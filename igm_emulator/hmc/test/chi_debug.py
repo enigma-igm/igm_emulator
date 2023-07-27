@@ -111,7 +111,7 @@ if __name__ == '__main__':
             )
     fig2.set_xlabel(r'Velocity [$km s^{-1}$]')
     fig2.set_ylabel(r'Relative error (%)')
-    fig2.title(f'rms: {rel_err_rms}; std: {rel_err_std}')
+    plt.title(f'rms: {rel_err_rms}; std: {rel_err_std}')
     out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
     fig1.savefig(out_path + f'chi_{test_num}.pdf')
     fig2.savefig(out_path + f'rel_err_{test_num}.pdf')
