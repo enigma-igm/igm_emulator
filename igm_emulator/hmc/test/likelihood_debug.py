@@ -217,7 +217,7 @@ if __name__ == '__main__':
     n_samples = 5
     for mock_idx in range(n_samples):
         print(f'Likelihood in theta vs. nn_x transformation for mock data{mock_idx}: {log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx])}')
-    ranind = np.random.randint(0,high=[len(temps_plot)+1,len(gammas_plot)+1,len(fobs_plot)+1],size=(20,3))
+    ranind = np.random.randint(0,high=[len(temps_plot),len(gammas_plot),len(fobs_plot)],size=(20,3))
     for i in range(20):
         sample = [temps_plot[ranind[i,0]],gammas_plot[ranind[i,1]],fobs_plot[ranind[i,2]]]
         sample_linda = [fobs_plot[ranind[i,2]],temps_plot[ranind[i,0]],gammas_plot[ranind[i,1]]]
