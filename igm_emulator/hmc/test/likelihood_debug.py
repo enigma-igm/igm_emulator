@@ -216,4 +216,4 @@ for mock_idx in range(n_samples):
 print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
 print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
 print('Covariance matrix and determinant compare:')
-print(nn_x.like_dict['covariance']==like_dict_0['covariance']},{nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
+print(nn_x.like_dict['covariance']==like_dict_0['covariance'],nn_x.like_dict['log_determinant']==like_dict_0['log_determinant'])
