@@ -109,13 +109,13 @@ if __name__ == '__main__':
             )
     fig2.set_xlabel(r'Velocity [$km s^{-1}$]')
     fig2.set_ylabel(r'Relative error (%)')
-    fig2.title(f'%Residual plot:RMS: {jnp.sqrt(jnp.mean(rel_err**2))}; std: {np.std(rel_err)}')
+    fig2.title(f'RMS: {jnp.sqrt(jnp.mean(rel_err**2))}; std: {jnp.std(rel_err)}')
     out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
     fig1.savefig(out_path + f'chi_{test_num}.pdf')
     fig2.savefig(out_path + f'rel_err_{test_num}.pdf')
 
     '''
-    Plot rekative error percentiles
+    Plot relative error percentiles
     '''
     colormap = cm.Reds
     n = 4
