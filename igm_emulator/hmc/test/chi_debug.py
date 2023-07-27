@@ -162,6 +162,7 @@ if __name__ == '__main__':
 Plot of error in parameter space
 '''
 def plot_3d_rel_err(rel_err):
+    colormap = cm.Reds
     fig3d = plt.figure(figsize=(10, 10))
     ax3d = plt.axes(projection='3d')
     rel_err_rms = jnp.sqrt(jnp.mean(rel_err**2,axis=0))
