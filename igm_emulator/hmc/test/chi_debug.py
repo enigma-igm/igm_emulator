@@ -161,12 +161,12 @@ if __name__ == '__main__':
 '''
 Plot of error in parameter space
 '''
-def plot_3d_chi(chi):
+def plot_3d_rel_err(rel_err):
     fig3d = plt.figure(figsize=(10, 10))
     ax3d = plt.axes(projection='3d')
-    chi_rms = jnp.sqrt(jnp.mean(chi**2,axis=0))
-    for i in range(chi_rms.shape[0]):
-        ax3d.scatter(X_test[i,0], X_test[i,1], X_test[i,2], color =colormap(chi_rms[i]*10**9), linewidth=1)
+    rel_err_rms = jnp.sqrt(jnp.mean(rel_err**2,axis=0))
+    for i in range(rel_err_rms.shape[0]):
+        ax3d.scatter(X_test[i,0], X_test[i,1], X_test[i,2], color =colormap(rel_err_rms[i]), linewidth=1)
     ax3d.scatter(X_train[:,0], X_train[:,1], X_train[:,2], color = 'b', linewidth=0.5,alpha = 0.1)
     ax3d.set_xlabel(r'$<F>$')
     ax3d.set_ylabel(r'$T_0$')
@@ -174,6 +174,6 @@ def plot_3d_chi(chi):
     ax3d.scatter(bad_param[0,:],bad_param[1,:],bad_param[2,:],color = 'b')
     ax3d.view_init(35, 20)
     plt.show()
-    fig3d.savefig(out_path + f'param_3d_chi_{test_num}.pdf')
+    fig3d.savefig(out_path + f'param_3d_rel_err_{test_num}.pdf')
 
-plot_3d_chi(chi)
+plot_3d_rel_err(rel_err)
