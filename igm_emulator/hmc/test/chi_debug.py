@@ -73,6 +73,10 @@ chi2_dof = chi2 / Y_test.shape[1]
 chi2_molly_dof = chi2_molly / Y_test.shape[1]
 print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
 
+bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
+bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
+bad_param=np.append(np.reshape(X_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[3,8]),np.reshape(X_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[3,9]),axis=1)
+
 if __name__ == '__main__':
     '''
     Plot chi and rel_err
@@ -143,9 +147,6 @@ if __name__ == '__main__':
     '''
     Largest chi model
     '''
-    bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
-    bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
-    bad_param=np.append(np.reshape(X_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[3,8]),np.reshape(X_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[3,9]),axis=1)
     plt.figure(figsize=(10,10))
     plt.plot(v_bins,bad_emu,'r')
     plt.plot(v_bins,bad_corr,'b',ls='-.',alpha=0.5)
