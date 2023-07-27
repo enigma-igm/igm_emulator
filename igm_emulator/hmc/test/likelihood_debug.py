@@ -212,7 +212,7 @@ sample = [t_0s[true_temp_idx],gammas[true_gamma_idx],fobs[true_fobs_idx]]
 sample_linda = [fobs[true_fobs_idx],t_0s[true_temp_idx],gammas[true_gamma_idx]]
 n_samples = 5
 for mock_idx in range(n_samples):
-    print(log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx]))
+    print(f'Likelihood in theta vs. nn_x transformation for mock data{mock_idx}: {log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx])}')
 print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
 print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
 print('Covariance matrix and determinant compare:')
