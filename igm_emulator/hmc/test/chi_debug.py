@@ -52,7 +52,7 @@ for d_i in range(Y_test.shape[0]):
     chi2 = +jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
     # chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
     chi.append(d/np.sqrt(np.diagonal(like_dict_0['covariance'])))
-    rel_precision.append(Y_test[d_i, :]/np.sqrt(np.diagonal(like_dict_0['covariance'])))
+    rel_precision.append(np.sqrt(np.diagonal(like_dict_0['covariance']))/Y_test[d_i, :]*100)
     rel_err.append(d / Y_test[d_i, :] * 100)
 
     diff_molly = Y_test[d_i, :] - get_molly_model_nearest([X_test[d_i, 1], X_test[d_i, 2], X_test[d_i, 0]])
@@ -74,7 +74,7 @@ rel_err_std = jnp.std(rel_err)
 chi2_dof = chi2 / Y_test.shape[1]
 chi2_molly_dof = chi2_molly / Y_test.shape[1]
 print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
-print(rel_precision)
+print(np.array(rel_precision).T)
 
 #bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
 #bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
