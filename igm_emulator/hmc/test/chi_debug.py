@@ -74,6 +74,7 @@ rel_err_std = jnp.std(rel_err)
 chi2_dof = chi2 / Y_test.shape[1]
 chi2_molly_dof = chi2_molly / Y_test.shape[1]
 print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
+print(rel_precision)
 
 #bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
 #bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
