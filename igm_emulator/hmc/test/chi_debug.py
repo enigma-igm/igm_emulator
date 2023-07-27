@@ -7,13 +7,15 @@ sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_run import nn_emulator
 sys.path.append(os.path.expanduser('~') + '/wdm/correlation')
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import h5py
 import IPython
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
 from nn_hmc_3d_x import NN_HMC_X
-from matplotlib import cm
 
-# ## Read in smaller bin parameters and mock data
+'''
+Read in smaller bin parameters grid
+'''
 true_temp_idx = 11
 true_gamma_idx = 4
 true_fobs_idx = 7
@@ -118,8 +120,10 @@ fobs_plot[-1] = fobs[-1]
 
 print(temps_plot.shape,gammas_plot.shape,fobs_plot.shape)
 
-
-# ## Molly's model
+'''
+Molly's model
+temp, gamma, ave_f = theta
+'''
 def return_idx(value, all_values):
     the_min_value = jnp.min(all_values)
     the_range = jnp.max(all_values) - the_min_value
@@ -144,14 +148,10 @@ def log_likelihood_molly(theta, corr, theta_covariance=like_dict_0['covariance']
     log_like = -(jnp.dot(diff, jnp.linalg.solve(theta_covariance, diff)) + true_log_det + nbins * jnp.log(2.0 * jnp.pi)) / 2.0
     return diff.mean(), log_like
 
-
-# ## Linda's model
-# get Linda's model 
-#temp, gamma, ave_f = theta
-
-sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
-from nn_hmc_3d_x import NN_HMC_X
-
+'''
+Linda's model
+ave_f, temp, gamma = theta_linda
+'''
 in_path_linda = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
 emu_name = f'{zstr}_best_param_training_768_bin59.p' #small bins
 best_params = dill.load(open(in_path_linda + emu_name, 'rb'))
@@ -163,210 +163,225 @@ def get_linda_model(theta, best_params_function=best_params):
     return model
 
 def log_likelihood(theta, corr):
-        '''
-        Args:
-            x: dimensionless parameters
-            flux: observed flux
-        Returns:
-            log_likelihood: log likelihood
-        '''
-        model = get_linda_model(theta) #theta is in physical dimension for this function
-        #model = get_molly_model_nearest(theta) #replace same model
+    '''
+    Args:
+        x: dimensionless parameters
+        flux: observed flux
+    Returns:
+        log_likelihood: log likelihood
+    '''
+    model = get_linda_model(theta) #theta is in physical dimension for this function
+    #model = get_molly_model_nearest(theta) #replace same model
 
-        new_covariance = nn_x.like_dict['covariance']
-        log_determinant = nn_x.like_dict['log_determinant']
+    new_covariance = nn_x.like_dict['covariance']
+    log_determinant = nn_x.like_dict['log_determinant']
 
-        diff = corr - model
-        nbins = len(nn_x.vbins)
-        log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
-            2.0 * jnp.pi)) / 2.0
-        #print(f'Log_likelihood={log_like}')
-        return diff.mean(), log_like
+    diff = corr - model
+    nbins = len(nn_x.vbins)
+    log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
+        2.0 * jnp.pi)) / 2.0
+    #print(f'Log_likelihood={log_like}')
+    return diff.mean(), log_like
 
 def log_likelihood_linda(theta, corr):
+    '''
+
+    Parameters
+    ----------
+    theta: temp, gamma, ave_f
+    corr
+
+    Returns
+    -------
+    log_likelihood: log likelihood from nn_x parameter transformation
+    '''
     theta = np.array(theta)
     theta_linda = (theta[2], theta[0], theta[1])
     theta_linda_x = nn_x.theta_to_x(theta_linda)
     return nn_x.log_likelihood(theta_linda_x, corr)
 
-
+'''
+Compare Likelihood functions line by line at sample points
+'''
 # read in the mock data
 mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{true_temp_idx}_G{true_gamma_idx}_SNR{noise_idx}_F{true_fobs_idx}_P{skewers_per_data}{bin_label}.p'
 mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
 
+# load sample theta
 sample = [t_0s[true_temp_idx],gammas[true_gamma_idx],fobs[true_fobs_idx]]
+sample_linda = [fobs[true_fobs_idx],t_0s[true_temp_idx],gammas[true_gamma_idx]]
 n_samples = 5
-for mock_idx in range(2):
-    print(log_likelihood(sample,mocks[mock_idx]))
-    print(log_likelihood_linda(sample,mocks[mock_idx]))
-
-
-# ## Plot chi for two models
-
-emu_path = os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/'
-#change retrain param
-with h5py.File(emu_path+'z5.4_nn_bin59_savefile.hdf5', 'r') as f:
-    # IPython.embed()
-    residual = np.asarray(f['performance']['residuals'])
-    meanY = np.asarray(f['data']['meanY'])
-    stdY = np.asarray(f['data']['stdY'])
-    print(f['data'].keys())
-    print(f['performance'].attrs.keys())
-
-dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-
-test_num = '_test_89_bin59'
-Y_test = dill.load(open(dir_lhs + f'{zstr}_model{test_num}.p', 'rb'))
-X_test = dill.load(open(dir_lhs + f'{zstr}_param{test_num}.p', 'rb'))
-#Y_test = (Y_test - meanY) / stdY
-
-diff = residual * Y_test
-chi2 = 0
-chi = []
-rel_err = []
-chi2_molly = 0
-chi_molly = []
-rel_err_molly = []
-print(diff.shape)
-for d_i in range(Y_test.shape[0]):
-    d = Y_test[d_i,:] - get_linda_model([X_test[d_i,1],X_test[d_i,2],X_test[d_i,0]])
-    chi2=+jnp.dot(d, jnp.linalg.solve(like_dict_0['covariance'], d))
-    #chi.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), d))
-    chi.append(np.multiply(np.diagonal(like_dict_0['covariance']), d))
-    rel_err.append(d/Y_test[d_i,:]*100)
-    
-    diff_molly = Y_test[d_i,:] - get_molly_model_nearest([X_test[d_i,1],X_test[d_i,2],X_test[d_i,0]])
-    chi2_molly=+(jnp.dot(diff_molly, jnp.linalg.solve(like_dict_0['covariance'], diff_molly)))
-    #chi_molly.append(jnp.linalg.solve(jnp.sqrt(like_dict_0['covariance']), diff_molly))
-    chi_molly.append(np.multiply(np.diagonal(like_dict_0['covariance']), diff_molly))
-    rel_err_molly.append(diff_molly/Y_test[d_i,:]*100)
-    #print(diff_molly/Y_test[d_i,:]<=0)
-chi = np.array(chi).T
-chi_molly = np.array(chi_molly).T
-rel_err = np.array(rel_err).T
-rel_err_molly = np.array(rel_err_molly).T
-
-chi2_dof = chi2/Y_test.shape[1]
-chi2_molly_dof = chi2_molly/Y_test.shape[1]
-print(f'chi2 square emulator: {chi2_dof},chi2 square molly: {chi2_molly_dof}')
-plt.plot(v_bins,Y_test.T)
-
-plt.show()
-
-
-# In[10]:
-
-
-with h5py.File(emu_path+'z5.4_nn_bin59_savefile.hdf5', 'r') as f:
-    print('smaller bin')
-    print(f['performance'].attrs['residuals_results'])
-    print(f['performance'].attrs['R2'])
-
-with h5py.File(emu_path+'z5.4_nn_savefile.hdf5', 'r') as f:
-    print('larger bin')
-    print(f['performance'].attrs['residuals_results'])
-    print(f['performance'].attrs['R2'])
+for mock_idx in range(n_samples):
+    print(log_likelihood(sample,mocks[mock_idx])[1]==log_likelihood_linda(sample,mocks[mock_idx]))
+print(f'NN_X parameter transformation: {np.array(sample_linda)==nn_x.x_to_theta(nn_x.theta_to_x(sample_linda))}')
+print(f'Emulator model application:{get_linda_model(sample)==nn_emulator(best_params,sample_linda)}')
+print(f'Covariance matrix and determinant compare: {nn_x.like_dict['covariance']==like_dict_0['covariance']},{nn_x.like_dict['log_determinant']==like_dict_0['log_determinant']}')
 
 
 
-x_size = 4
-dpi_value = 200
-plt_params = {'legend.fontsize': 7,
-              'legend.frameon': False,
-              'axes.labelsize': 8,
-              'axes.titlesize': 6.5,
-              'figure.titlesize': 8,
-              'xtick.labelsize': 7,
-              'ytick.labelsize': 7,
-              'lines.linewidth': 1,
-              'lines.markersize': 2,
-              'errorbar.capsize': 3,
-              'font.family': 'serif',
-              # 'text.usetex': True,
-              'xtick.minor.visible': True,
-              }
-plt.rcParams.update(plt_params)
-
-plt.figure(figsize=(x_size, x_size*4), constrained_layout=True,
-                                dpi=dpi_value)
-
-fig1 = plt.subplot(3,1,1)
-fig1.plot(v_bins, chi, linewidth=0.5, color = 'b'#, alpha=0.2
-         ,label='Linda'
-        )
-fig1.plot(v_bins, chi_molly, linewidth=0.5, color = 'r', alpha=0.2
-         ,label='Molly'
-        )
-fig1.set_xlabel(r'Velocity [$km s^{-1}$]')
-fig1.set_ylabel(r'$\chi$')
-#plt.title(f'%Residual plot:mean: {np.mean(diff)}; std: {np.std(diff)}')
-
-fig2 = plt.subplot(3,1,2)
-fig2.plot(v_bins, rel_err, linewidth=0.5, color = 'b'#, alpha=0.2
-         #,label='linda'
-        )
-fig2.plot(v_bins, rel_err_molly[:,32], linewidth=0.5, color = 'r'#, alpha=0.2
-         #,label='molly'
-        )
-#fig2.plot(v_bins, residual.T, linewidth=0.5, color = 'g', alpha=0.2
-         #,label='molly'
-        #)
-fig2.set_xlabel(r'Velocity [$km s^{-1}$]')
-fig2.set_ylabel(r'Relative error (%)')
 
 
-# In[ ]:
 
 
-print(X_test[:10,:])
-
-plt.plot(v_bins,get_molly_model_nearest([X_test[:,1],X_test[:,2],X_test[:,0]]),label='molly')
-plt.plot(v_bins,Y_test.T,label='test')
-
-plt.legend()
-
-colormap = cm.Reds
-n = 3
-percentiles = [68,95,99]
-rel_err_perc= np.zeros((59,n))
-rel_err_molly_perc = np.zeros((59,n))
-
-for i in range(n):
-    rel_err_perc[:,i]=np.percentile(rel_err,percentiles[i],axis=1)
-    rel_err_molly_perc[:,i]=np.percentile(rel_err_molly,percentiles[i],axis=1)
-
-fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=(8,8))
-for i in range(n):
-    ax[0].fill_between(v_bins, rel_err_perc[:,i],color=colormap(i/n),zorder=-i,label=f'{percentiles[i]}%')
-    ax[1].fill_between(v_bins, rel_err_molly_perc[:,i],color=colormap(i/n),zorder=-i)
-ax[0].set_title("Percentile plot", fontsize=15)
-ax[0].tick_params(labelsize=11.5)
-ax[1].set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
-ax[0].set_ylabel(r'Relative error Emulator(%)', fontsize=10)
-ax[1].set_ylabel(r'Relative error Molly(%)', fontsize=10)
-fig.tight_layout()
-fig.legend()
 
 
-# ## Print evidence of HMC
-test_id = 15
-molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}_R_30000.hdf5'
-molly_hmc = h5py.File(f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/' + molly_name, 'r')
-for mock_idx in range(n_inference): 
-    molly_sample = molly_hmc['samples'][mock_idx,:,:]
-    molly_flip = np.zeros(shape = molly_sample.shape)
-    molly_flip[:,0] = molly_sample[:,2]
-    molly_flip[:,1] = molly_sample[:,0]
-    molly_flip[:,2] = molly_sample[:,1]
-    t_molly, g_molly, f_molly = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
-                                     zip(*np.percentile(molly_sample, [16, 50, 84], axis=0)))
-    molly_infer = get_molly_model_nearest([t_molly[0], g_molly[0],f_molly[0]])
-    
-    linda_name = f"jit_2000_4_test{test_id}_small_bins_compare_molly_mock{mock_idx}"
-    linda_hmc = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/' +f'{zstr}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_{linda_name}_hmc_results.hdf5', 'r')
-    
-    molly_evidence = np.sum(molly_hmc['log_prob'][mock_idx,:])
-    linda_evidence = np.sum(linda_hmc['lnP'])
-    print(f'molly_evidence: {molly_evidence}, linda_evidence: {linda_evidence}')
-                      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
