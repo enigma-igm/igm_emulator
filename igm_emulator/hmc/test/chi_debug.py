@@ -74,7 +74,7 @@ rel_err_std = jnp.std(rel_err)
 chi2_dof = chi2 / Y_test.shape[1]
 chi2_molly_dof = chi2_molly / Y_test.shape[1]
 print(f'chi2 per dof emulator: {chi2_dof},chi2 per dof molly: {chi2_molly_dof}')
-print(np.array(rel_precision).T)
+print(np.mean(np.array(rel_precision).T,axis=1))
 
 #bad_emu=np.append(np.reshape(model_linda[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(model_linda[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
 #bad_corr=np.append(np.reshape(Y_test.T[:,np.where(np.min(chi,axis=0)<-2e-9)],[59,8]),np.reshape(Y_test.T[:,np.where(np.max(chi,axis=0)>2e-9)],[59,9]),axis=1)
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     fig2.set_title(f'rms: {rel_err_rms}; std: {rel_err_std}')
     figchi.savefig(out_path + f'chi_{test_num}.pdf')
     fig_rel_err.savefig(out_path + f'rel_err_{test_num}.pdf')
-
+    plt.show()
     '''
     Plot relative error percentiles
     '''
@@ -145,6 +145,7 @@ if __name__ == '__main__':
     fig_perc.tight_layout()
     fig_perc.legend()
     fig_perc.savefig(out_path + f'Percentile plot_{test_num}.pdf')
+    plt.show()
 
     '''
     Largest chi model
@@ -177,7 +178,7 @@ def plot_3d_rel_err(rel_err):
     ax3d.set_xlabel(r'$<F>$')
     ax3d.set_ylabel(r'$T_0$')
     ax3d.set_zlabel(r'$\gamma$')
-    ax3d.scatter(bad_param[0,:],bad_param[1,:],bad_param[2,:],color = 'b')
+    #ax3d.scatter(bad_param[0,:],bad_param[1,:],bad_param[2,:],color = 'b')
     ax3d.view_init(35, 20)
     plt.show()
     fig3d.savefig(out_path + f'param_3d_rel_err_{test_num}.pdf')
