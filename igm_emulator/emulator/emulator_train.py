@@ -12,8 +12,8 @@ from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
-#from bayes import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
+#from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
+from bayes import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     '''
     #small bin size
     if small_bin_bool==True:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_bin59_savefile.hdf5', 'a')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_bnn_bin59_savefile.hdf5', 'a')
     else:
         f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_nn_savefile.hdf5', 'a')
     group1 = f.create_group('haiku_nn')
