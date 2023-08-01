@@ -17,6 +17,7 @@ if small_bin_bool==True:
 else:
     #larger bins
     output_size=[100,100,100,276]
+    
 
 activation= jax.nn.leaky_relu
 l2 =0.0001
@@ -71,11 +72,11 @@ class MyModuleCustom(hk.Module):
     return out
 
 
-def _custom_forward_fn(x):
+def _bnn_custom_forward_fn(x):
   module = MyModuleCustom(output_size=output_size, activation = activation)
   return module(x)
 
-custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
+custom_forward = hk.without_apply_rng(hk.transform(_bnn_custom_forward_fn))
 
 '''
 Infrastructure for network training
@@ -98,36 +99,45 @@ def gaussian_kl(mu, logvar):
 @jax.jit
 def sample_params(param, rng):
     def sample_gaussian(mu, logvar):
-        eps = jax.random.normal(rng, shape=mu.shape)
+        eps = jax.random.normal(rng, shape=jax.tree_map(lambda x: x.shape, mu))
         return eps * jnp.exp(logvar / 2) + mu
 
-    sample = jax.tree_multimap(sample_gaussian, sample_gaussian, param['mu'], param['logvar'])
+    sample = jax.tree_map(sample_gaussian, param['mu'], param['logvar'])
     return sample
 
-def elbo(aprx_posterior, x, y, rng):
+def predict(param, x, rng):
+    params_rng, rng = jax.random.split(rng)
+    preds = custom_forward.apply(sample_params(param, params_rng),x)
+    return preds
+
+def elbo(aprx_posterior, x, y, rng, 
+         #like_dict
+        ):
     """Computes the Evidence Lower Bound."""
-    batch_image, batch_label = batch
-    # Sample net parameters from the approximate posterior.
+    ## Sample net parameters from the approximate posterior.
     params = sample_params(aprx_posterior, rng)
-    # Get network predictions.
-    ogits = net.apply(params, batch_image)
-    # Compute log likelihood of batch.
+    # Compute L2 regularization
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
-    # Original negative MSE loss
-    log_likelihood = -jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
-    # Compute the kl penalty on the approximate posterior.
+    ## Compute log likelihood
+    diff = custom_forward.apply(params, x) - y
+    #new_covariance = like_dict['covariance']
+    #log_determinant = like_dict['log_determinant']
+    #log_likelihood = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
+            #2.0 * jnp.pi)) / 2.0 + regularization
+    log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 + regularization
+    ## Compute the kl penalty on the approximate posterior.
     kl_divergence = jax.tree_util.tree_reduce(lambda a, b: a + b,
-            jax.tree_multimap(gaussian_kl,
-                              aprx_posterior['mu'],
-                              aprx_posterior['logvar']),
+            jax.tree_map(gaussian_kl,aprx_posterior['mu'],aprx_posterior['logvar']),
     )
     elbo_ = log_likelihood - 1e-3 * kl_divergence
     return elbo_, log_likelihood, kl_divergence
 
-def loss_fn(params, x, y, rng):
+def loss_fn(params, x, y, rng, 
+            #like_dict
+           ):
     """Computes the Evidence Lower Bound loss."""
     return -elbo(params, x, y, rng)[0]
 
@@ -142,16 +152,19 @@ def schedule_lr(lr,total_steps):
     return lrate
 
 @jax.jit
-def accuracy(aprx_posterior, x, y, meanY, stdY):
-    params = sample_params(aprx_posterior, rng)
+def accuracy(aprx_posterior, x, y, meanY, stdY, rng):
+    params_rng, rng = jax.random.split(rng)
+    params = sample_params(aprx_posterior, params_rng)
     preds = custom_forward.apply(params=params, x=x)*stdY+meanY
     y = y*stdY+meanY
     delta = (y - preds) / y
     return delta
 
 
-def update(aprx_posterior, opt_state, x, y, rng, optimizer):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, rng)
-    updates, opt_state = optimizer.update(grads, opt_state, params)
-    new_params = optax.apply_updates(params, updates)
+def update(aprx_posterior, opt_state, x, y, optimizer, rng, 
+           #like_dict
+          ):
+    batch_loss, grads = jax.value_and_grad(loss_fn)(aprx_posterior, x, y, rng)
+    updates, opt_state = optimizer.update(grads, opt_state, aprx_posterior)
+    new_params = optax.apply_updates(aprx_posterior, updates)
     return new_params, opt_state, batch_loss, grads

@@ -15,7 +15,7 @@ notes = 'bin59'
 
 zstr = 'z54'
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-z= f'{zstr}_768_leaky_relu_l2+adamw'
+z= f'{zstr}_768_BNN_leaky_relu_l2'
 
 if small_bin_bool==True:
     num = '_training_768_bin59'
