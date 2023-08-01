@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import h5py
 import dill
+from IPython import embed
 
 '''
 Load testing dataset
@@ -183,3 +184,5 @@ def plot_3d_rel_err(rel_err):
     ax3d.view_init(35, 20)
     plt.show()
     fig3d.savefig(out_path + f'param_3d_rel_err_{test_num}.pdf')
+
+embed()
