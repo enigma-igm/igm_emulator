@@ -13,6 +13,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
+#from bayes import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -22,7 +23,9 @@ import IPython
 max_grad_norm = 0.1
 n_epochs = 1000
 lr = 1e-3
+beta = 1e-3
 decay = 5e-3
+rng = hk.PRNGSequence(42)
 print(f'Training for small bin: {small_bin_bool}')
 print(f'Layers: {output_size}')
 print(f'Activation: {activation}')
