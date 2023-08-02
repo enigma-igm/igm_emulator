@@ -111,7 +111,7 @@ def predict(param, x, rng):
     return preds
 
 def elbo(aprx_posterior, x, y, rng, 
-         #like_dict
+         like_dict,vbins
         ):
     """Computes the Evidence Lower Bound."""
     ## Sample net parameters from the approximate posterior.
@@ -119,27 +119,27 @@ def elbo(aprx_posterior, x, y, rng,
     # Compute L2 regularization
     leaves =[]
     for module in sorted(params):
-        leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
+        leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
     ## Compute log likelihood
     diff = custom_forward.apply(params, x) - y
-    #new_covariance = like_dict['covariance']
-    #log_determinant = like_dict['log_determinant']
-    #log_likelihood = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
-            #2.0 * jnp.pi)) / 2.0 + regularization
-    log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 + regularization
+    
+    new_covariance = like_dict['covariance']
+    log_determinant = like_dict['log_determinant']
+    nbins = len(vbins)
+    log_likelihood = -jnp.mean(diff/jnp.sqrt(jnp.diagonal(new_covariance))) - regularization
+    #log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 - regularization
+    
     ## Compute the kl penalty on the approximate posterior.
-    kl_divergence = jax.tree_util.tree_reduce(lambda a, b: a + b,
-            jax.tree_map(gaussian_kl,aprx_posterior['mu'],aprx_posterior['logvar']),
-    )
-    elbo_ = log_likelihood - 1e-3 * kl_divergence
+    kl_divergence = jax.tree_util.tree_reduce(lambda a, b: a + b, jax.tree_map(gaussian_kl,aprx_posterior['mu'],aprx_posterior['logvar']))
+    elbo_ = log_likelihood #- 1e-3 * kl_divergence
     return elbo_, log_likelihood, kl_divergence
 
 def loss_fn(params, x, y, rng, 
-            #like_dict
+            like_dict,vbins
            ):
     """Computes the Evidence Lower Bound loss."""
-    return -elbo(params, x, y, rng)[0]
+    return -elbo(params, x, y, rng, like_dict,vbins)[0]
 
 
 ###Learning Rate schedule + Gradient Clipping###
@@ -153,18 +153,16 @@ def schedule_lr(lr,total_steps):
 
 @jax.jit
 def accuracy(aprx_posterior, x, y, meanY, stdY, rng):
-    params_rng, rng = jax.random.split(rng)
-    params = sample_params(aprx_posterior, params_rng)
-    preds = custom_forward.apply(params=params, x=x)*stdY+meanY
+    preds = predict(aprx_posterior, x, rng)
     y = y*stdY+meanY
     delta = (y - preds) / y
     return delta
 
 
 def update(aprx_posterior, opt_state, x, y, optimizer, rng, 
-           #like_dict
+           like_dict,vbins
           ):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(aprx_posterior, x, y, rng)
+    batch_loss, grads = jax.value_and_grad(loss_fn)(aprx_posterior, x, y, rng, like_dict,vbins)
     updates, opt_state = optimizer.update(grads, opt_state, aprx_posterior)
     new_params = optax.apply_updates(aprx_posterior, updates)
     return new_params, opt_state, batch_loss, grads

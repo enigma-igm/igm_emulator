@@ -13,7 +13,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 #from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
-from bayes import _bnn_custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, predict, small_bin_bool
+from bayes import _bnn_custom_forward_fn, schedule_lr, elbo, loss_fn, accuracy, update, output_size, activation, l2, predict, small_bin_bool
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -63,9 +63,17 @@ else:
     bin_label = '_set_bins_4'
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
 
+T0_idx = 8 #0-14
+g_idx = 4 #0-8
+f_idx = 4 #0-8
    
-#like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-#like_dict = dill.load(open(in_path + like_name, 'rb'))
+like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
+like_dict = dill.load(open(in_path + like_name, 'rb'))
+
+in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
+with h5py.File(in_path + in_name_h5py, 'r') as f:
+    params = dict(f['params'].attrs.items())
+vbins = params['v_bins']
 
 X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
 X_test = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
@@ -121,18 +129,19 @@ params = dict(
         logvar=jax.tree_map(lambda x: -7 * jnp.ones_like(x), init_params),
     )
 opt_state = optimizer.init(params)
+IPython.embed()
 
 if __name__ == "__main__":
     with trange(n_epochs) as t:
         for step in t:
             # optimizing loss by update function
-            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer, my_rng)
+            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer, my_rng, like_dict,vbins)
 
             #if step % 100 == 0:
                 #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
-            l = loss_fn(params, X_vali, Y_vali, my_rng)
+            l = loss_fn(params, X_vali, Y_vali, my_rng, like_dict,vbins)
             training_loss.append(batch_loss)
             validation_loss.append(l)
 
@@ -153,7 +162,7 @@ if __name__ == "__main__":
     print(f'Model saved.')
     print(f'early_stopping_counter: {early_stopping_counter}')
     print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY, my_rng)**2))}')
-    print(f'Test Loss: {loss_fn(params, X_test, Y_test, my_rng)}')
+    print(f'Test Loss: {loss_fn(params, X_test, Y_test, my_rng, like_dict,vbins)}')
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
@@ -165,7 +174,7 @@ if __name__ == "__main__":
     train_overplot(preds,X,Y,meanY,stdY)
 
     test_preds = predict(best_params,X_test,my_rng)
-    test_loss = loss_fn(best_params, X_test, Y_test, my_rng)
+    test_loss = loss_fn(best_params, X_test, Y_test, my_rng, like_dict,vbins)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
     test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
@@ -183,9 +192,9 @@ if __name__ == "__main__":
     '''
     #small bin size
     if small_bin_bool==True:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_BNN_bin59_savefile.hdf5', 'a')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_bin59_savefile.hdf5', 'a')
     else:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_BNN_savefile.hdf5', 'a')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_savefile.hdf5', 'a')
     group1 = f.create_group('haiku_nn')
     group1.attrs['redshift'] = redshift
     group1.attrs['adamw_decay'] = decay
@@ -219,6 +228,6 @@ if __name__ == "__main__":
 
     dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
     dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_BNN_best_param{train_num}.p'), 'wb'))
-    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_BNN_best_param{train_num}.p'), 'wb'))
+    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
+    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")
