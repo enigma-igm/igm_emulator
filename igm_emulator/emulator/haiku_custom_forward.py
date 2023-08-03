@@ -89,12 +89,18 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, l2=l2):
+def loss_fn(params, x, y, like_dict, l2=l2):
     leaves =[]
     for module in sorted(params):
-        leaves.append(jnp.asarray(jax.tree_leaves(params[module]['w'])))
+        leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
-    return jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
+    
+    diff = custom_forward.apply(params, x) - y
+    new_covariance = like_dict['covariance']
+    loss = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
+    
+    #loss = jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
+    return loss
 
 @jax.jit
 def accuracy(params, x, y, meanY, stdY):
@@ -104,8 +110,8 @@ def accuracy(params, x, y, meanY, stdY):
     return delta
 
 
-def update(params, opt_state, x, y, optimizer):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
+def update(params, opt_state, x, y, optimizer, like_dict):
+    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state, batch_loss, grads
