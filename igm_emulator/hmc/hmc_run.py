@@ -222,7 +222,7 @@ if __name__ == '__main__':
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
         fit_axis.legend()
-        out_path = os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc/plots/'
+        out_path = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/'
         fit_fig.savefig(out_path + f'model_fit_{note}.pdf')
         corner_fig.savefig(out_path + f'corner_{note}.pdf')
         print('Figures saved.')
