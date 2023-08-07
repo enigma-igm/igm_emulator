@@ -107,17 +107,39 @@ optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
 '''
 Training Loop + Visualization of params
 '''
-#params_grads_distribution(loss_fn,init_params,X_train,Y_train)
+@jax.jit
+def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
+               optimizer, update, loss_fn, accuracy, like_dict,
+               n_epochs=1000, pv=100):
+    '''
+    Train loop for a given model and optimizer.
+    Args:
+        X_train: training thermal parameters [Fob, T0, Gamma] (normalized)
+        Y_train: training mean autocorrelation functions (normalized)
+        X_test: test thermal parameters [Fob, T0, Gamma] (normalized)
+        Y_test: test mean autocorrelation functions (normalized)
+        X_vali: validation thermal parameters [Fob, T0, Gamma] (normalized)
+        Y_vali: validation mean autocorrelation functions (normalized)
+        meanY: mean of the training mean autocorrelation functions
+        stdY: standard deviation of the training mean autocorrelation functions
+        params: initial sampled parameters custom_forward.init()
+        optimizer: optax optimizer
+        update: update function
+        loss_fn: loss function MSE, soft_max, cross entropy, etc.
+        accuracy: (y - preds) / y
+        like_dict: likelihood dictionary for loss function
+    Returns:
+        best_params: best weights from training
+        best_loss: best loss from training
+        savefile.hdf5: save emulator performance at /igm_emulator/igm_emulator/emulator/best_params/
+        savefile.p: save best params at /igm_emulator/igm_emulator/emulator/best_params/ & /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params
 
-best_loss = np.inf
-validation_loss = []
-training_loss = []
-early_stopping_counter = 0
-pv = 100
-params = init_params
-opt_state = optimizer.init(params)
-
-if __name__ == "__main__":
+    '''
+    opt_state = optimizer.init(params)
+    early_stopping_counter = 0
+    best_loss = np.inf
+    validation_loss = []
+    training_loss = []
     with trange(n_epochs) as t:
         for step in t:
             # optimizing loss by update function
