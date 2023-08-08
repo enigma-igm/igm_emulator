@@ -7,11 +7,11 @@ import os
 import dill
 import h5py
 import os
-from haiku_custom_forward import small_bin_bool
+from haiku_custom_forward import small_bin_bool,l2
 '''
 Visualization of hyperparameters
 '''
-notes = 'bin59'
+notes = f'chi_l2_{l2}_bin59'
 
 zstr = 'z54'
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'

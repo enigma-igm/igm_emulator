@@ -199,7 +199,7 @@ def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, pa
     '''
     #small bin size
     if small_bin_bool==True:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_bin59_savefile.hdf5', 'a')
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_l2_{l2}_bin59_savefile.hdf5', 'a')
     else:
         f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_savefile.hdf5', 'a')
     group1 = f.create_group('haiku_nn')
@@ -235,6 +235,6 @@ def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, pa
 
     dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
     dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
-    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
+    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
+    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")

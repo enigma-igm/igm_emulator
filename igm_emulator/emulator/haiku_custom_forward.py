@@ -19,7 +19,8 @@ else:
     output_size=[100,100,100,276]
 
 activation= jax.nn.leaky_relu
-l2 =0.0001
+#l2 =0.0001
+l2 = 0.01
 '''
 Build custom haiku Module
 '''
