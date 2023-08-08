@@ -21,6 +21,12 @@ else:
 activation= jax.nn.leaky_relu
 #l2 =0.0001
 l2 = 0.01
+redshift = 5.4 #choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
+# get the appropriate string and pathlength for chosen redshift
+zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
+z_idx = np.argmin(np.abs(zs - redshift))
+z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+z_string = z_strings[z_idx]
 if small_bin_bool == True:
     n_path = 20  # 17->20
     n_covar = 500000
