@@ -1,4 +1,7 @@
-import emulator as emu
+import sys
+import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator')
+import igm_emulator as emu
 import dill
 import numpy as np
 import IPython
@@ -15,8 +18,6 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 import corner
 import h5py
-import sys
-import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 print(f'Training for small bin: {emu.small_bin_bool}')
 from progressbar import ProgressBar
