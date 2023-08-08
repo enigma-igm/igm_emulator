@@ -108,7 +108,7 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 Run HMC
 '''
 if __name__ == '__main__':
-    nn_x = emu.nn_hmc_3d_x(vbins, best_params, T0s, gammas, fobs, like_dict)
+    nn_x = emu.NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
 
