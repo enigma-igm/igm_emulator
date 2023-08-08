@@ -29,7 +29,7 @@ sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 load model and auto-corr
 '''
 redshift = 5.4
-n_inference = 50
+n_inference = 100
 n_params = 3
 
 # get the appropriate string and pathlength for chosen redshift
