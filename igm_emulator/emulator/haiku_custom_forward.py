@@ -7,6 +7,7 @@ from typing import Callable, Iterable, Optional
 import optax
 import itertools
 import struct
+import numpy as np
 print(struct.calcsize("P") * 8)
 
 
