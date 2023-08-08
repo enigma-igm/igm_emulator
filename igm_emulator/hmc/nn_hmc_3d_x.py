@@ -180,20 +180,23 @@ class NN_HMC_X:
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
-        mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
-                 jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
         if report:
             print(f'true theta:{self.x_to_theta(x)}')
             print(f'true x:{x}')
+            mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
+                        num_chains=self.num_chains,
+                        jit_model_args=True,
+                        chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
+        else:
+            mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
+                        num_chains=self.num_chains,
+                        jit_model_args=True,
+                        chain_method='vectorized',
+                        progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
         theta = self.x_to_theta(x)
-        #ave_f, temp, g = theta
-        #T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
-        #g_idx_closest = np.argmin(np.abs(self.gammas - g))
-        #f_idx_closest = np.argmin(np.abs(self.fobs - ave_f))
         theta_init = theta + 1e-4 * np.random.randn(self.num_chains, 3)
         x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
-        #print(f'init pos:{theta_init}')
         
         # Run the MCMC
         start_time = time.time()
