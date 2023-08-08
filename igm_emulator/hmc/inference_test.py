@@ -1,4 +1,4 @@
-import igm_emulator as emu
+import emulator as emu
 import dill
 import numpy as np
 import IPython
