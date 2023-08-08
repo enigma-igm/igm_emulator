@@ -146,13 +146,13 @@ if __name__ == '__main__':
     with trange(n_epochs) as t:
         for step in t:
             # optimizing loss by update function
-            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer, like_dict)
+            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
 
             #if step % 100 == 0:
                 #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
-            l = loss_fn(params, X_vali, Y_vali, like_dict)
+            l = loss_fn(params, X_vali, Y_vali)
             training_loss.append(batch_loss)
             validation_loss.append(l)
 
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     print(f'Model saved.')
     print(f'early_stopping_counter: {early_stopping_counter}')
     print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY)**2))}')
-    print(f'Test Loss: {loss_fn(params, X_test, Y_test, like_dict)}')
+    print(f'Test Loss: {loss_fn(params, X_test, Y_test)}')
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     train_overplot(preds,X,Y,meanY,stdY)
 
     test_preds = custom_forward.apply(best_params, X_test)
-    test_loss = loss_fn(params, X_test, Y_test, like_dict)
+    test_loss = loss_fn(params, X_test, Y_test)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
 
     test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
