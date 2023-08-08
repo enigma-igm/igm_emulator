@@ -138,6 +138,8 @@ if __name__ == '__main__':
         savefile.p: save best params at /igm_emulator/igm_emulator/emulator/best_params/ & /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params
 
     '''
+    n_epochs = 1000
+    pv = 100
     params = init_params
     opt_state = optimizer.init(params)
     early_stopping_counter = 0
