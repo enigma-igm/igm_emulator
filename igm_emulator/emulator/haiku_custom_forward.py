@@ -138,7 +138,6 @@ def accuracy(params, x, y, meanY, stdY):
 
 
 def update(params, opt_state, x, y, optimizer):
-    print(loss_fn(params, x, y))
     batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
