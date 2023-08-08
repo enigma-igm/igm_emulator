@@ -131,7 +131,7 @@ if __name__ == '__main__':
         flux = mocks[mock_idx, :]
 
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-        hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
+        hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux, report=False)
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 

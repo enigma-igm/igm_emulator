@@ -151,7 +151,7 @@ class NN_HMC_X:
         return jax.tree_util.Partial(self.potential_fun, flux=flux)
 
 
-    def mcmc_one(self, key, x, flux): #input dimensionless paramter x
+    def mcmc_one(self, key, x, flux, report = True): #input dimensionless paramter x
         '''
 
         Parameters
@@ -160,6 +160,7 @@ class NN_HMC_X:
         key: random key
         x: dimensionless parameters
         flux: observed flux
+        report: whether to report the progress
 
         Returns
         -------
@@ -182,8 +183,9 @@ class NN_HMC_X:
         mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples, num_chains= self.num_chains,
                  jit_model_args=True, chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
         # Initial position
-        print(f'true theta:{self.x_to_theta(x)}')
-        print(f'true x:{x}')
+        if report:
+            print(f'true theta:{self.x_to_theta(x)}')
+            print(f'true x:{x}')
         theta = self.x_to_theta(x)
         #ave_f, temp, g = theta
         #T0_idx_closest = np.argmin(np.abs(self.T0s - temp))
@@ -218,16 +220,17 @@ class NN_HMC_X:
         hmc_tree_depth == self.max_tree_depth)  # Number of transitions that hit the maximum tree depth.
         ms_per_step = 1e3 * total_time / np.sum(hmc_num_steps)
 
-        print(f"*** SUMMARY FOR HMC ***")
-        print(f"total_time = {total_time} seconds for the HMC")
-        print(f"total_steps = {np.sum(hmc_num_steps)} total steps")
-        print(f"ms_per_step = {ms_per_step} ms per step of the HMC")
-        print(f"n_eff_mean = {neff_mean} effective sample size, compared to ntot = {self.mcmc_nsteps_tot} total samples.")
-        print(f"ms_per_neff = {ms_per_neff:.3f} ms per effective sample")
-        print(f"r_hat_mean = {r_hat_mean}")
-        print(f"max_tree_depth encountered = {hmc_tree_depth.max()} in chain")
-        print(f"There were {hit_max_tree_depth} transitions that exceeded the max_tree_depth = {self.max_tree_depth}")
-        print("*************************")
+        if report:
+            print(f"*** SUMMARY FOR HMC ***")
+            print(f"total_time = {total_time} seconds for the HMC")
+            print(f"total_steps = {np.sum(hmc_num_steps)} total steps")
+            print(f"ms_per_step = {ms_per_step} ms per step of the HMC")
+            print(f"n_eff_mean = {neff_mean} effective sample size, compared to ntot = {self.mcmc_nsteps_tot} total samples.")
+            print(f"ms_per_neff = {ms_per_neff:.3f} ms per effective sample")
+            print(f"r_hat_mean = {r_hat_mean}")
+            print(f"max_tree_depth encountered = {hmc_tree_depth.max()} in chain")
+            print(f"There were {hit_max_tree_depth} transitions that exceeded the max_tree_depth = {self.max_tree_depth}")
+            print("*************************")
 
         # Return the values needed
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
