@@ -238,3 +238,5 @@ def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, pa
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
     dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")
+train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
+            optimizer, update, loss_fn, accuracy, like_dict)
