@@ -147,7 +147,7 @@ if __name__ == '__main__':
         for step in t:
             # optimizing loss by update function
             params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
-
+            IPython.embed()
             #if step % 100 == 0:
                 #plot_params(params)
 
