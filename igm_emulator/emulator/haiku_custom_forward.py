@@ -8,6 +8,7 @@ import optax
 import itertools
 import struct
 import numpy as np
+import dill
 print(struct.calcsize("P") * 8)
 
 
