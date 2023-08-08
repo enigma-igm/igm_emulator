@@ -146,8 +146,8 @@ if __name__ == '__main__':
                                        quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins.png')
-    note = f"{z_string}_inference_{n_inference}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_small_bins_retrain.hdf5"
-    with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/' + note, 'a') as f:
+    note = f"{z_string}_inference_{n_inference}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_small_bins_retrain"
+    with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/' + f'{note}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob', data=log_prob)
         f.create_dataset('true_log_prob', data=true_log_prob)
