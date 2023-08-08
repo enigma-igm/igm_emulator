@@ -107,10 +107,13 @@ optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
 '''
 Training Loop + Visualization of params
 '''
+'''
 @jax.jit
 def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
                optimizer, update, loss_fn, accuracy, like_dict,
                n_epochs=1000, pv=100):
+'''
+if __name__ == '__main__':
     '''
     Train loop for a given model and optimizer.
     Args:
@@ -238,5 +241,6 @@ def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, pa
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
     dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")
-train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
-            optimizer, update, loss_fn, accuracy, like_dict)
+
+#train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
+            #optimizer, update, loss_fn, accuracy, like_dict)
