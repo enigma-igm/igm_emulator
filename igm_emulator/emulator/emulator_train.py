@@ -149,12 +149,12 @@ if __name__ == '__main__':
     with trange(n_epochs) as t:
         for step in t:
             # optimizing loss by update function
-            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer)
+            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer,like_dict)
             #if step % 100 == 0:
                 #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
-            l = loss_fn(params, X_vali, Y_vali)
+            l = loss_fn(params, X_vali, Y_vali,like_dict)
             training_loss.append(batch_loss)
             validation_loss.append(l)
 
@@ -175,74 +175,75 @@ if __name__ == '__main__':
     print(f'Model saved.')
     print(f'early_stopping_counter: {early_stopping_counter}')
     print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY)**2))}')
-    print(f'Test Loss: {loss_fn(params, X_test, Y_test)}')
+    print(f'Test Loss: {loss_fn(params, X_test, Y_test,like_dict)}')
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
+
     '''
     Prediction overplots: Training And Test
     '''
-    preds = custom_forward.apply(best_params,X_train)
-    train_overplot(preds,X,Y,meanY,stdY)
-
-    test_preds = custom_forward.apply(best_params, X_test)
-    test_loss = loss_fn(params, X_test, Y_test)
-    test_R2 = r2_score(test_preds.squeeze(), Y_test)
-
-    test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
-    '''
-    Accuracy + Results
-    '''
-    delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
-    print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
-    plot_residue(delta)
-    bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
-    plot_error_distribution(delta)
-
-    '''
-    Save best emulated parameter
-    '''
-    #small bin size
-    if small_bin_bool==True:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_l2_{l2}_bin59_savefile.hdf5', 'a')
-    else:
-        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_savefile.hdf5', 'a')
-    group1 = f.create_group('haiku_nn')
-    group1.attrs['redshift'] = redshift
-    group1.attrs['adamw_decay'] = decay
-    group1.attrs['epochs'] = n_epochs
-    group1.create_dataset('layers', data = output_size)
-    group1.attrs['activation_function'] = f'{activation}'
-    group1.attrs['learning_rate'] = lr
-    group1.attrs['L2_lambda'] = l2
-
-    group2 = f.create_group('data')
-    group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
-    group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
-    group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
-    group2.create_dataset('test_data', data = X_test)
-    group2.create_dataset('train_data', data = X_train)
-    group2.create_dataset('vali_data', data = X_vali)
-    group2.create_dataset('meanX', data=meanX)
-    group2.create_dataset('stdX', data=stdX)
-    group2.create_dataset('meanY', data=meanY)
-    group2.create_dataset('stdY', data=stdY)
-    #IPython.embed()
-    group3 = f.create_group('performance')
-    group3.attrs['R2'] = test_R2
-    group3.attrs['test_loss'] = test_loss
-    group3.attrs['train_loss'] = batch_loss
-    group3.attrs['vali_loss'] = best_loss
-    group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
-    group3.create_dataset('residuals', data=delta)
-    f.close()
-    print("training directories and hyperparameters saved")
-
-    dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
-    dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-    dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
-    dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
-    print("trained parameter for smaller bins saved")
+    #preds = custom_forward.apply(best_params,X_train)
+    #train_overplot(preds,X,Y,meanY,stdY)
+    #
+    #test_preds = custom_forward.apply(best_params, X_test)
+    #test_loss = loss_fn(params, X_test, Y_test,like_dict)
+    #test_R2 = r2_score(test_preds.squeeze(), Y_test)
+    #
+    #test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    #'''
+    #Accuracy + Results
+    #'''
+    #delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
+    #print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
+    #plot_residue(delta)
+    #bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
+    #plot_error_distribution(delta)
+    #
+    #'''
+    #Save best emulated parameter
+    #'''
+    ##small bin size
+    #if small_bin_bool==True:
+    #    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_chi_l2_{l2}_bin59_savefile.hdf5', 'a')
+    #else:
+    #    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/z{redshift}_savefile.hdf5', 'a')
+    #group1 = f.create_group('haiku_nn')
+    #group1.attrs['redshift'] = redshift
+    #group1.attrs['adamw_decay'] = decay
+    #group1.attrs['epochs'] = n_epochs
+    #group1.create_dataset('layers', data = output_size)
+    #group1.attrs['activation_function'] = f'{activation}'
+    #group1.attrs['learning_rate'] = lr
+    #group1.attrs['L2_lambda'] = l2
+    #
+    #group2 = f.create_group('data')
+    #group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
+    #group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
+    #group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
+    #group2.create_dataset('test_data', data = X_test)
+    #group2.create_dataset('train_data', data = X_train)
+    #group2.create_dataset('vali_data', data = X_vali)
+    #group2.create_dataset('meanX', data=meanX)
+    #group2.create_dataset('stdX', data=stdX)
+    #group2.create_dataset('meanY', data=meanY)
+    #group2.create_dataset('stdY', data=stdY)
+    ##IPython.embed()
+    #group3 = f.create_group('performance')
+    #group3.attrs['R2'] = test_R2
+    #group3.attrs['test_loss'] = test_loss
+    #group3.attrs['train_loss'] = batch_loss
+    #group3.attrs['vali_loss'] = best_loss
+    #group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
+    #group3.create_dataset('residuals', data=delta)
+    #f.close()
+    #print("training directories and hyperparameters saved")
+    #
+    #dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
+    #dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
+    #dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
+    #dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_l2_{l2}_best_param{train_num}.p'), 'wb'))
+    #print("trained parameter for smaller bins saved")
 
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
             #optimizer, update, loss_fn, accuracy, like_dict)

@@ -23,29 +23,6 @@ else:
 activation= jax.nn.leaky_relu
 #l2 =0.0001
 l2 = 0.01
-redshift = 5.4 #choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
-# get the appropriate string and pathlength for chosen redshift
-zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-z_idx = np.argmin(np.abs(zs - redshift))
-z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-z_string = z_strings[z_idx]
-if small_bin_bool == True:
-    n_path = 20  # 17->20
-    n_covar = 500000
-    bin_label = '_set_bins_3'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
-else:
-    n_path = 17
-    n_covar = 500000
-    bin_label = '_set_bins_4'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-
-T0_idx = 8  # 0-14
-g_idx = 4  # 0-8
-f_idx = 4  # 0-8
-
-like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-like_dict = dill.load(open(in_path + like_name, 'rb'))
 
 '''
 Build custom haiku Module
@@ -116,7 +93,7 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, l2=l2):
+def loss_fn(params, x, y, like_dict, l2=l2):
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
@@ -137,8 +114,8 @@ def accuracy(params, x, y, meanY, stdY):
     return delta
 
 
-def update(params, opt_state, x, y, optimizer):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
+def update(params, opt_state, x, y, optimizer, like_dict):
+    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state, batch_loss, grads

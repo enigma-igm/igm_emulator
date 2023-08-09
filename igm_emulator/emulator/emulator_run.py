@@ -5,7 +5,6 @@ from emulator_train import custom_forward
 from haiku_custom_forward import small_bin_bool
 import h5py
 import numpy as np
-import dill
 from jax.config import config
 config.update("jax_enable_x64", True)
 
