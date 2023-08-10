@@ -7,43 +7,37 @@ import os
 import dill
 import h5py
 import os
-from haiku_custom_forward import small_bin_bool,l2
+from haiku_custom_forward import small_bin_bool,var_tag
+from matplotlib import cm
+
 '''
 Visualization of hyperparameters
 '''
-notes = f'chi_l2_{l2}_bin59'
 
 zstr = 'z54'
-dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-z= f'{zstr}_768_chi_leaky_relu_l2'
+dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
 if small_bin_bool==True:
-    num = '_training_768_bin59'
     skewers_per_data = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
     in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{zstr}/'
-    # change path from f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-
-    # get initial grid
     in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
-    with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
-        params = dict(f['params'].attrs.items())
+
 else:
-    num = '_training_768'
-    in_path_hdf5 = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
     R_value = 30000.
     skewers_use = 2000
     n_flux = 9
     bin_label = '_set_bins_4'
     added_label = ''
-    temp_param_dict_name = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
-    with h5py.File(in_path_hdf5 + temp_param_dict_name, 'r') as f:
-        params = dict(f['params'].attrs.items())
-        
-Y = dill.load(open(dir_lhs + f'{zstr}_model{num}.p', 'rb'))
-out = Y.shape[1]
+    in_path_molly = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{zstr}/final_135/'
+    in_name_h5py = f'correlation_temp_fluct_{added_label}skewers_{skewers_use}_R_{int(R_value)}_nf_{n_flux}_dict_set_bins_4.hdf5'
+
+with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
+    params = dict(f['params'].attrs.items())
+
 v_bins = params['v_bins']
+
 fig = {'legend.fontsize': 16,
        'legend.frameon': False,
        'axes.labelsize': 30,
@@ -132,7 +126,7 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.legend(labels=['layer1', 'layer2', 'layer3'], title='grads_b')
     plt.show()
 
-def train_overplot(preds, X, Y, meanY, stdY):
+def train_overplot(preds, X, Y, meanY, stdY, out_tag):
     ax = v_bins # velocity bins
     sample = 8  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
@@ -150,12 +144,11 @@ def train_overplot(preds, X, Y, meanY, stdY):
     plt.ylabel('Auto-Correlation')
     plt.title('Train overplot in data space')
     plt.legend()
-    dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'train_overplot_{z}_{X.shape[0]}_{notes}.png'))
+    plt.savefig(os.path.join(dir_exp, f'train_overplot_{out_tag}_{var_tag}.png'))
     print('Train overplot saved')
     plt.show()
 
-def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
+def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag):
     ax = v_bins
     sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
@@ -175,26 +168,24 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY):
     plt.ylabel('Auto-Correlation')
     plt.title('Test overplot in data space')
     plt.legend()
-    dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'test_overplot_{z}_{X_test.shape[0]}_{notes}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     plt.show()
 
-def plot_residue(new_delta):
+def plot_residue(new_delta, out_tag):
     plt.figure(figsize=(15, 15))
     for i in range(new_delta.shape[0]):
-        plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5)
-    plt.plot(v_bins, jnp.ones([out]), c='r')
-    plt.plot(v_bins, -jnp.ones([out]), c='r')
+        plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5,color = 'b', alpha=0.2)
+    plt.plot(v_bins, jnp.ones_like(v_bins), c='r')
+    plt.plot(v_bins, -jnp.ones_like(v_bins), c='r')
     plt.xlabel(r'Velocity [$km s^{-1}$]')
     plt.ylabel('[Residual] [%]')
     plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100:.3f}%; std: {np.std(new_delta) * 100:.3f}%')
-    dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'test%error_{z}_{notes}.png'))
+    plt.savefig(os.path.join(dir_exp, f'test%error_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
 
 
-def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY):
+def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY, out_tag):
     unlearnt_idx = []
     for i, d in enumerate(delta):
         for j, e in enumerate(d):
@@ -202,7 +193,6 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY):
                 unlearnt_idx.append(i)
                 break
     unlearnt_idx = jnp.asarray(unlearnt_idx)
-    print(f'unlearned:{unlearnt_idx.shape}')
 
     ax = v_bins
     fig2, axs2 = plt.subplots(2, 1)
@@ -224,11 +214,29 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY):
     plt.ylabel('Correlation function %')
     plt.title(f'unlearned residue percentage: {unlearnt_idx.shape[0]} sets')
     plt.legend()
-    dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'  # plot saving directory
-    plt.savefig(os.path.join(dir_exp, f'unlearnt_{z}_{notes}.png'))
+    plt.savefig(os.path.join(dir_exp, f'unlearnt_{out_tag}_{var_tag}.png'))
     plt.show()
 
-def plot_error_distribution(new_delta):
-    plt.hist(new_delta.flatten(), bins=100, range=[-0.2, 0.2])
-    plt.show()
-    print(f'%mean: {np.mean(new_delta) * 100}; %std: {np.std(new_delta) * 100}')
+def plot_error_distribution(new_delta,out_tag):
+    colormap = cm.Reds
+    n = 3
+    percentiles = [68, 95, 99]
+    rel_err_perc = np.zeros((59, n))
+    rel_err = []
+    for i in range(new_delta.shape[0]):
+        rel_err.append(new_delta[i, :] * 100)
+    rel_err = np.array(rel_err).T
+    for i in range(n):
+        rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
+    for i in range(n):
+        ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
+    ax.set_title("Percentile plot", fontsize=15)
+    ax.tick_params(labelsize=11.5)
+    ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
+    ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
+    fig.tight_layout()
+    fig.legend()
+    print(f'mean error: {np.mean(new_delta) * 100}%; std error: {np.std(new_delta) * 100}%')
+    plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
