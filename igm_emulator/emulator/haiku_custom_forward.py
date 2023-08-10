@@ -13,7 +13,7 @@ print(struct.calcsize("P") * 8)
 
 #Hyperparameters tuning
 small_bin_bool = True
-loss_str = 'chi_one_covariance'
+loss_str = 'mse'
 activation= jax.nn.leaky_relu
 l2 =0.0001
 #l2 = 0.01
@@ -104,9 +104,9 @@ def loss_fn(params, x, y, like_dict, l2=l2):
     
     diff = custom_forward.apply(params, x) - y
     new_covariance = like_dict['covariance']
-    loss = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
+    #loss = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
     
-    #loss = jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
+    loss = jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
     return loss
 
 @jax.jit
