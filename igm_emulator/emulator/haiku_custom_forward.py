@@ -15,8 +15,8 @@ print(struct.calcsize("P") * 8)
 small_bin_bool = True
 loss_str = 'chi_one_covariance'
 activation= jax.nn.leaky_relu
-#l2 =0.0001
-l2 = 0.01
+l2 =0.0001
+#l2 = 0.01
 
 if small_bin_bool==True:
     #smaller bins
