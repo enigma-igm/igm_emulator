@@ -54,7 +54,7 @@ else:
     output_size = [100, 100, 100, 276]
 
 # set emulator parameters
-loss_str = 'chi'
+loss_str = 'chi_one_covariance'
 l2 = 0.01
 activation= jax.nn.leaky_relu
 

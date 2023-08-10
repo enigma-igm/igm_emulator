@@ -13,7 +13,7 @@ print(struct.calcsize("P") * 8)
 
 #Hyperparameters tuning
 small_bin_bool = True
-loss_str = 'mse' #'chi'
+loss_str = 'mse' #'chi_one_covariance'
 activation= jax.nn.leaky_relu
 l2 =0.0001
 #l2 = 0.01
