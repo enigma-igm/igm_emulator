@@ -13,7 +13,7 @@ print(struct.calcsize("P") * 8)
 
 #Hyperparameters tuning
 small_bin_bool = True
-loss_str = 'mse'
+loss_str = 'mse' #'chi'
 activation= jax.nn.leaky_relu
 l2 =0.0001
 #l2 = 0.01
@@ -21,11 +21,11 @@ l2 =0.0001
 if small_bin_bool==True:
     #smaller bins
     output_size=[100,100,100,59]
-    var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
 else:
     #larger bins
     output_size=[100,100,100,276]
-    var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
+
+var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
 
 '''
 Build custom haiku Module

@@ -5,6 +5,7 @@ import igm_emulator as emu
 import dill
 import numpy as np
 import IPython
+import jax
 import jax.random as random
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
@@ -36,27 +37,33 @@ zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 z_string = z_strings[z_idx]
-in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
-if emu.small_bin_bool==True:
-    emu_name = f'{z_string}_best_param_training_768_bin59.p'
-else:
-    emu_name = f'{z_string}_best_param_training_768.p'
-best_params = dill.load(open(in_path_hdf5 + emu_name, 'rb'))
-
-
-if emu.small_bin_bool==True:
+if emu.small_bin_bool == True:
     n_path = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+    out_tag = f'{z_string}_training_768_bin59'
+    output_size = [100, 100, 100, 59]
 else:
-    #n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
-    #n_path = n_paths[z_idx]
+    # n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
+    # n_path = n_paths[z_idx]
     n_path = 17
     n_covar = 500000
     bin_label = '_set_bins_4'
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+    out_tag = f'{z_string}_training_768_bin276'
+    output_size = [100, 100, 100, 276]
+
+# set emulator parameters
+loss_str = 'chi'
+l2 = 0.01
+activation= jax.nn.leaky_relu
+
+# load model
+in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
+f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
+var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
+best_params = dill.load(open(in_path_hdf5 + f'{out_tag}_{var_tag}_best_param.p', 'rb'))
 
 in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
 with h5py.File(in_path + in_name_h5py, 'r') as f:
@@ -145,7 +152,7 @@ if __name__ == '__main__':
                                        quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins.png')
-    note = f"{z_string}_inference_{n_inference}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_small_bins_retrain"
+    note = f"{z_string}_inference_{n_inference}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_small_bins_retrain_{var_tag}"
     with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/' + f'{note}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob', data=log_prob)
