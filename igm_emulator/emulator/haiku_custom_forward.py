@@ -102,12 +102,13 @@ def loss_fn(params, x, y, like_dict, l2=l2):
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
-    
-    diff = custom_forward.apply(params, x) - y
+
+    pred = custom_forward.apply(params, x)
+    diff = pred - y
     new_covariance = like_dict['covariance']
     chi = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
-    mse = jnp.mean((custom_forward.apply(params, x) - y) ** 2) + regularization
-    loss = mse + 0.06 * jnp.mean((fft(custom_forward.apply(params, x)) - fft(y)) ** 2) + regularization
+    mse = jnp.mean((diff) ** 2) + regularization
+    loss = mse + 0.06 * jnp.mean((fft(pred) - fft(y)) ** 2) + regularization
     return loss
 
 @jax.jit
