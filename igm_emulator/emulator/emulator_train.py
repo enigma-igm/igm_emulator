@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag
+from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag, loss_str
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -30,6 +30,7 @@ print(f'Small bin number: {small_bin_bool}')
 print(f'Layers: {output_size}')
 print(f'Activation: {activation.__name__}')
 print(f'L2 regularization lambda: {l2}')
+print(f'Loss function: {loss_str}')
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
