@@ -8,7 +8,7 @@ import optax
 import itertools
 import struct
 import numpy as np
-from scipy.fft import fft, ifft
+from jax.scipy.fft import dct
 import dill
 print(struct.calcsize("P") * 8)
 
@@ -108,7 +108,7 @@ def loss_fn(params, x, y, like_dict, l2=l2):
     new_covariance = like_dict['covariance']
     chi = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
     mse = jnp.mean((diff) ** 2) + regularization
-    loss = mse + 0.06 * jnp.mean((fft(pred) - fft(y)) ** 2) + regularization
+    loss = mse + 0.06 * jnp.mean((dct(pred) - dct(y)) ** 2) + regularization
     return loss
 
 @jax.jit
