@@ -60,7 +60,6 @@ activation= jax.nn.leaky_relu
 
 # load model
 in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-f = h5py.File(in_path_hdf5 + f'z{redshift}_nn_savefile.hdf5', 'r')
 var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
 best_params = dill.load(open(in_path_hdf5 + f'{out_tag}_{var_tag}_best_param.p', 'rb'))
 
