@@ -234,7 +234,7 @@ class NN_HMC_X:
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-'''
+    '''
     def plot_HMC(self,x_samples,theta_samples,theta,note,zstr):
         var_label = ['fobs', 'T0s', 'gammas']
         out_prefix = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{zstr}/'
@@ -248,7 +248,7 @@ class NN_HMC_X:
         corner_plot(theta_samples, var_label,
                     theta_true=jnp.asarray(theta),
                     cornerfile=cornerfile)
-'''
+    '''
     def save_HMC(self,zstr,note,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time):
         # Save the results
