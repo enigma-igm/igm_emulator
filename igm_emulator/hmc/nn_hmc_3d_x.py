@@ -14,7 +14,7 @@ import IPython
 import os
 import sys
 from igm_emulator import nn_emulator
-sys.path.append(os.path.expanduser('~') + '/qso_fitting/qso_fitting/fitting')
+sys.path.append('/home/zhenyujin/qso_fitting/qso_fitting/fitting')
 from utils import bounded_theta_to_x, x_to_bounded_theta
 #from utils import walker_plot, corner_plot
 import struct
