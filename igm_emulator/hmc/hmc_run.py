@@ -17,10 +17,8 @@ import corner
 import h5py
 import sys
 import os
-sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-import igm_emulator as emu
-import emu.nn_emulator as nn_emulator
-import emu.small_bin_bool as small_bin_bool
+from igm_emulator.emulator.emulator_run import nn_emulator
+from igm_emulator.emulator.haiku_custom_forward import small_bin_bool
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
