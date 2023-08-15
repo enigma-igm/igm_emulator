@@ -13,8 +13,7 @@ import time
 import IPython
 import os
 import sys
-sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from emulator_run import nn_emulator
+from igm_emulator import nn_emulator
 sys.path.append(os.path.expanduser('~') + '/qso_fitting/qso_fitting/fitting')
 from utils import bounded_theta_to_x, x_to_bounded_theta
 #from utils import walker_plot, corner_plot
