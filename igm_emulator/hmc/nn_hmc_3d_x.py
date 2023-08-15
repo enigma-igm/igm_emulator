@@ -15,7 +15,8 @@ import os
 import sys
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_run import nn_emulator
-#sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
+sys.path.append(os.path.expanduser('~') + '/qso_fitting/qso_fitting/fitting')
+from utils import bounded_theta_to_x, x_to_bounded_theta
 #from utils import walker_plot, corner_plot
 import struct
 print(struct.calcsize("P") * 8)
@@ -79,11 +80,7 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def _theta_to_x(self,theta): #theta is in physical dimension
-        x_astro = []
-        for theta_i, theta_range in zip(theta, self.theta_ranges):
-            x_astro.append(jax.scipy.special.logit(
-                jnp.clip((theta_i - theta_range[0]) / (theta_range[1] - theta_range[0]),
-                         a_min=1e-7, a_max=1.0 - 1e-7)))
+        x_astro = bounded_theta_to_x(theta, self.theta_ranges)
         return jnp.array(x_astro)
 
     @partial(jit, static_argnums=(0,))
@@ -96,9 +93,7 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def _x_to_theta(self,x):
-        theta_astro = []
-        for x_i, theta_range in zip(x, self.theta_ranges):
-            theta_astro.append(theta_range[0] + (theta_range[1] - theta_range[0]) * jax.nn.sigmoid(x_i))
+        theta_astro = x_to_bounded_theta(x, self.theta_ranges)
         return jnp.array(theta_astro)
 
     @partial(jit, static_argnums=(0,))
@@ -239,8 +234,10 @@ class NN_HMC_X:
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-    def plot_HMC(self,x_samples,theta_samples,theta,note):
+'''
+    def plot_HMC(self,x_samples,theta_samples,theta,note,zstr):
         var_label = ['fobs', 'T0s', 'gammas']
+        out_prefix = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{zstr}/'
         walkerfile = out_prefix + '_walkers_' + note + '.pdf'
         cornerfile = out_prefix + '_corner_' + note + '.pdf'
         x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
@@ -251,7 +248,7 @@ class NN_HMC_X:
         corner_plot(theta_samples, var_label,
                     theta_true=jnp.asarray(theta),
                     cornerfile=cornerfile)
-
+'''
     def save_HMC(self,zstr,note,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time):
         # Save the results
