@@ -13,7 +13,7 @@ import time
 import IPython
 import os
 import sys
-from emulator.emulator_run import nn_emulator
+from igm_emulator.emulator.emulator_run import nn_emulator
 sys.path.append('/home/zhenyujin/qso_fitting/qso_fitting/fitting')
 from utils import bounded_theta_to_x, x_to_bounded_theta
 #from utils import walker_plot, corner_plot
