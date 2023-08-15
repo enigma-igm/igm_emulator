@@ -11,11 +11,10 @@ from numpyro.infer import MCMC, NUTS
 import arviz as az
 import time
 import IPython
-import os
-import sys
 from igm_emulator.emulator.emulator_run import nn_emulator
-sys.path.append('/home/zhenyujin/qso_fitting/qso_fitting/fitting')
-from utils import bounded_theta_to_x, x_to_bounded_theta
+import sys
+sys.path.append('/home/zhenyujin/qso_fitting/')
+from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta
 #from utils import walker_plot, corner_plot
 import struct
 print(struct.calcsize("P") * 8)
