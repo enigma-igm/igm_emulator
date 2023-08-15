@@ -153,7 +153,7 @@ if __name__ == '__main__':
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins.png')
     note = f"{out_tag}_inference_{n_inference}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
-    with h5py.File('/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results' + f'{note}.hdf5', 'a') as f:
+    with h5py.File('/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/' + f'{note}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob', data=log_prob)
         f.create_dataset('true_log_prob', data=true_log_prob)
