@@ -1,8 +1,8 @@
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from emulator_train import custom_forward
-from haiku_custom_forward import small_bin_bool
+import haiku as hk
+from haiku_custom_forward import small_bin_bool,_custom_forward_fn
 import h5py
 import numpy as np
 from jax.config import config
@@ -32,6 +32,7 @@ stdY =  np.asarray(f['data']['stdY'])
 
 def nn_emulator(best_params,theta):
     x = (theta - meanX)/ stdX
+    custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
     model = custom_forward.apply(params=best_params, x=x)
     model = model * stdY + meanY
     return model
