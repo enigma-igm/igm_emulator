@@ -31,6 +31,11 @@ redshift = 5.4
 n_inference = 100
 n_params = 3
 
+# set emulator parameters
+loss_str = 'mse+fft'
+l2 = 0.0001
+activation= jax.nn.leaky_relu
+
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
@@ -52,11 +57,6 @@ else:
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
     out_tag = f'{z_string}_training_768_bin276'
     output_size = [100, 100, 100, 276]
-
-# set emulator parameters
-loss_str = 'chi_one_covariance'
-l2 = 0.01
-activation= jax.nn.leaky_relu
 
 # load model
 in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
