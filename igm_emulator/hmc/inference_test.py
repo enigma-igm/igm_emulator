@@ -32,7 +32,7 @@ n_inference = 100
 n_params = 3
 
 # set emulator parameters
-loss_str = 'mse'
+loss_str = 'mse+fft'
 l2 = 0.0001
 activation= jax.nn.leaky_relu
 
