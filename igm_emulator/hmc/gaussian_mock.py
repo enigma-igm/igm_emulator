@@ -1,5 +1,5 @@
 from inference_test import *
-from numpy.random.Generator import multivariate_normal
+import numpy as np
 
 mock_corr = np.empty([n_inference, len(vbins)])
 pbar = ProgressBar()
@@ -12,7 +12,8 @@ for mock_idx in pbar(range(n_inference)):
     model_dict = dill.load(open(in_path + model_name, 'rb'))
     mean = model_dict['mean_data']
     covariance = like_dict['covariance']
-    mock_corr[mock_idx, :] = multivariate_normal(mean, covariance)
+    rng = np.random.default_rng()
+    mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 dill.dump(mock_corr, open(out_path + f'mock_corr_inference{n_inference}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.p', 'wb'))
