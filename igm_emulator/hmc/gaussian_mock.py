@@ -1,5 +1,5 @@
 from inference_test import *
-from jax.random import multivariate_normal
+from numpy.random.Generator import multivariate_normal
 
 mock_corr = np.empty([n_inference, len(vbins)])
 pbar = ProgressBar()
