@@ -16,4 +16,4 @@ for mock_idx in pbar(range(n_inference)):
     mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-dill.dump(mock_corr, open(out_path + f'mock_corr_inference{n_inference}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.p', 'wb'))
+dill.dump(mock_corr, open(out_path + f'gaussian_mock_corr_inference{n_inference}.p', 'wb'))
