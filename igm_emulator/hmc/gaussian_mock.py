@@ -2,6 +2,7 @@ from inference_test import *
 from jax.random import multivariate_normal
 
 mock_corr = np.empty([n_inference, len(vbins)])
+pbar = ProgressBar()
 for mock_idx in pbar(range(n_inference)):
     closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
     closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
