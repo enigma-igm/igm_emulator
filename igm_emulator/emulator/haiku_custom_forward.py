@@ -79,12 +79,6 @@ class MyModuleCustom(hk.Module):
     return out
 
 
-def _custom_forward_fn(x):
-  module = MyModuleCustom(output_size=output_size, activation = activation)
-  return module(x)
-
-custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
-
 '''
 Infrastructure for network training
 '''
@@ -97,7 +91,7 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, like_dict, l2=l2):
+def loss_fn(params, x, y, like_dict, custom_forward, l2=l2):
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
@@ -112,7 +106,7 @@ def loss_fn(params, x, y, like_dict, l2=l2):
     return loss
 
 @jax.jit
-def accuracy(params, x, y, meanY, stdY):
+def accuracy(params, x, y, meanY, stdY, custom_forward):
     preds = custom_forward.apply(params=params, x=x)*stdY+meanY
     y = y*stdY+meanY
     delta = (y - preds) / y

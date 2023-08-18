@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag, loss_str
+from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag, loss_str, MyModuleCustom
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
@@ -24,7 +24,6 @@ n_epochs = 1000
 lr = 1e-3
 beta = 1e-3
 decay = 5e-3
-my_rng = hk.PRNGSequence(jax.random.PRNGKey(42))
 print('***Training Start***')
 print(f'Small bin number: {small_bin_bool}')
 print(f'Layers: {output_size}')
@@ -92,31 +91,36 @@ Y_test = (Y_test - meanY) / stdY
 Y_vali = (Y_vali - meanY) / stdY
 
 print('***Data Loaded***')
-print(f'Train datasize: {X_train.shape[0]}; Test datasize: {X_test.shape[0]}; Validation datasize: {X_vali.shape[0]}')    
-'''
-Build custom haiku Module
-'''
-custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
-init_params = custom_forward.init(rng=next(my_rng), x=X_train)
-preds = custom_forward.apply(init_params, X_train)
-n_samples = X_train.shape[0]
-total_steps = n_epochs*n_samples + n_epochs
-
-optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
-                        )
-
+print(f'Train datasize: {X_train.shape[0]}; Test datasize: {X_test.shape[0]}; Validation datasize: {X_vali.shape[0]}')
 
 '''
 Training Loop + Visualization of params
 '''
-'''
+
 @jax.jit
-def train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
-               optimizer, update, loss_fn, accuracy, like_dict,
-               n_epochs=1000, pv=100):
-'''
-if __name__ == '__main__':
+def train_loop(X_train,
+                Y_train,
+               X_test, 
+               Y_test, 
+               X_vali, 
+               Y_vali, 
+               meanY, 
+               stdY,
+               layer_sizes: Sequence[int],
+                activation: Callable,
+                dropout_rate: float,
+               optimizer_hparams: Any,
+               update: Callable, 
+               loss_fn: Callable,
+               l2_weight: float,
+               accuracy_fn: Callable,
+               schedule_lr: Callable,
+               like_dict,
+                init_rng=42,
+               n_epochs=1000,
+               pv=100):
+
+#if __name__ == '__main__':
     '''
     Train loop for a given model and optimizer.
     Args:
@@ -128,12 +132,16 @@ if __name__ == '__main__':
         Y_vali: validation mean autocorrelation functions (normalized)
         meanY: mean of the training mean autocorrelation functions
         stdY: standard deviation of the training mean autocorrelation functions
-        params: initial sampled parameters custom_forward.init()
-        optimizer: optax optimizer
+        layer_sizes: number of nodes in each layer of the neural network
+        optimizer_hparams: optax optimizer hyperparameters [max_grad_norm, lr, decay]
         update: update function
         loss_fn: loss function MSE, soft_max, cross entropy, etc.
-        accuracy: (y - preds) / y
-        like_dict: likelihood dictionary for loss function
+        l2_weight: l2 regularization weight argument of loss function
+        accuracy_fn: accuracy function
+        like_dict: likelihood dictionary for covariance matrix
+        init_rng: random seed for initialization of weights
+        n_epochs: number of epochs to train
+        pv: print every pv epochs
     Returns:
         best_params: best weights from training
         best_loss: best loss from training
@@ -141,9 +149,21 @@ if __name__ == '__main__':
         savefile.p: save best params at /igm_emulator/igm_emulator/emulator/best_params/ & /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params
 
     '''
-    n_epochs = 1000
-    pv = 100
-    params = init_params
+    def _custom_forward_fn(x):
+        module = MyModuleCustom(output_size=layer_sizes, activation = activation, dropout_rate=dropout_rate)
+        return module(x)
+    custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
+
+    params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(init_rng))), x=X_train)
+    preds = custom_forward.apply(params, X_train)
+
+    n_samples = X_train.shape[0]
+    total_steps = n_epochs*n_samples + n_epochs
+    max_grad_norm, lr, decay = optimizer_hparams
+    optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
+                            optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
+                            )
+
     opt_state = optimizer.init(params)
     early_stopping_counter = 0
     best_loss = np.inf
