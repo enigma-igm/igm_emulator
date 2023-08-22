@@ -91,7 +91,7 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, like_dict, custom_forward, l2=l2):
+def loss_fn(params, x, y, like_dict, custom_forward, l2, loss_str='mse'):
     leaves =[]
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
@@ -100,9 +100,13 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2=l2):
     pred = custom_forward.apply(params, x)
     diff = pred - y
     new_covariance = like_dict['covariance']
-    chi = jnp.mean(jnp.abs(diff/jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
     mse = jnp.mean((diff) ** 2) + regularization
-    loss = mse + 0.06 * jnp.mean((dct(pred) - dct(y)) ** 2) + regularization
+    if loss_str=='mse':
+        loss = mse
+    elif loss_str=='chi_one_covariance':
+        loss = jnp.mean(jnp.abs(diff / jnp.sqrt(jnp.diagonal(new_covariance)))) + regularization
+    elif loss_str=='mse+fft':
+        loss = mse + 0.06 * jnp.mean((dct(pred) - dct(y)) ** 2) + regularization
     return loss
 
 @jax.jit
@@ -113,8 +117,8 @@ def accuracy(params, x, y, meanY, stdY, custom_forward):
     return delta
 
 
-def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict, custom_forward, l2)
+def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2, loss_str):
+    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict, custom_forward, l2, loss_str)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state, batch_loss, grads

@@ -8,11 +8,13 @@ from typing import Any, Sequence, Optional, Tuple, Iterator, Dict, Callable, Uni
 import optax
 from tqdm import trange
 from jax.config import config
+from jax import jit
+from functools import partial
 from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag, loss_str, MyModuleCustom
+from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, MyModuleCustom
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 import h5py
@@ -23,12 +25,15 @@ n_epochs = 1000
 lr = 1e-3
 beta = 1e-3
 decay = 5e-3
+l2 =0.0001
 print('***Training Start***')
+'''
 print(f'Small bin number: {small_bin_bool}')
 print(f'Layers: {output_size}')
 print(f'Activation: {activation.__name__}')
 print(f'L2 regularization lambda: {l2}')
 print(f'Loss function: {loss_str}')
+'''
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
@@ -113,8 +118,6 @@ class TrainerModule:
                 update: Callable,
                 loss_str: str,
                 l2_weight: float,
-                accuracy_fn: Callable,
-                schedule_lr: Callable,
                 like_dict: dict,
                 out_tag: str,
                 init_rng=42,
@@ -137,8 +140,6 @@ class TrainerModule:
         self.update = update
         self.loss_str = loss_str
         self.l2_weight = l2_weight
-        self.accuracy_fn = accuracy_fn
-        self.schedule_lr = schedule_lr
         self.like_dict = like_dict
         self.out_tag = out_tag
         self.var_tag =f'{loss_str}_l2_{l2_weight}_activation_{activation.__name__}_layers_{layer_sizes}'
@@ -151,8 +152,13 @@ class TrainerModule:
             return module(x)
         self.custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
 
+    @partial(jit, static_argnums=(0,))
+    def loss_fn(self):
+        return jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
-
+    @partial(jit, static_argnums=(0,))
+    def update(self):
+        return jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
     def train_loop(self):
 
@@ -177,12 +183,12 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train, optimizer, self.like_dict, custom_forward, self.l2_weight)
+                params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train, optimizer)
                 #if step % 100 == 0:
                     #plot_params(params)
 
                 # compute training & validation loss at the end of the epoch
-                l = self.loss_fn(params, self.X_vali, self.Y_vali, self.like_dict, custom_forward=custom_forward, l2=self.l2_weight)
+                l = self.loss_fn(params, self.X_vali, self.Y_vali)
                 training_loss.append(batch_loss)
                 validation_loss.append(l)
 
@@ -202,7 +208,7 @@ class TrainerModule:
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'accuracy: {jnp.sqrt(jnp.mean(self.accuracy_fn(params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward)**2))}')
-        print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test, self.like_dict, custom_forward, self.l2_weight)}')
+        print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
         plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
         plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
         plt.legend()
@@ -213,7 +219,7 @@ class TrainerModule:
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        self.test_loss = self.loss_fn(params, self.X_test, self.Y_test,self.like_dict, custom_forward, self.l2_weight)
+        self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
@@ -287,11 +293,8 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanY,stdY,
                         activation= jax.nn.leaky_relu,
                         dropout_rate=0.1,
                         optimizer_hparams=[max_grad_norm, lr, decay],
-                        update=update,
                         loss_str='mse',
                         l2_weight=l2,
-                        accuracy_fn=accuracy,
-                         schedule_lr=schedule_lr,
                         like_dict=like_dict,
                         init_rng=42,
                         n_epochs=1000,
