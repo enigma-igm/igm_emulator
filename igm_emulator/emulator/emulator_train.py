@@ -105,19 +105,20 @@ def train_loop(X_train,
                Y_vali, 
                meanY, 
                stdY,
-               layer_sizes: Any,
-                activation: Callable,
-                dropout_rate: float,
-               optimizer_hparams: Any,
-               update: Callable, 
-               loss_fn: Callable,
-               l2_weight: float,
-               accuracy_fn: Callable,
-               schedule_lr: Callable,
+               layer_sizes,
+                activation,
+                dropout_rate,
+               optimizer_hparams,
+               update,
+               loss_str,
+               l2_weight,
+               accuracy_fn,
+               schedule_lr,
                like_dict,
                 init_rng=42,
                n_epochs=1000,
-               pv=100):
+               pv=100,
+               save_training_info=False):
 
 #if __name__ == '__main__':
     '''
@@ -172,12 +173,12 @@ def train_loop(X_train,
     with trange(n_epochs) as t:
         for step in t:
             # optimizing loss by update function
-            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer,like_dict)
+            params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer,like_dict, custom_forward, l2_weight)
             #if step % 100 == 0:
                 #plot_params(params)
 
             # compute training & validation loss at the end of the epoch
-            l = loss_fn(params, X_vali, Y_vali,like_dict)
+            l = loss_fn(params, X_vali, Y_vali,like_dict, custom_forward=custom_forward, l2=l2_weight)
             training_loss.append(batch_loss)
             validation_loss.append(l)
 
@@ -196,8 +197,8 @@ def train_loop(X_train,
     print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
     best_params = params
     print(f'early_stopping_counter: {early_stopping_counter}')
-    print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY)**2))}')
-    print(f'Test Loss: {loss_fn(params, X_test, Y_test,like_dict)}')
+    print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy_fn(params, X_test, Y_test, meanY, stdY,custom_forward)**2))}')
+    print(f'Test Loss: {loss_fn(params, X_test, Y_test, like_dict, custom_forward, l2_weight)}')
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
@@ -208,7 +209,7 @@ def train_loop(X_train,
     print(f'***Result Plots saved {dir_exp}***')
 
     test_preds = custom_forward.apply(best_params, X_test)
-    test_loss = loss_fn(params, X_test, Y_test,like_dict)
+    test_loss = loss_fn(params, X_test, Y_test,like_dict, custom_forward, l2_weight)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
     print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
     preds = custom_forward.apply(best_params, X_train)
@@ -218,54 +219,62 @@ def train_loop(X_train,
     '''
     Accuracy + Results
     '''
-    delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY))
+    delta = np.asarray(accuracy_fn(best_params, X_test, Y_test, meanY, stdY,custom_forward))
 
     plot_residue(delta,out_tag)
     bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY,out_tag)
     plot_error_distribution(delta,out_tag)
+    plot_error_distribution(delta,out_tag,log=True)
 
-    '''
-    Save best emulated parameter
-    '''
-    print(f'***Saving training info & best parameters***')
+    if save_training_info:
+        zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
+        z_idx = np.argmin(np.abs(zs - redshift))
+        z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+        z_string = z_strings[z_idx]
+        '''
+        Save best emulated parameter
+        '''
+        print(f'***Saving training info & best parameters***')
 
-    f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_savefile.hdf5', 'a')
-    group1 = f.create_group('haiku_nn')
-    group1.attrs['redshift'] = redshift
-    group1.attrs['adamw_decay'] = decay
-    group1.attrs['epochs'] = n_epochs
-    group1.create_dataset('layers', data = output_size)
-    group1.attrs['activation_function'] = f'{activation}'
-    group1.attrs['learning_rate'] = lr
-    group1.attrs['L2_lambda'] = l2
+        f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_savefile.hdf5', 'a')
+        group1 = f.create_group('haiku_nn')
+        group1.attrs['redshift'] = redshift
+        group1.attrs['adamw_decay'] = decay
+        group1.attrs['epochs'] = n_epochs
+        group1.create_dataset('layers', data = output_size)
+        group1.attrs['activation_function'] = f'{activation}'
+        group1.attrs['learning_rate'] = lr
+        group1.attrs['L2_weight'] = l2_weight
+        group1.attrs['loss_fn'] = loss_str
 
-    group2 = f.create_group('data')
-    group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
-    group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
-    group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
-    group2.create_dataset('test_data', data = X_test)
-    group2.create_dataset('train_data', data = X_train)
-    group2.create_dataset('vali_data', data = X_vali)
-    group2.create_dataset('meanX', data=meanX)
-    group2.create_dataset('stdX', data=stdX)
-    group2.create_dataset('meanY', data=meanY)
-    group2.create_dataset('stdY', data=stdY)
-    #IPython.embed()
-    group3 = f.create_group('performance')
-    group3.attrs['R2'] = test_R2
-    group3.attrs['test_loss'] = test_loss
-    group3.attrs['train_loss'] = batch_loss
-    group3.attrs['vali_loss'] = best_loss
-    group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
-    group3.create_dataset('residuals', data=delta)
-    f.close()
-    print("training directories and hyperparameters saved")
+        group2 = f.create_group('data')
+        group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
+        group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
+        group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
+        group2.create_dataset('test_data', data = X_test)
+        group2.create_dataset('train_data', data = X_train)
+        group2.create_dataset('vali_data', data = X_vali)
+        group2.create_dataset('meanX', data=meanX)
+        group2.create_dataset('stdX', data=stdX)
+        group2.create_dataset('meanY', data=meanY)
+        group2.create_dataset('stdY', data=stdY)
+        #IPython.embed()
+        group3 = f.create_group('performance')
+        group3.attrs['R2'] = test_R2
+        group3.attrs['test_loss'] = test_loss
+        group3.attrs['train_loss'] = batch_loss
+        group3.attrs['vali_loss'] = best_loss
+        group3.attrs['residuals_results'] = f'{jnp.mean(delta)*100}% +/- {jnp.std(delta) * 100}%'
+        group3.create_dataset('residuals', data=delta)
+        f.close()
+        print("training directories and hyperparameters saved")
 
-    dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
-    dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-    dill.dump(best_params, open(os.path.join(dir, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
-    dill.dump(best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
-    print("trained parameters saved")
+        dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
+        dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
+        dill.dump(best_params, open(os.path.join(dir, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
+        dill.dump(best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
+        print("trained parameters saved")
+    return best_params, best_loss
 
 IPython.embed()
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
