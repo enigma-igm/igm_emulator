@@ -203,9 +203,9 @@ class TrainerModule:
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
     plt.legend()
 
-    '''
+
     #Prediction overplots: Training And Test
-    '''
+
     print(f'***Result Plots saved {dir_exp}***')
 
     test_preds = custom_forward.apply(best_params, X_test)
@@ -216,9 +216,9 @@ class TrainerModule:
 
     train_overplot(preds, X, Y, meanY, stdY,out_tag)
     test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY,out_tag)
-    '''
+
     #Accuracy + Results
-    '''
+
     delta = np.asarray(accuracy_fn(best_params, X_test, Y_test, meanY, stdY,custom_forward))
 
     plot_residue(delta,out_tag)
@@ -231,9 +231,9 @@ class TrainerModule:
         z_idx = np.argmin(np.abs(zs - redshift))
         z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
         z_string = z_strings[z_idx]
-        '''
+
         #Save best emulated parameter
-        '''
+
         print(f'***Saving training info & best parameters***')
 
         f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_savefile.hdf5', 'a')
