@@ -4,7 +4,7 @@ import numpy as np
 import haiku as hk
 import jax.numpy as jnp
 import jax
-from typing import Callable, Iterable, Optional
+from typing import Any, Sequence, Optional, Tuple, Iterator, Dict, Callable, Union
 import optax
 from tqdm import trange
 from jax.config import config
@@ -95,61 +95,60 @@ print(f'Train datasize: {X_train.shape[0]}; Test datasize: {X_test.shape[0]}; Va
 '''
 Training Loop + Visualization of params
 '''
+class TrainerModule:
 
-@jax.jit
-def train_loop(X_train,
-                Y_train,
-               X_test, 
-               Y_test, 
-               X_vali, 
-               Y_vali, 
-               meanY, 
-               stdY,
-               layer_sizes):
-#   ,
-#               activation,
-#               dropout_rate,
-#              optimizer_hparams,
-#              update,
-#              loss_str,
-#              l2_weight,
-#              accuracy_fn,
-#              schedule_lr,
-#              like_dict,
-#               init_rng=42,
-#              n_epochs=1000,
-#              pv=100,
-#              save_training_info=False):
+    def __int__(self,
+                X_train: Any,
+                Y_train: Any,
+                X_test: Any,
+                Y_test: Any,
+                X_vali: Any
+                Y_vali: Any,
+                meanY: Any,
+                stdY: Any,
+                layer_sizes: Sequence[int],
+                activation: Callable[[jnp.ndarray], jnp.ndarray],
+                dropout_rate: float,
+                optimizer_hparams: Sequence[float],
+                update: Callable,
+                loss_str: str
+                l2_weight: float,
+                accuracy_fn: Callable,
+                schedule_lr: Callable,
+                like_dict: dict,
+                init_rng=42,
+                n_epochs=1000,
+                pv=100,
+                save_training_info=False):
+        self.X_train = X_train
+        self.Y_train = Y_train
+        self.X_test = X_test
+        self.Y_test = Y_test
+        self.X_vali = X_vali
+        self.Y_vali = Y_vali
+        self.meanY = meanY
+        self.stdY = stdY
+        self.layer_sizes = layer_sizes
+        self.activation = activation
+        self.dropout_rate = dropout_rate
+        self.optimizer_hparams = optimizer_hparams
+        self.update = update
+        self.loss_str = loss_str
+        self.l2_weight = l2_weight
+        self.accuracy_fn = accuracy_fn
+        self.schedule_lr = schedule_lr
+        self.like_dict = like_dict
+        self.init_rng = init_rng
+        self.n_epochs = n_epochs
+        self.pv = pv
+        self.save_training_info = save_training_info
+
+'''
+    @jax.jit
+    def train_loop(self):
 
 #if __name__ == '__main__':
-    '''
-    Train loop for a given model and optimizer.
-    Args:
-        X_train: training thermal parameters [Fob, T0, Gamma] (normalized)
-        Y_train: training mean autocorrelation functions (normalized)
-        X_test: test thermal parameters [Fob, T0, Gamma] (normalized)
-        Y_test: test mean autocorrelation functions (normalized)
-        X_vali: validation thermal parameters [Fob, T0, Gamma] (normalized)
-        Y_vali: validation mean autocorrelation functions (normalized)
-        meanY: mean of the training mean autocorrelation functions
-        stdY: standard deviation of the training mean autocorrelation functions
-        layer_sizes: number of nodes in each layer of the neural network
-        optimizer_hparams: optax optimizer hyperparameters [max_grad_norm, lr, decay]
-        update: update function
-        loss_fn: loss function MSE, soft_max, cross entropy, etc.
-        l2_weight: l2 regularization weight argument of loss function
-        accuracy_fn: accuracy function
-        like_dict: likelihood dictionary for covariance matrix
-        init_rng: random seed for initialization of weights
-        n_epochs: number of epochs to train
-        pv: print every pv epochs
-    Returns:
-        best_params: best weights from training
-        best_loss: best loss from training
-        savefile.hdf5: save emulator performance at /igm_emulator/igm_emulator/emulator/best_params/
-        savefile.p: save best params at /igm_emulator/igm_emulator/emulator/best_params/ & /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params
-
-    '''
+   
     def _custom_forward_fn(x):
         module = MyModuleCustom(output_size=layer_sizes, activation = activation, dropout_rate=dropout_rate)
         return module(x)
@@ -205,7 +204,7 @@ def train_loop(X_train,
     plt.legend()
 
     '''
-    Prediction overplots: Training And Test
+    #Prediction overplots: Training And Test
     '''
     print(f'***Result Plots saved {dir_exp}***')
 
@@ -218,7 +217,7 @@ def train_loop(X_train,
     train_overplot(preds, X, Y, meanY, stdY,out_tag)
     test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY,out_tag)
     '''
-    Accuracy + Results
+    #Accuracy + Results
     '''
     delta = np.asarray(accuracy_fn(best_params, X_test, Y_test, meanY, stdY,custom_forward))
 
@@ -233,7 +232,7 @@ def train_loop(X_train,
         z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
         z_string = z_strings[z_idx]
         '''
-        Save best emulated parameter
+        #Save best emulated parameter
         '''
         print(f'***Saving training info & best parameters***')
 
@@ -276,7 +275,7 @@ def train_loop(X_train,
         dill.dump(best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
         print("trained parameters saved")
     return best_params, best_loss
-
+'''
 IPython.embed()
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
             #optimizer, update, loss_fn, accuracy, like_dict)
