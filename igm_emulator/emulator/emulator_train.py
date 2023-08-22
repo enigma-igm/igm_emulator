@@ -178,7 +178,7 @@ class TrainerModule:
         validation_loss = []
         training_loss = []
         print('***Training Loop Start***')
-        '''
+
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
@@ -202,8 +202,7 @@ class TrainerModule:
                     early_stopping_counter += 1
                 if early_stopping_counter >= self.pv:
                     break
-        '''
-        batch_loss = 0
+
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
@@ -218,7 +217,7 @@ class TrainerModule:
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        test_accuracy = (test_preds*self.stdY+self.meanY-self.Y_test*self.stdY+self.meanY)/(self.Y_test*self.stdY+self.meanY)
+        test_accuracy = jnp.sqrt(jnp.mean(jnp.square((test_preds*self.stdY+self.meanY-self.Y_test*self.stdY+self.meanY)/(self.Y_test*self.stdY+self.meanY))))
         print(f'Test accuracy: {test_accuracy}')
 
         self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
@@ -226,7 +225,7 @@ class TrainerModule:
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
 
-        train_overplot(preds, self.X, self.Y, self.meanY, self.stdY, out_tag)
+        train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, out_tag)
         test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY,self.out_tag)
 
         #Accuracy + Results
