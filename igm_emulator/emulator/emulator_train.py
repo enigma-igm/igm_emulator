@@ -105,7 +105,7 @@ def train_loop(X_train,
                Y_vali, 
                meanY, 
                stdY,
-               layer_sizes)
+               layer_sizes)：
 #   ,
 #               activation,
 #               dropout_rate,
