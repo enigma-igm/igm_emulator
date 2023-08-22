@@ -207,7 +207,7 @@ class TrainerModule:
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
-        print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
+        print(f'Test Loss: {self.loss_fn()(params, self.X_test, self.Y_test)}')
         plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
         plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
         plt.legend()
