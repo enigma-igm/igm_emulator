@@ -183,12 +183,12 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train, optimizer)
+                params, opt_state, batch_loss, grads = self.update()(params, opt_state, self.X_train, self.Y_train, optimizer)
                 #if step % 100 == 0:
                     #plot_params(params)
 
                 # compute training & validation loss at the end of the epoch
-                l = self.loss_fn(params, self.X_vali, self.Y_vali)
+                l = self.loss_fn()(params, self.X_vali, self.Y_vali)
                 training_loss.append(batch_loss)
                 validation_loss.append(l)
 
