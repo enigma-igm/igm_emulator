@@ -219,8 +219,8 @@ class TrainerModule:
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        test_accuracy = jnp.sqrt(jnp.mean(jnp.square((test_preds*self.stdY-self.Y_test*self.stdY)/(self.Y_test*self.stdY+self.meanY))))
-        print(f'Test accuracy: {test_accuracy}')
+        test_accuracy = test_preds*self.stdY-self.Y_test*self.stdY)/(self.Y_test*self.stdY+self.meanY)
+        print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square((test_accuracy)))}')
 
         self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
