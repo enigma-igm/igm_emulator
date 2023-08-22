@@ -219,7 +219,7 @@ class TrainerModule:
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
+        self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
