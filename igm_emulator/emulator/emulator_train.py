@@ -140,7 +140,7 @@ class TrainerModule:
         self.loss_str = loss_str
         self.l2_weight = l2_weight
         self.like_dict = like_dict
-        self.accuracy_fn = accuracy_fn
+        self.accuracy_fn = jax.jit(self.accuracy_fn)
         self.out_tag = out_tag
         self.var_tag =f'{loss_str}_l2_{l2_weight}_activation_{activation.__name__}_layers_{layer_sizes}'
         self.init_rng = init_rng
@@ -152,11 +152,11 @@ class TrainerModule:
             return module(x)
         self.custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
 
-    #@partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0,))
     def loss_fn(self):
         return jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
-    #@partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0,))
     def update(self):
         return jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
@@ -229,7 +229,7 @@ class TrainerModule:
 
         #Accuracy + Results
 
-        self.RelativeError = np.asarray(self.accuracy_fn(self.best_params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward))
+        self.RelativeError = np.asarray(self.accuracy_fn()(self.best_params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward))
 
         plot_residue(self.RelativeError,out_tag)
         bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY,self.out_tag)
