@@ -178,6 +178,7 @@ class TrainerModule:
         validation_loss = []
         training_loss = []
         print('***Training Loop Start***')
+'''
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
@@ -201,7 +202,7 @@ class TrainerModule:
                     early_stopping_counter += 1
                 if early_stopping_counter >= self.pv:
                     break
-
+'''
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
