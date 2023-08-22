@@ -115,10 +115,10 @@ class TrainerModule:
                 activation: Callable[[jnp.ndarray], jnp.ndarray],
                 dropout_rate: float,
                 optimizer_hparams: Sequence[float],
-                update: Callable,
                 loss_str: str,
                 l2_weight: float,
                 like_dict: dict,
+                accuracy_fn: Callable,
                 out_tag: str,
                 init_rng=42,
                 n_epochs=1000,
@@ -137,10 +137,10 @@ class TrainerModule:
         self.activation = activation
         self.dropout_rate = dropout_rate
         self.optimizer_hparams = optimizer_hparams
-        self.update = update
         self.loss_str = loss_str
         self.l2_weight = l2_weight
         self.like_dict = like_dict
+        self.accuracy_fn = accuracy_fn
         self.out_tag = out_tag
         self.var_tag =f'{loss_str}_l2_{l2_weight}_activation_{activation.__name__}_layers_{layer_sizes}'
         self.init_rng = init_rng
@@ -171,7 +171,7 @@ class TrainerModule:
         total_steps = self.n_epochs*n_samples + self.n_epochs
         max_grad_norm, lr, decay = self.optimizer_hparams
         optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                                optax.adamw(learning_rate=self.schedule_lr(lr,total_steps),weight_decay=decay)
+                                optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
                                 )
 
         opt_state = optimizer.init(params)
@@ -296,6 +296,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanY,stdY,
                         loss_str='mse',
                         l2_weight=l2,
                         like_dict=like_dict,
+                        accuracy_fn=accuracy,
                         init_rng=42,
                         n_epochs=1000,
                         pv=100,
