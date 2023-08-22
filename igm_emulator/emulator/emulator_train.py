@@ -120,6 +120,7 @@ class TrainerModule:
                 n_epochs=1000,
                 pv=100,
                 save_training_info=False):
+        super().__init__()
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_test = X_test
