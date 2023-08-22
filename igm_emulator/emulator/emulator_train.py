@@ -97,7 +97,7 @@ Training Loop + Visualization of params
 '''
 class TrainerModule:
 
-    def __int__(self,
+    def __init__(self,
                 X_train: Any,
                 Y_train: Any,
                 X_test: Any,
