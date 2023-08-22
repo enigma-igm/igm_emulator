@@ -211,9 +211,7 @@ class TrainerModule:
         plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
         plt.legend()
 
-        #Prediction overplots: Training And Test
-
-        print(f'***Result Plots saved {dir_exp}***')
+        #Metrics
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
@@ -225,6 +223,9 @@ class TrainerModule:
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
 
+        #Prediction overplots: Training And Test
+
+        print(f'***Result Plots saved {dir_exp}***')
         train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, out_tag)
         test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY,self.out_tag)
 
