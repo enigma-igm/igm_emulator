@@ -109,6 +109,8 @@ class TrainerModule:
                 Y_test: Any,
                 X_vali: Any,
                 Y_vali: Any,
+                meanX: Any,
+                stdX: Any,
                 meanY: Any,
                 stdY: Any,
                 layer_sizes: Sequence[int],
@@ -130,6 +132,8 @@ class TrainerModule:
         self.Y_test = Y_test
         self.X_vali = X_vali
         self.Y_vali = Y_vali
+        self.meanX = meanX
+        self.stdX = stdX
         self.meanY = meanY
         self.stdY = stdY
         self.layer_sizes = layer_sizes
@@ -215,7 +219,7 @@ class TrainerModule:
 
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        test_accuracy = jnp.sqrt(jnp.mean(jnp.square((test_preds*self.stdY+self.meanY-self.Y_test*self.stdY+self.meanY)/(self.Y_test*self.stdY+self.meanY))))
+        test_accuracy = jnp.sqrt(jnp.mean(jnp.square((test_preds*self.stdY-self.Y_test*self.stdY)/(self.Y_test*self.stdY+self.meanY))))
         print(f'Test accuracy: {test_accuracy}')
 
         self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
@@ -290,7 +294,7 @@ class TrainerModule:
             dill.dump(self.best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
             print("trained parameters saved")
 
-trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanY,stdY,
+trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
                         dropout_rate=0.1,
