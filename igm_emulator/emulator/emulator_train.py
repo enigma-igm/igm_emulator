@@ -207,7 +207,7 @@ class TrainerModule:
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
-        print(f'accuracy: {jnp.sqrt(jnp.mean(self.accuracy_fn(params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward)**2))}')
+        print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward)**2))}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
         plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
         plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
@@ -229,7 +229,7 @@ class TrainerModule:
 
         #Accuracy + Results
 
-        self.RelativeError = np.asarray(self.accuracy_fn()(self.best_params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward))
+        self.RelativeError = np.asarray(accuracy(self.best_params, self.X_test, self.Y_test, self.meanY, self.stdY,custom_forward))
 
         plot_residue(self.RelativeError,out_tag)
         bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY,self.out_tag)
