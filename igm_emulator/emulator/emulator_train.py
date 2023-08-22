@@ -102,7 +102,7 @@ class TrainerModule:
                 Y_train: Any,
                 X_test: Any,
                 Y_test: Any,
-                X_vali: Any
+                X_vali: Any,
                 Y_vali: Any,
                 meanY: Any,
                 stdY: Any,
@@ -111,7 +111,7 @@ class TrainerModule:
                 dropout_rate: float,
                 optimizer_hparams: Sequence[float],
                 update: Callable,
-                loss_str: str
+                loss_str: str,
                 l2_weight: float,
                 accuracy_fn: Callable,
                 schedule_lr: Callable,
