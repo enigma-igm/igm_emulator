@@ -203,6 +203,7 @@ class TrainerModule:
                 if early_stopping_counter >= self.pv:
                     break
         '''
+        batch_loss = 0
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
@@ -218,7 +219,7 @@ class TrainerModule:
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
         test_accuracy = (test_preds*self.stdY+self.meanY-self.Y_test*self.stdY+self.meanY)/(self.Y_test*self.stdY+self.meanY)
-        print(f'Testaccuracy: {test_accuracy}')
+        print(f'Test accuracy: {test_accuracy}')
 
         self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
