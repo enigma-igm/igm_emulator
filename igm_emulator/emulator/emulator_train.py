@@ -140,7 +140,7 @@ class TrainerModule:
         self.loss_str = loss_str
         self.l2_weight = l2_weight
         self.like_dict = like_dict
-        self.accuracy_fn = jax.jit(self.accuracy_fn)
+        self.accuracy_fn = jax.jit(accuracy_fn)
         self.out_tag = out_tag
         self.var_tag =f'{loss_str}_l2_{l2_weight}_activation_{activation.__name__}_layers_{layer_sizes}'
         self.init_rng = init_rng
