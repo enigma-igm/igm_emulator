@@ -15,7 +15,6 @@ sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool, var_tag, loss_str, MyModuleCustom
 from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
-from pytree_h5py import save, load
 import h5py
 import IPython
 
