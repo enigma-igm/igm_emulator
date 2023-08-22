@@ -282,6 +282,21 @@ class TrainerModule:
             dill.dump(self.best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
             print("trained parameters saved")
 
+trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanY,stdY,
+                        layer_sizes=[100,100,100,59],
+                        activation= jax.nn.leaky_relu,
+                        dropout_rate=0.1,
+                        optimizer_hparams=[max_grad_norm, lr, decay],
+                        update=update,
+                        loss_str='mse',
+                        l2_weight=l2,
+                        accuracy_fn=accuracy,
+                         schedule_lr=schedule_lr,
+                        like_dict=like_dict,
+                        init_rng=42,
+                        n_epochs=1000,
+                        pv=100,
+                        out_tag=out_tag)
 IPython.embed()
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
             #optimizer, update, loss_fn, accuracy, like_dict)
