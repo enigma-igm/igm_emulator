@@ -153,7 +153,7 @@ class TrainerModule:
 
 
 
-    @jax.jit
+
     def train_loop(self):
 
 #if __name__ == '__main__':
