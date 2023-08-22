@@ -268,5 +268,6 @@ def train_loop(X_train,
     dill.dump(best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
     print("trained parameters saved")
 
+IPython.embed()
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
             #optimizer, update, loss_fn, accuracy, like_dict)
