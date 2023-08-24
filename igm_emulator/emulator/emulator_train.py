@@ -304,6 +304,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=1000,
                         pv=100,
                         out_tag=out_tag)
+trainer.train_loop()
 IPython.embed()
 #train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
             #optimizer, update, loss_fn, accuracy, like_dict)
