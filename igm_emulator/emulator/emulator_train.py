@@ -155,13 +155,14 @@ class TrainerModule:
         self.custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
 
     @partial(jit, static_argnums=(0,))
-    def loss_fn(self):
-        return jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
+    def loss_fn(self, params, X_train, Y_train):
+        _loss_fn = jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
+        return _loss_fn(params, X_train, Y_train)
 
     @partial(jit, static_argnums=(0,))
-    def update(self):
-        return jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
-
+    def update(self, params, opt_state, X_train, Y_train, optimizer):
+        _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
+        return _update(params, opt_state, X_train, Y_train, optimizer)
     def train_loop(self):
 
 #if __name__ == '__main__':
@@ -186,10 +187,10 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                params, opt_state, batch_loss, grads = self.update()(params, opt_state, self.X_train, self.Y_train, optimizer)
+                params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train, optimizer)
 
                 # compute training & validation loss at the end of the epoch
-                l = self.loss_fn()(params, self.X_vali, self.Y_vali)
+                l = self.loss_fn(params, self.X_vali, self.Y_vali)
                 training_loss.append(batch_loss)
                 validation_loss.append(l)
 
@@ -208,7 +209,7 @@ class TrainerModule:
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
         print(f'early_stopping_counter: {early_stopping_counter}')
-        print(f'Test Loss: {self.loss_fn()(params, self.X_test, self.Y_test)}')
+        print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
         plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
         plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
         plt.legend()
@@ -220,7 +221,7 @@ class TrainerModule:
         test_accuracy = (test_preds*self.stdY-self.Y_test*self.stdY)/(self.Y_test*self.stdY+self.meanY)
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
-        self.test_loss = self.loss_fn()(params, self.X_test, self.Y_test)
+        self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
