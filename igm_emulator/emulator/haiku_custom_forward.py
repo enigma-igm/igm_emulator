@@ -100,7 +100,7 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, loss_str='mse'):
     pred = custom_forward.apply(params, x)
     diff = pred - y
     new_covariance = like_dict['covariance']
-    mse = jnp.mean((diff) ** 2) + regularization
+    mse = jnp.mean((diff) ** 2)
     if loss_str=='mse':
         loss = mse
     elif loss_str=='chi_one_covariance':
