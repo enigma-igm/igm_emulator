@@ -7,7 +7,7 @@ import os
 import dill
 import h5py
 import os
-from haiku_custom_forward import small_bin_bool,var_tag
+from haiku_custom_forward import small_bin_bool
 from matplotlib import cm
 
 '''
@@ -126,7 +126,7 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.legend(labels=['layer1', 'layer2', 'layer3'], title='grads_b')
     plt.show()
 
-def train_overplot(preds, X, Y, meanY, stdY, out_tag):
+def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     ax = v_bins # velocity bins
     sample = 8  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
@@ -148,7 +148,7 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag):
     print('Train overplot saved')
     plt.show()
 
-def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag):
+def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var_tag):
     ax = v_bins
     sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
@@ -171,7 +171,7 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag):
     plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     plt.show()
 
-def plot_residue(new_delta, out_tag):
+def plot_residue(new_delta, out_tag, var_tag):
     plt.figure(figsize=(15, 15))
     for i in range(new_delta.shape[0]):
         plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5,color = 'b', alpha=0.2)
@@ -185,7 +185,7 @@ def plot_residue(new_delta, out_tag):
     plt.show()
 
 
-def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY, out_tag):
+def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY, out_tag, var_tag):
     unlearnt_idx = []
     for i, d in enumerate(delta):
         for j, e in enumerate(d):
@@ -217,7 +217,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY, out_tag):
     plt.savefig(os.path.join(dir_exp, f'unlearnt_{out_tag}_{var_tag}.png'))
     plt.show()
 
-def plot_error_distribution(new_delta,out_tag):
+def plot_error_distribution(new_delta,out_tag, var_tag):
     colormap = cm.Reds
     n = 3
     percentiles = [68, 95, 99]

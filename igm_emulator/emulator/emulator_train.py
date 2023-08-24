@@ -230,17 +230,16 @@ class TrainerModule:
         #Prediction overplots: Training And Test
 
         print(f'***Result Plots saved {dir_exp}***')
-        train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, out_tag)
-        test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY,self.out_tag)
+        train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
+        test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
         #Accuracy + Results
 
         self.RelativeError = test_accuracy
 
-        plot_residue(self.RelativeError,out_tag)
-        bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY,self.out_tag)
-        plot_error_distribution(self.RelativeError,self.out_tag)
-        plot_error_distribution(self.RelativeError,self.out_tag,log=True)
+        plot_residue(self.RelativeError,self.out_tag, self.var_tag)
+        bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
+        plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
         self.best_loss = best_loss
 
         return self.best_params, self.best_loss
@@ -290,8 +289,8 @@ class TrainerModule:
 
             dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
             dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-            dill.dump(self.best_params, open(os.path.join(dir, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
-            dill.dump(self.best_params, open(os.path.join(dir2, f'{out_tag}_{var_tag}_best_param.p'), 'wb'))
+            dill.dump(self.best_params, open(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
+            dill.dump(self.best_params, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
             print("trained parameters saved")
 
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
