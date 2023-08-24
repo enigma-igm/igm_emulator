@@ -225,7 +225,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     rel_err_perc = np.zeros((59, n))
     rel_err = []
     for i in range(new_delta.shape[0]):
-        rel_err.append(new_delta[i, :] * 100)
+        rel_err.append(jnp.abs(new_delta[i, :]) * 100)
     rel_err = np.array(rel_err).T
     for i in range(n):
         rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
