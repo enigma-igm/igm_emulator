@@ -295,7 +295,7 @@ class TrainerModule:
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
-                        dropout_rate=0.1,
+                        dropout_rate=None,
                         optimizer_hparams=[max_grad_norm, lr, decay],
                         loss_str='mse',
                         l2_weight=l2,
