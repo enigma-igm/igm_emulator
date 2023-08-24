@@ -154,11 +154,11 @@ class TrainerModule:
             return module(x)
         self.custom_forward = hk.without_apply_rng(hk.transform(_custom_forward_fn))
 
-    #@partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0,))
     def loss_fn(self):
         return jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
-    #@partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0,))
     def update(self):
         return jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
 
@@ -187,8 +187,6 @@ class TrainerModule:
             for step in t:
                 # optimizing loss by update function
                 params, opt_state, batch_loss, grads = self.update()(params, opt_state, self.X_train, self.Y_train, optimizer)
-                #if step % 100 == 0:
-                    #plot_params(params)
 
                 # compute training & validation loss at the end of the epoch
                 l = self.loss_fn()(params, self.X_vali, self.Y_vali)

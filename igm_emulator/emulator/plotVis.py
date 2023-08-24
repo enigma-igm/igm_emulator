@@ -134,6 +134,7 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     fig.set_figheight(15)
     corr_idx = np.random.randint(0, Y.shape[0], sample)  # randomly select correlation functions to compare
     preds = preds * stdY + meanY
+    Y = Y * stdY + meanY
     for i in range(sample):
         axs.plot(ax, preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X[corr_idx[i], 0]:.2f},'
                                                r'$T_0$='f'{X[corr_idx[i], 1]:.2f},'
