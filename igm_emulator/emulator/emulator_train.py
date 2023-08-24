@@ -19,21 +19,6 @@ from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 import h5py
 import IPython
-
-max_grad_norm = 0.1
-n_epochs = 1000
-lr = 1e-3
-beta = 1e-3
-decay = 5e-3
-l2 =0.0001
-print('***Training Start***')
-'''
-print(f'Small bin number: {small_bin_bool}')
-print(f'Layers: {output_size}')
-print(f'Activation: {activation.__name__}')
-print(f'L2 regularization lambda: {l2}')
-print(f'Loss function: {loss_str}')
-'''
 config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
@@ -98,7 +83,7 @@ print('***Data Loaded***')
 print(f'Train datasize: {X_train.shape[0]}; Test datasize: {X_test.shape[0]}; Validation datasize: {X_vali.shape[0]}')
 
 '''
-Training Loop + Visualization of params
+Training Loop Module + Visualization of params
 '''
 class TrainerModule:
 
@@ -164,7 +149,6 @@ class TrainerModule:
         _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
         return _update(params, opt_state, X_train, Y_train, optimizer)
     def train_loop(self):
-
 #if __name__ == '__main__':
         custom_forward = self.custom_forward
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
@@ -182,8 +166,8 @@ class TrainerModule:
         best_loss = np.inf
         validation_loss = []
         training_loss = []
-        print('***Training Loop Start***')
-
+        print(f'***Training Loop Start***')
+        print(f'MLP info: {self.var_tag}')
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
@@ -292,6 +276,15 @@ class TrainerModule:
             dill.dump(self.best_params, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
             print("trained parameters saved")
 
+'''
+#Initiate training module
+'''
+max_grad_norm = 0.1
+lr = 1e-3
+#beta = 1e-3 #BNN
+decay = 5e-3
+l2 =0.0001
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
@@ -306,5 +299,3 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         out_tag=out_tag)
 trainer.train_loop()
 IPython.embed()
-#train_loop(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanY, stdY, params,
-            #optimizer, update, loss_fn, accuracy, like_dict)
