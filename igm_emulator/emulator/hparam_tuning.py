@@ -9,7 +9,7 @@ def objective(trial):
     dropout_rate_tune = trial.suggest_float('dropout_rate', 0, 0.5)
     max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 0.5)
     lr_tune = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
-    decay_tune = trial.suggest_float('decay', 1e-4, 5e-3)
+    decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=True)
     l2_tune = trial.suggest_float('l2', 1e-5, 1e-3, log=True)
     n_epochs_tune = trial.suggest_categorical('n_epochs', [500, 1000, 2000])
     loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft'])
