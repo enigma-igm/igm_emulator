@@ -148,7 +148,7 @@ class TrainerModule:
     def update(self, params, opt_state, X_train, Y_train, optimizer):
         _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
         return _update(params, opt_state, X_train, Y_train, optimizer)
-    def train_loop(self):
+    def train_loop(self, plot=True):
 #if __name__ == '__main__':
         custom_forward = self.custom_forward
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
@@ -190,19 +190,17 @@ class TrainerModule:
                 if early_stopping_counter >= self.pv:
                     break
 
-        print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         self.best_params = params
+        self.best_loss = best_loss
+        print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
-        plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
-        plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
-        plt.legend()
 
         #Metrics
-
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
         test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY)
+        self.RelativeError = test_accuracy
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
         self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
@@ -210,20 +208,19 @@ class TrainerModule:
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, X_train)
 
-        #Prediction overplots: Training And Test
+        if plot:
+            #Prediction overplots: Training And Test
+            plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
+            plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
+            plt.legend()
+            print(f'***Result Plots saved {dir_exp}***')
+            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
+            test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
-        print(f'***Result Plots saved {dir_exp}***')
-        train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
-        test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
-
-        #Accuracy + Results
-
-        self.RelativeError = test_accuracy
-
-        plot_residue(self.RelativeError,self.out_tag, self.var_tag)
-        bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
-        plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
-        self.best_loss = best_loss
+            #Accuracy + Results Plots
+            plot_residue(self.RelativeError,self.out_tag, self.var_tag)
+            #bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
+            plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
 
         return self.best_params, self.best_loss
 
@@ -284,7 +281,7 @@ lr = 1e-3
 #beta = 1e-3 #BNN
 decay = 5e-3
 l2 =0.0001
-
+'''
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
@@ -299,3 +296,4 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         out_tag=out_tag)
 trainer.train_loop()
 IPython.embed()
+'''
