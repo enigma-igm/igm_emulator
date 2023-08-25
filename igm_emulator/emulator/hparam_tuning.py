@@ -14,7 +14,7 @@ def objective(trial):
     n_epochs_tune = trial.suggest_categorical('n_epochs', [500, 1000, 2000])
     loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft'])
     trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
-                            layer_sizes= [100, 100, 100, 59] #layer_sizes_tune,
+                            layer_sizes= [100, 100, 100, 59], #layer_sizes_tune,
                             activation=eval(activation_tune),
                             dropout_rate=dropout_rate_tune,
                             optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
