@@ -1,7 +1,7 @@
 import jax
 import optuna
 from optuna.samplers import TPESampler
-from emulator_train import X_train, Y_train, X_test, Y_test, X_vali, Y_vali, TrainerModule, out_tag, like_dict
+from emulator_train import X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY, TrainerModule, out_tag, like_dict
 
 def objective(trial):
     layer_sizes_tune = trial.suggest_categorical('layer_sizes', [[100, 100, 100, 59], [100, 100, 59], [100, 59]])
