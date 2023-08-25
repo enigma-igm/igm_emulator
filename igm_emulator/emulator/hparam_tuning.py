@@ -1,3 +1,4 @@
+import jax
 import optuna
 from optuna.samplers import TPESampler
 from emulator_train import X_train, Y_train, X_test, Y_test, X_vali, Y_vali, TrainerModule, out_tag, like_dict
@@ -11,13 +12,13 @@ def objective(trial):
     decay_tune = trial.suggest_float('decay', 1e-4, 5e-3)
     l2_tune = trial.suggest_float('l2', 1e-5, 1e-3, log=True)
     n_epochs_tune = trial.suggest_int('n_epochs', 500, 2000)
-
+    loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft'])
     trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
                             layer_sizes=layer_sizes_tune,
                             activation=activation_tune,
                             dropout_rate=dropout_rate_tune,
                             optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
-                            loss_str='chi_one_covariance',
+                            loss_str=loss_str_tune,
                             l2_weight=l2_tune,
                             like_dict=like_dict,
                             init_rng=42,
