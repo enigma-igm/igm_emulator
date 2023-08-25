@@ -26,7 +26,7 @@ def objective(trial):
                             pv=100,
                             out_tag=out_tag)
 
-    best_vali_loss = trainer.train_loop()[1]
+    best_vali_loss = trainer.train_loop(False)[1]
     del trainer
     return best_vali_loss
 

@@ -191,7 +191,7 @@ class TrainerModule:
                     break
 
         self.best_params = params
-        self.best_loss = best_loss
+        self.best_chi_loss = jnp.mean(jnp.abs((custom_forward.apply(self.best_params, self.X_vali) - self.Y_vali) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))))
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
