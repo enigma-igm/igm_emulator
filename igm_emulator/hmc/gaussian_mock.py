@@ -20,7 +20,7 @@ for mock_idx in pbar(range(n_inference)):
     mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
     covariance = like_dict['covariance']
     rng = np.random.default_rng()
-    mock_corr[mock_idx, :] = mean #rng.multivariate_normal(mean, covariance)
+    mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 dill.dump(mock_corr, open(out_path + f'gaussian_emulator_corr_inference{n_inference}_{var_tag}.p', 'wb'))
