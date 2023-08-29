@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
-from haiku_custom_forward import small_bin_bool, MyModuleCustom, output_sizes, activation
+from haiku_custom_forward import small_bin_bool, MyModuleCustom, output_size, activation
 from emulator_train import TrainerModule
 import h5py
 import numpy as np
@@ -32,7 +32,7 @@ meanY = np.asarray(f['data']['meanY'])
 stdY =  np.asarray(f['data']['stdY'])
 
 def _custom_forward_fn(x):
-    module = MyModuleCustom(output_size=output_sizes, activation=activation,
+    module = MyModuleCustom(output_size=output_size, activation=activation,
                             dropout_rate=None)
     return module(x)
 
