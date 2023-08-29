@@ -108,7 +108,6 @@ molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_on
 molly_model = h5py.File(in_path_model + molly_name, 'r')
 '''
 
-print(f'Start {n_inference} inference test for:{out_tag}_{var_tag}')
 
 '''
 Run HMC
@@ -127,6 +126,7 @@ if __name__ == '__main__':
     var_label = ['fobs', 'T0s', 'gammas']
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     pbar = ProgressBar()
+    print(f'Start {n_inference} inference test for:{out_tag}_{var_tag}')
     for mock_idx in pbar(range(n_inference)):
         closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
