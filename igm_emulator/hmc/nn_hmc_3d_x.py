@@ -212,8 +212,8 @@ class NN_HMC_X:
         lnP = -mcmc.get_extra_fields()['potential_energy']
         hmc_num_steps = mcmc.get_extra_fields()['num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
         hmc_tree_depth = np.log2(hmc_num_steps).astype(int) + 1  # Tree depth of the Hamiltonian trajectory (for diagnostics).
-        hit_max_tree_depth = np.sum(
-        hmc_tree_depth == self.max_tree_depth)  # Number of transitions that hit the maximum tree depth.
+        IPython.embed()
+        hit_max_tree_depth = np.sum(hmc_tree_depth == self.max_tree_depth)  # Number of transitions that hit the maximum tree depth.
         ms_per_step = 1e3 * total_time / np.sum(hmc_num_steps)
 
         if report:
