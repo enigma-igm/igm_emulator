@@ -136,7 +136,7 @@ if __name__ == '__main__':
         #mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
         #mocks = dill.load(open(in_path + mock_name, 'rb'))
         #flux = mocks[mock_idx, :]
-        mock_name = f'gaussian_mock_corr_inference{n_inference}.p'
+        mock_name = f'gaussian_emulator_corr_inference{n_inference}.p'
         mocks = dill.load(open(out_path + mock_name, 'rb'))
         flux = mocks[mock_idx, :]
 
@@ -156,7 +156,7 @@ if __name__ == '__main__':
                                        quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins_{var_tag}.png')
-    note = f"{out_tag}_inference_{n_inference}_gaussain_mocks_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
+    note = f"{out_tag}_inference_{n_inference}_gaussain_emulator_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
     with h5py.File(out_path + f'{note}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob', data=log_prob)
