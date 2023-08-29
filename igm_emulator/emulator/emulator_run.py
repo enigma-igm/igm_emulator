@@ -2,7 +2,8 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
-from haiku_custom_forward import small_bin_bool,_custom_forward_fn
+from haiku_custom_forward import small_bin_bool, MyModuleCustom, output_sizes, activation
+from emulator_train import TrainerModule
 import h5py
 import numpy as np
 from jax.config import config
@@ -29,6 +30,11 @@ meanX = np.asarray(f['data']['meanX'])
 stdX = np.asarray(f['data']['stdX'])
 meanY = np.asarray(f['data']['meanY'])
 stdY =  np.asarray(f['data']['stdY'])
+
+def _custom_forward_fn(x):
+    module = MyModuleCustom(output_size=output_sizes, activation=activation,
+                            dropout_rate=None)
+    return module(x)
 
 def nn_emulator(best_params,theta):
     x = (theta - meanX)/ stdX

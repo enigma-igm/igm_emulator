@@ -148,8 +148,35 @@ class TrainerModule:
     def update(self, params, opt_state, X_train, Y_train, optimizer):
         _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
         return _update(params, opt_state, X_train, Y_train, optimizer)
+
+    def predict(self, params, theta):
+        '''
+        Predicts model given parameters all in the physical space
+        Parameters
+        ----------
+        trained_params
+        theta
+
+        Returns
+        -------
+        model
+        '''
+        x = (theta - self.meanX) / self.stdX
+        model = self.custom_forward.apply(params, X)
+        model = model * self.stdY + self.meanY
+        return model
+
     def train_loop(self, plot=True):
-#if __name__ == '__main__':
+        '''
+        Training loop for the neural network
+        Parameters
+        ----------
+        plot
+
+        Returns
+        -------
+
+        '''
         custom_forward = self.custom_forward
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
         preds = custom_forward.apply(params, self.X_train)
