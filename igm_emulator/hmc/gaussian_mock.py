@@ -1,4 +1,4 @@
-from inference_test import true_theta_sampled, T0s, gammas, fobs, n_inference, vbins, in_path, like_dict, best_params, n_params,n_covar, n_path, bin_label
+from inference_test import var_tag,true_theta_sampled, T0s, gammas, fobs, n_inference, vbins, in_path, like_dict, best_params, n_params,n_covar, n_path, bin_label
 import numpy as np
 import dill
 from progressbar import ProgressBar
@@ -23,4 +23,4 @@ for mock_idx in pbar(range(n_inference)):
     mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-dill.dump(mock_corr, open(out_path + f'gaussian_emulator_corr_inference{n_inference}.p', 'wb'))
+dill.dump(mock_corr, open(out_path + f'gaussian_emulator_corr_inference{n_inference}_{var_tag}.p', 'wb'))
