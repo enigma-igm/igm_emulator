@@ -136,7 +136,7 @@ if __name__ == '__main__':
         #mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
         #mocks = dill.load(open(in_path + mock_name, 'rb'))
         #flux = mocks[mock_idx, :]
-        mock_name = f'gaussian_emulator_corr_inference{n_inference}.p'
+        mock_name = f'gaussian_emulator_corr_inference{n_inference}_{var_tag}.p'
         mocks = dill.load(open(out_path + mock_name, 'rb'))
         flux = mocks[mock_idx, :]
 
