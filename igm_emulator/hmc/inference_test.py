@@ -91,15 +91,15 @@ true_theta_sampled = np.empty([n_inference, n_params])
 rng = np.random.default_rng(36)
 seed = rng.integers(0, 100,3)
 
-true_temp_x = random.uniform(random.PRNGKey(seed[0]),(n_inference,), minval=nn_x.theta_to_x(T0s).min(), maxval=nn_x.theta_to_x(T0s).max())
+true_temp_x = random.uniform(random.PRNGKey(seed[0]),(n_inference,), minval=T0s[0]-0.001, maxval=T0s[-1]+0.001)
 IPython.embed()
-true_gamma_x = random.uniform(random.PRNGKey(seed[1]),(n_inference,), minval=nn_x.theta_to_x(gammas).min(), maxval=nn_x.theta_to_x(gammas).max())
+true_gamma_x = random.uniform(random.PRNGKey(seed[1]),(n_inference,), minval=gammas[0]-0.001, maxval=gammas[-1]+0.001)
 
-true_fobs_x = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=nn_x.theta_to_x(fobs).min(), maxval=nn_x.theta_to_x(fobs).max())
+true_fobs_x = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=fobs[0]-0.001, maxval=fobs[-1]+0.001)
 
-true_theta_sampled[:, 0] = nn_x.x_to_theta(true_temp_x)
-true_theta_sampled[:, 1] = nn_x.x_to_theta(true_gamma_x)
-true_theta_sampled[:, 2] = nn_x.x_to_theta(true_fobs_x)
+true_theta_sampled[:, 0] =true_temp_x #nn_x.x_to_theta(true_temp_x)
+true_theta_sampled[:, 1] =true_gamma_x #nn_x.x_to_theta(true_gamma_x)
+true_theta_sampled[:, 2] =true_fobs_x #nn_x.x_to_theta(true_fobs_x)
 
 
 '''
