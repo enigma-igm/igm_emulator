@@ -89,7 +89,7 @@ nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
 # get 1000 sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
 rng = np.random.default_rng(36)
-seed = rng.choice(100,3)
+seed = rng.integers(0, 100,3)
 
 true_temp_x = random.uniform(random.PRNGKey(seed[0]),n_inference, minval=nn_x.theta_to_x(T0s)[0], maxval=nn_x.theta_to_x(T0s)[-1])
 
