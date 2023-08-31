@@ -87,9 +87,9 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def theta_to_x(self, theta, axis=0): #x is in dimensionless parameter space
-    '''
-    Transform theta to x: [fob, T0, gamma]
-    '''
+        '''
+        Transform theta (nsamples, n_params) or (n_params,) to x: [fob, T0, gamma]
+        '''
         x_astro = jax.vmap(self._theta_to_x, in_axes=axis, out_axes=axis)(jnp.atleast_2d(theta))
 
         return x_astro.squeeze()
@@ -101,9 +101,9 @@ class NN_HMC_X:
 
     @partial(jit, static_argnums=(0,))
     def x_to_theta(self, x, axis=0):
-    '''
-    Transform x to theta: [fob, T0, gamma]
-    '''
+        '''
+        Transform x (nsamples, n_params) or (n_params,) to theta: [fob, T0, gamma]
+        '''
         theta_astro = jax.vmap(self._x_to_theta, in_axes=axis, out_axes=axis)(jnp.atleast_2d(x))
 
         return theta_astro.squeeze()
