@@ -92,7 +92,7 @@ rng = np.random.default_rng(36)
 seed = rng.integers(0, 100,3)
 
 true_temp_x = random.uniform(random.PRNGKey(seed[0]),(n_inference,), minval=nn_x.theta_to_x(T0s).min(), maxval=nn_x.theta_to_x(T0s).max())
-
+IPython.embed()
 true_gamma_x = random.uniform(random.PRNGKey(seed[1]),(n_inference,), minval=nn_x.theta_to_x(gammas).min(), maxval=nn_x.theta_to_x(gammas).max())
 
 true_fobs_x = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=nn_x.theta_to_x(fobs).min(), maxval=nn_x.theta_to_x(fobs).max())
