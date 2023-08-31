@@ -14,7 +14,7 @@ import IPython
 from igm_emulator.emulator.emulator_run import nn_emulator
 import sys
 sys.path.append('/home/zhenyujin/qso_fitting/')
-from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta
+from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta, bounded_variable_lnP
 #from utils import walker_plot, corner_plot
 import struct
 print(struct.calcsize("P") * 8)
@@ -113,7 +113,7 @@ class NN_HMC_X:
         Returns:
             log_prior: log prior
         '''
-        return jax.nn.log_sigmoid(x) + jnp.log(1.0 - jax.nn.sigmoid(x))
+        return bounded_variable_lnP(x)
 
     @partial(jit, static_argnums=(0,))
     def eval_prior(self,x):

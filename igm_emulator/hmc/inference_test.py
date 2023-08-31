@@ -1,12 +1,12 @@
 import sys
 import os
 import igm_emulator as emu
-
+from nn_hmc_3d_x import NN_HMC_X
 import dill
 import numpy as np
 import IPython
 import jax
-import jax.random as random
+import jax.random as random, uniform, PRNGKey
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 import jax.numpy as jnp
@@ -20,6 +20,7 @@ from tabulate import tabulate
 import corner
 import h5py
 from progressbar import ProgressBar
+
 sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
 sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 
@@ -82,24 +83,23 @@ f_idx = 4
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 
+# get priors
+nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
 
 # get 1000 sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
-seed_temp = 36
-rand_temp = np.random.RandomState(seed_temp)  # if seed is None else seed
-true_temp_idx = rand_temp.choice(np.arange(n_temps), size=n_inference)
+rng = np.random.default_rng(36)
+seed = rng.choice(100,3)
 
-seed_gamma = 25
-rand_gamma = np.random.RandomState(seed_gamma)  # if seed is None else seed
-true_gamma_idx = rand_gamma.choice(np.arange(n_gammas), size=n_inference)
+true_temp_x = uniform(PRNGKey(seed[0]),n_inference, minval=nn_x.theta_to_x(T0s)[0], maxval=nn_x.theta_to_x(T0s)[-1])
 
-seed_flux = 74
-rand_flux = np.random.RandomState(seed_flux)  # if seed is None else seed
-true_fobs_idx = rand_flux.choice(np.arange(n_f), size=n_inference)
+true_gamma_x = uniform(PRNGKey(seed[1]),n_inference, minval=nn_x.theta_to_x(gammas)[0], maxval=nn_x.theta_to_x(gammas)[-1])
 
-true_theta_sampled[:, 0] = T0s[true_temp_idx]
-true_theta_sampled[:, 1] = gammas[true_gamma_idx]
-true_theta_sampled[:, 2] = fobs[true_fobs_idx]
+true_fobs_x = uniform(PRNGKey(seed[2]),n_inference, minval=nn_x.theta_to_x(fobs)[0], maxval=nn_x.theta_to_x(fobs)[-1])
+
+true_theta_sampled[:, 0] = nn_x.x_to_theta(true_temp_x)
+true_theta_sampled[:, 1] = nn_x.x_to_theta(true_gamma_x)
+true_theta_sampled[:, 2] = nn_x.x_to_theta(true_fobs_x)
 
 
 '''
@@ -113,7 +113,9 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 Run HMC
 '''
 if __name__ == '__main__':
-    nn_x = emu.NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
+    note = 'gaussian_emulator_prior_x'
+    save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
+
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
 
@@ -126,7 +128,7 @@ if __name__ == '__main__':
     var_label = ['fobs', 'T0s', 'gammas']
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     pbar = ProgressBar()
-    print(f'Start {n_inference} inference test for:{out_tag}_{var_tag}')
+    print(f'Start {n_inference} inference test for:{save_name}')
     for mock_idx in pbar(range(n_inference)):
         closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
@@ -136,7 +138,7 @@ if __name__ == '__main__':
         #mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
         #mocks = dill.load(open(in_path + mock_name, 'rb'))
         #flux = mocks[mock_idx, :]
-        mock_name = f'gaussian_emulator_corr_inference{n_inference}_{var_tag}.p'
+        mock_name = f'{note}_corr_inference{n_inference}_{var_tag}.p'
         mocks = dill.load(open(out_path + mock_name, 'rb'))
         flux = mocks[mock_idx, :]
 
@@ -155,9 +157,10 @@ if __name__ == '__main__':
                                        truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                        quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-            corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins_{var_tag}.png')
-    note = f"{out_tag}_inference_{n_inference}_gaussain_emulator_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
-    with h5py.File(out_path + f'{note}.hdf5', 'a') as f:
+            corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins_{note}.png')
+
+        #save HMC inference results
+        with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob', data=log_prob)
         f.create_dataset('true_log_prob', data=true_log_prob)
