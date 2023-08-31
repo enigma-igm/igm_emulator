@@ -91,7 +91,7 @@ true_theta_sampled = np.empty([n_inference, n_params])
 rng = np.random.default_rng(36)
 seed = rng.integers(0, 100,3)
 
-true_temp_x = random.uniform(random.PRNGKey(seed[0]),n_inference, minval=nn_x.theta_to_x(T0s)[0], maxval=nn_x.theta_to_x(T0s)[-1])
+true_temp_x = random.uniform(random.PRNGKey(seed[0]),n_inference, minval=nn_x.theta_to_x(T0s).min, maxval=nn_x.theta_to_x(T0s).max)
 
 true_gamma_x = random.uniform(random.PRNGKey(seed[1]),n_inference, minval=nn_x.theta_to_x(gammas)[0], maxval=nn_x.theta_to_x(gammas)[-1])
 
