@@ -161,10 +161,10 @@ if __name__ == '__main__':
 
         #save HMC inference results
         with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
-        f.create_dataset('true_theta', data=true_theta)
-        f.create_dataset('log_prob', data=log_prob)
-        f.create_dataset('true_log_prob', data=true_log_prob)
-        f.create_dataset('samples', data=samples)
-        f.create_dataset('infer_theta', data=infer_theta)
+            f.create_dataset('true_theta', data=true_theta)
+            f.create_dataset('log_prob', data=log_prob)
+            f.create_dataset('true_log_prob', data=true_log_prob)
+            f.create_dataset('samples', data=samples)
+            f.create_dataset('infer_theta', data=infer_theta)
         IPython.embed()
 
