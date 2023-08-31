@@ -83,23 +83,6 @@ f_idx = 4
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 
-# get priors
-nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
-
-# get 1000 sampled parameters
-true_theta_sampled = np.empty([n_inference, n_params])
-rng = np.random.default_rng(36)
-seed = rng.integers(0, 100,3)
-
-true_temp_x = random.uniform(random.PRNGKey(seed[0]),(n_inference,), minval=T0s[0]-0.001, maxval=T0s[-1]+0.001)
-IPython.embed()
-true_gamma_x = random.uniform(random.PRNGKey(seed[1]),(n_inference,), minval=gammas[0]-0.001, maxval=gammas[-1]+0.001)
-
-true_fobs_x = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=fobs[0]-0.001, maxval=fobs[-1]+0.001)
-
-true_theta_sampled[:, 0] =true_temp_x #nn_x.x_to_theta(true_temp_x)
-true_theta_sampled[:, 1] =true_gamma_x #nn_x.x_to_theta(true_gamma_x)
-true_theta_sampled[:, 2] =true_fobs_x #nn_x.x_to_theta(true_fobs_x)
 
 
 '''
@@ -113,23 +96,26 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 Run HMC
 '''
 if __name__ == '__main__':
+    nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
+
     note = 'gaussian_emulator_prior_x'
+    out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
     key = random.PRNGKey(642)
-    key, subkey = random.split(key)
 
     true_theta = np.empty([n_inference, n_params])
     infer_theta = np.empty([n_inference, n_params])
     log_prob = np.empty([n_inference, nn_x.num_samples*nn_x.num_chains])
     true_log_prob = np.empty([n_inference])
     samples = np.empty([n_inference, nn_x.num_samples*nn_x.num_chains, n_params])
+    true_theta_sampled = dill.load(open(out_path + f'{note}_corr_inference{n_inference}_{var_tag}.p', 'rb'))
 
     var_label = ['fobs', 'T0s', 'gammas']
-    out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     pbar = ProgressBar()
     print(f'Start {n_inference} inference test for:{save_name}')
     for mock_idx in pbar(range(n_inference)):
+        key, subkey = random.split(key)
         closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 2]))
