@@ -146,11 +146,11 @@ if __name__ == '__main__':
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins_{note}.png')
 
         #save HMC inference results
-        with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
-            f.create_dataset('true_theta', data=true_theta)
-            f.create_dataset('log_prob', data=log_prob)
-            f.create_dataset('true_log_prob', data=true_log_prob)
-            f.create_dataset('samples', data=samples)
-            f.create_dataset('infer_theta', data=infer_theta)
-        IPython.embed()
+    with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
+        f.create_dataset('true_theta', data=true_theta)
+        f.create_dataset('log_prob', data=log_prob)
+        f.create_dataset('true_log_prob', data=true_log_prob)
+        f.create_dataset('samples', data=samples)
+        f.create_dataset('infer_theta', data=infer_theta)
+    IPython.embed()
 
