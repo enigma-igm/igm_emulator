@@ -104,12 +104,15 @@ if __name__ == '__main__':
 
     key = random.PRNGKey(642)
 
-    true_theta = np.empty([n_inference, n_params])
     infer_theta = np.empty([n_inference, n_params])
     log_prob = np.empty([n_inference, nn_x.num_samples*nn_x.num_chains])
     true_log_prob = np.empty([n_inference])
     samples = np.empty([n_inference, nn_x.num_samples*nn_x.num_chains, n_params])
+
+    #read in samples
     true_theta = dill.load(open(out_path + f'{note}_theta_inference{n_inference}_{var_tag}.p', 'rb'))
+    mock_name = f'{note}_corr_inference{n_inference}_{var_tag}.p'
+    mocks = dill.load(open(out_path + mock_name, 'rb'))
 
     var_label = ['fobs', 'T0s', 'gammas']
     pbar = ProgressBar()
@@ -117,12 +120,14 @@ if __name__ == '__main__':
     for mock_idx in pbar(range(n_inference)):
         key, subkey = random.split(key)
 
+        closest_temp_idx = np.argmin(np.abs(T0s - true_theta[mock_idx, 1]))
+        closest_gamma_idx = np.argmin(np.abs(gammas - true_theta[mock_idx, 2]))
+        closest_fobs_idx = np.argmin(np.abs(fobs - true_theta[mock_idx, 0]))
+
         x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
         #mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
         #mocks = dill.load(open(in_path + mock_name, 'rb'))
         #flux = mocks[mock_idx, :]
-        mock_name = f'{note}_corr_inference{n_inference}_{var_tag}.p'
-        mocks = dill.load(open(out_path + mock_name, 'rb'))
         flux = mocks[mock_idx, :]
 
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
