@@ -29,7 +29,7 @@ sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 load model and auto-corr
 '''
 redshift = 5.4
-n_inference = 500
+n_inference = 100
 n_params = 3
 
 # set emulator parameters
@@ -98,7 +98,7 @@ Run HMC
 if __name__ == '__main__':
     nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
 
-    note = 'gaussian_emulator_prior_x_no_grids'
+    note = 'gaussian_emulator_prior_x'
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
