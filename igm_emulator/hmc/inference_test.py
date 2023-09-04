@@ -138,7 +138,7 @@ if __name__ == '__main__':
         infer_theta[mock_idx, :] = [f_mcmc[0], t_mcmc[0], g_mcmc[0]]
         samples[mock_idx, :, :] = theta_samples
         log_prob[mock_idx, :] = lnP
-        true_log_prob[mock_idx] = nn_x.potential_fun(x_true, flux)
+        true_log_prob[mock_idx] = -1 * nn_x.potential_fun(x_true, flux)
         #corner plot for each inference
         if mock_idx < 10:
             corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
@@ -150,9 +150,9 @@ if __name__ == '__main__':
         #save HMC inference results
     with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
-        f.create_dataset('log_prob', data=log_prob)
-        f.create_dataset('true_log_prob', data=true_log_prob)
-        f.create_dataset('samples', data=samples)
+        f.create_dataset('log_prob_x', data=log_prob)
+        f.create_dataset('true_log_prob_x', data=true_log_prob)
+        f.create_dataset('samples_theta', data=samples)
         f.create_dataset('infer_theta', data=infer_theta)
     IPython.embed()
 

@@ -39,7 +39,7 @@ for mock_idx in pbar(range(n_inference)):
     #mean = model_dict['mean_data'] #around emulator mean
 
     true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 2], true_theta_sampled[mock_idx, 0], true_theta_sampled[mock_idx, 1]]
-fi
+
     mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
     covariance = like_dict['covariance']
     rng = random.default_rng()
