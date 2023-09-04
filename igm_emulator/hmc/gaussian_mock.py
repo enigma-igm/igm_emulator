@@ -7,7 +7,7 @@ import igm_emulator as emu
 
 # get n_inference sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
-rng = random.default_rng(36)
+rng = random.PRNGKey(36)
 
 rng, init_rng = random.split(rng)
 true_temp = random.uniform(init_rng,(n_inference,), minval=T0s[0], maxval=T0s[-1])
@@ -42,7 +42,7 @@ for mock_idx in pbar(range(n_inference)):
 
     mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
     covariance = like_dict['covariance']
-    rng = random.default_rng()
+    rng = random.PRNGKey()
     mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 #save get n_inference sampled parameters and mock correlation functions
