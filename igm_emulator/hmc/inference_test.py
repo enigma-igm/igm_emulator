@@ -29,7 +29,7 @@ sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
 load model and auto-corr
 '''
 redshift = 5.4
-n_inference = 100
+n_inference = 500
 n_params = 3
 
 # set emulator parameters
