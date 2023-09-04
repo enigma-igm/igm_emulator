@@ -18,7 +18,7 @@ true_fob = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=fobs[0]
 
 true_theta_sampled[:, 0] =true_temp
 true_theta_sampled[:, 1] =true_gamma
-true_theta_sampled[:, 2] =true_fobs
+true_theta_sampled[:, 2] =true_fob
 
 #get n_inference mock correlation functions
 mock_corr = np.empty([n_inference, len(vbins)])
