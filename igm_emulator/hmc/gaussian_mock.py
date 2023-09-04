@@ -7,14 +7,16 @@ import igm_emulator as emu
 
 # get n_inference sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
-rng = np.random.default_rng(36)
-seed = rng.integers(0, 100,3)
+rng = random.default_rng(36)
 
-true_temp = random.uniform(random.PRNGKey(seed[0]),(n_inference,), minval=T0s[0], maxval=T0s[-1])
+rng, init_rng = random.split(rng)
+true_temp = random.uniform(init_rng,(n_inference,), minval=T0s[0], maxval=T0s[-1])
 
-true_gamma = random.uniform(random.PRNGKey(seed[1]),(n_inference,), minval=gammas[0], maxval=gammas[-1])
+rng, init_rng = random.split(rng)
+true_gamma = random.uniform(init_rng,(n_inference,), minval=gammas[0], maxval=gammas[-1])
 
-true_fob = random.uniform(random.PRNGKey(seed[2]),(n_inference,), minval=fobs[0], maxval=fobs[-1])
+rng, init_rng = random.split(rng)
+true_fob = random.uniform(init_rng,(n_inference,), minval=fobs[0], maxval=fobs[-1])
 
 true_theta_sampled[:, 0] =true_temp
 true_theta_sampled[:, 1] =true_gamma
@@ -37,10 +39,10 @@ for mock_idx in pbar(range(n_inference)):
     #mean = model_dict['mean_data'] #around emulator mean
 
     true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 2], true_theta_sampled[mock_idx, 0], true_theta_sampled[mock_idx, 1]]
-
+fi
     mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
     covariance = like_dict['covariance']
-    rng = np.random.default_rng()
+    rng = random.default_rng()
     mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 #save get n_inference sampled parameters and mock correlation functions
