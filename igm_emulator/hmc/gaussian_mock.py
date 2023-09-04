@@ -42,7 +42,7 @@ for mock_idx in pbar(range(n_inference)):
 
     mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
     covariance = like_dict['covariance']
-    rng = random.PRNGKey()
+    rng = random.PRNGKey(42)
     mock_corr[mock_idx, :] = rng.multivariate_normal(mean, covariance)
 
 #save get n_inference sampled parameters and mock correlation functions
