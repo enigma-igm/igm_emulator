@@ -51,3 +51,4 @@ note = 'gaussian_emulator_prior_x'
 
 dill.dump(mock_corr, open(out_path + f'{note}_corr_inference{n_inference}_{var_tag}.p', 'wb'))
 dill.dump(true_theta, open(out_path + f'{note}_theta_inference{n_inference}_{var_tag}.p', 'wb'))
+dill.dump(true_theta_sampled, open(out_path + f'{note}_theta_sampled_inference{n_inference}_{var_tag}.p', 'wb'))

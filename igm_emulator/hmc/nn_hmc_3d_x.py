@@ -301,7 +301,7 @@ class NN_HMC_X:
 
         corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                          truths=np.array(theta_true), truth_color='red', show_titles=True,
-                                         title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
+                                         title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
                                          data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
 
