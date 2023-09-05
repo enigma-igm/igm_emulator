@@ -15,6 +15,9 @@ from igm_emulator.emulator.emulator_run import nn_emulator
 import sys
 sys.path.append('/home/zhenyujin/qso_fitting/')
 from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta, bounded_variable_lnP
+import corner
+import matplotlib
+import matplotlib.pyplot as plt
 #from utils import walker_plot, corner_plot
 import struct
 print(struct.calcsize("P") * 8)
@@ -274,3 +277,39 @@ class NN_HMC_X:
             f.create_dataset('g_infer', data=g_mcmc)
             f.close()
         print(f"hmc results saved for {note}")
+
+    def corner_plot(self,z_string,theta_samples,x_samples,theta_true):
+        '''
+        Plot the corner plot for the HMC results
+        Parameters
+        ----------
+        z_string: str of redshift ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+        theta_samples: list of samples from HMC in theta space, shape (nwalkers * nsteps, ndim)
+        x_samples: list of samples from HMC in x space, shape (nwalkers, nsteps, ndim)
+        theta_true: list of true values of theta [fob, T0, gamma], shape (ndim,)
+
+        Returns
+        -------
+        corner_fig_theta: corner plot for theta
+        corner_fig_x: corner plot for x
+        '''
+
+        closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
+        closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
+        closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
+        var_label = ['fobs', 'T0s', 'gammas']
+
+        plt.subplot(211)
+        corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
+                                         truths=np.array(theta_true), truth_color='red', show_titles=True,
+                                         title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
+                                         data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+        corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
+        plt.subplot(212)
+        x_true = self.theta_to_x(theta_true)
+        corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
+                                     truths=np.array(x_true), truth_color='red', show_titles=True,
+                                     title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
+                                     data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+        corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
+        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
