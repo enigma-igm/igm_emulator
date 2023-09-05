@@ -299,7 +299,9 @@ class NN_HMC_X:
         closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
         var_label = ['fobs', 'T0s', 'gammas']
 
-        plt.subplot(211)
+        fig = plt.figure()
+        gs = fig.add_gridspec(2, 1)
+        fig.add_subplot(gs[0, 0])
         corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                          truths=np.array(theta_true), truth_color='red', show_titles=True,
                                          title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
@@ -307,9 +309,10 @@ class NN_HMC_X:
         corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
         plt.subplot(212)
         x_true = self.theta_to_x(theta_true)
+        fig.add_subplot(gs[1, 0])
         corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
                                      truths=np.array(x_true), truth_color='red', show_titles=True,
                                      title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
                                      data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
-        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
+        fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
