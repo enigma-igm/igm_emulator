@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
+sys.path.append('/home/zhenyujin/qso_fitting/')
+import h5py
+from qso_fitting.analysis.inf_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
 import corner
 import h5py
 from progressbar import ProgressBar
@@ -92,9 +95,6 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 '''
 
 
-'''
-Run HMC
-'''
 if __name__ == '__main__':
     nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
 
@@ -114,6 +114,9 @@ if __name__ == '__main__':
     mock_name = f'{note}_corr_inference{n_inference}_{var_tag}.p'
     mocks = dill.load(open(out_path + mock_name, 'rb'))
 
+    '''
+    Run inference test for each mock
+    '''
     var_label = ['fobs', 'T0s', 'gammas']
     pbar = ProgressBar()
     print(f'Start {n_inference} inference test for:{save_name}')
@@ -147,7 +150,7 @@ if __name__ == '__main__':
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_small_bins_{note}.png')
 
-        #save HMC inference results
+    #save HMC inference results
     with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
         f.create_dataset('true_theta', data=true_theta)
         f.create_dataset('log_prob_x', data=log_prob)
@@ -156,3 +159,54 @@ if __name__ == '__main__':
         f.create_dataset('infer_theta', data=infer_theta)
     IPython.embed()
 
+
+    '''
+    plot HMC inference test results
+    '''
+    alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
+    coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, log_prob, true_log_prob,
+                                                                              title='Gaussian Lhood MSE', show=False)
+
+    x_size = 3.5
+    dpi_value = 200
+    plt_params = {'legend.fontsize': 7,
+                  'legend.frameon': False,
+                  'axes.labelsize': 8,
+                  'axes.titlesize': 8,
+                  'figure.titlesize': 8,
+                  'xtick.labelsize': 7,
+                  'ytick.labelsize': 7,
+                  'lines.linewidth': 1,
+                  'lines.markersize': 2,
+                  'errorbar.capsize': 3,
+                  'font.family': 'serif',
+                  # 'text.usetex': True,
+                  'xtick.minor.visible': True,
+                  }
+    plt.rcParams.update(plt_params)
+    print('plotting')
+
+    inference_fig = plt.figure(figsize=(x_size, x_size * .9), constrained_layout=True,
+                               dpi=dpi_value,
+                               )
+    grid = inference_fig.add_gridspec(
+        nrows=1, ncols=1,
+    )
+
+    skew_ax = inference_fig.add_subplot(grid[0])
+
+    skew_ax.plot(alpha_vec, coverage_gauss, color='black', linestyle='solid', label='inference test points',
+                 zorder=10)
+    skew_ax.fill_between(alpha_vec, coverage_gauss_lo, coverage_gauss_hi, facecolor='grey', alpha=0.8, zorder=3)
+    x_vec = np.linspace(0.0, 1.0, 11)
+    skew_ax.plot(x_vec, x_vec, linewidth=1.5, color='red', linestyle=(0, (5, 10)), zorder=20, label='inferred model')
+
+    skew_ax.set_xlim((-0.01, 1.01))
+    skew_ax.set_ylim((-0.01, 1.01))
+    skew_ax.set_xlabel(r'$P_{{\rm true}}$', fontsize=16)
+    skew_ax.set_ylabel(r'$P_{{\rm inf}}$', fontsize=16)
+
+    out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/'
+    inference_fig.suptitle(f'{note}')
+    inference_fig.savefig(out_path_plot + f'{save_name}.png')
+    print(f'plot saved as: {save_name}.png')
