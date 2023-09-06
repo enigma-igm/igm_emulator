@@ -36,8 +36,8 @@ n_inference = 100
 n_params = 3
 
 # set emulator parameters
-loss_str = 'chi_one_covariance' #'mse'
-l2 = 0.01 #0.0001
+loss_str = 'mse' #'chi_one_covariance' #'mse'
+l2 = 0.0001 #0.01
 activation= jax.nn.leaky_relu
 
 # get the appropriate string and pathlength for chosen redshift
@@ -128,9 +128,6 @@ if __name__ == '__main__':
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta[mock_idx, 0]))
 
         x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
-        #mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
-        #mocks = dill.load(open(in_path + mock_name, 'rb'))
-        #flux = mocks[mock_idx, :]
         flux = mocks[mock_idx, :]
 
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
