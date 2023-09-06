@@ -14,6 +14,8 @@ if gaussian == False:
 else:
     note = 'gaussian_mocks_prior_x'
 
+print('Sampling parameters from priors')
+
 # get n_inference sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
 rng = random.PRNGKey(36)
