@@ -98,7 +98,7 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 if __name__ == '__main__':
     nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
 
-    note = 'gaussian_mocks_prior_x'
+    from gaussian_mock import note
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
     save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
