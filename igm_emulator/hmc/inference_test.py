@@ -36,8 +36,8 @@ n_inference = 100
 n_params = 3
 
 # set emulator parameters
-loss_str = 'mse'#'chi_one_covariance'
-l2 = 0.0001
+loss_str = 'chi_one_covariance' #'mse'
+l2 = 0.01 #0.0001
 activation= jax.nn.leaky_relu
 
 # get the appropriate string and pathlength for chosen redshift
