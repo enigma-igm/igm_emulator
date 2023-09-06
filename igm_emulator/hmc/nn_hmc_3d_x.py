@@ -278,7 +278,7 @@ class NN_HMC_X:
             f.close()
         print(f"hmc results saved for {note}")
 
-    def corner_plot(self,z_string,theta_samples,x_samples,theta_true):
+    def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None):
         '''
         Plot the corner plot for the HMC results
         Parameters
@@ -311,5 +311,6 @@ class NN_HMC_X:
                                      title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
                                      data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
-        corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
-        corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
+
+        corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')

@@ -30,6 +30,7 @@ load model and auto-corr
 '''
 redshift = 5.4
 test_id = 15
+compare = False
 
 T0_idx = 11 #0-14
 g_idx = 4 #0-8
@@ -84,9 +85,10 @@ mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
 
-in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
-molly_model = h5py.File(in_path_model + molly_name, 'r')
+if compare:
+    in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+    molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
+    molly_model = h5py.File(in_path_model + molly_name, 'r')
 
 mock_flux = mocks[0:5,:]
 mean_flux = like_dict['mean_data']
@@ -115,7 +117,6 @@ if __name__ == '__main__':
     n_inference = 5
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
-        note = f"jit_2000_4_test{test_id}_small_bins_retrain_compare_molly_mock{mock_idx}"
         flux = mocks[mock_idx, :]
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux)
@@ -123,23 +124,26 @@ if __name__ == '__main__':
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         nn_x.save_HMC(z_string,note,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time)
+        nn_x.corner_plot(z_string,theta_samples,x_samples,theta_true,save_str=f'mock{mock_idx}')
 
         y_error = np.sqrt(np.diag(new_covariance))
-        molly_sample = molly_model['samples'][mock_idx, :, :]
-        molly_flip = np.zeros(shape=molly_sample.shape)
-        molly_flip[:, 0] = molly_sample[:, 2]
-        molly_flip[:, 1] = molly_sample[:, 0]
-        molly_flip[:, 2] = molly_sample[:, 1]
+        if compare:
+            molly_sample = molly_model['samples'][mock_idx, :, :]
+            molly_flip = np.zeros(shape=molly_sample.shape)
+            molly_flip[:, 0] = molly_sample[:, 2]
+            molly_flip[:, 1] = molly_sample[:, 0]
+            molly_flip[:, 2] = molly_sample[:, 1]
 
-        t_molly, g_molly, f_molly = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
-                                        zip(*np.percentile(molly_sample, [16, 50, 84], axis=0)))
-        molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
+            t_molly, g_molly, f_molly = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
+                                            zip(*np.percentile(molly_sample, [16, 50, 84], axis=0)))
+            molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
 
         corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                    truths=np.array(theta_true), truth_color='red', show_titles=True,
                                    title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                    data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-        corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
+        if compare:
+            corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
         plt_params = {'legend.fontsize': 7,
                       'legend.frameon': False,
                       'axes.labelsize': 12,
@@ -168,7 +172,10 @@ if __name__ == '__main__':
         for idx, ind in enumerate(inds):
             sample = theta_samples[ind]
             model_plot = nn_emulator(best_params, sample)
-            molly, co, log_d = get_model_covar_nearest(molly_sample[ind])
+            if compare:
+                molly, co, log_d = get_model_covar_nearest(molly_sample[ind])
+                fit_axis.plot(vbins, molly_infer, c="m", label='Old Model', zorder=4, lw=1,
+                              path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
             if idx == 0:
                 fit_axis.plot(vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
                 #fit_axis.plot(vbins, molly, c="yellow", lw=.7, alpha=0.1, zorder=1, label='Old Posterior Draws')
@@ -192,7 +199,7 @@ if __name__ == '__main__':
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=1, capsize=0,
                           label='Mock Data')
-        #fit_axis.plot(vbins, molly_infer, c="m", label='Old Model', zorder=4, lw=1, path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+
         fit_axis.text(
             500, 0.0248,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
@@ -218,11 +225,28 @@ if __name__ == '__main__':
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 10},
         )
+        if compare:
+            fit_axis.text(
+                1510, 0.026,
+                tabulate([[r' $R_2$', np.round(r2_score(flux, molly_infer), decimals=4),
+                           np.round(r2_score(flux, max_P_model), decimals=4)],
+                          ['MSE', np.format_float_scientific(mean_squared_error(flux, molly_infer), precision=3),
+                           np.format_float_scientific(mean_squared_error(flux, max_P_model), precision=3)],
+                          ['Distance', np.format_float_scientific(minkowski(flux, molly_infer), precision=3),
+                           np.format_float_scientific(minkowski(flux, max_P_model), precision=3)]],
+                         headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
+                {'color': 'm', 'fontsize': 10},
+            )
+
         fit_axis.set_xlim(vbins[0], vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
         fit_axis.legend()
         out_path = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/'
-        fit_fig.savefig(out_path + f'model_fit_{note}.pdf')
-        corner_fig.savefig(out_path + f'corner_{note}.pdf')
+        note = f"T{T0_idx}_G{g_idx}_F{f_idx}_mock{mock_idx}"
+        if compare:
+            fit_fig.savefig(out_path + f'model_fit_compare_{note}.pdf')
+            corner_fig.savefig(out_path + f'corner_theta_compare_{note}.pdf')
+        else:
+            fit_fig.savefig(out_path + f'model_fit_{note}.pdf')
         print('Figures saved.')
