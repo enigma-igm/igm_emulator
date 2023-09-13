@@ -6,7 +6,7 @@ from emulator_train import X_train, Y_train, X_test, Y_test, X_vali, Y_vali, mea
 def objective(trial):
     layer_sizes_tune = trial.suggest_categorical('layer_sizes', [[100, 100, 100, 59], [100, 100, 59], [100, 59]])
     activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
-    dropout_rate_tune = trial.suggest_float('dropout_rate', 0, 0.5)
+    dropout_rate_tune = trial.suggest_float('dropout_rate', 0, 0.1)
     max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 0.5)
     lr_tune = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
     decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=True)
@@ -14,7 +14,7 @@ def objective(trial):
     n_epochs_tune = trial.suggest_categorical('n_epochs', [500, 1000, 2000])
     loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft'])
     trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
-                            layer_sizes= [100, 100, 100, 59], #layer_sizes_tune,
+                            layer_sizes= layer_sizes_tune,
                             activation=eval(activation_tune),
                             dropout_rate=dropout_rate_tune,
                             optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
