@@ -241,7 +241,7 @@ class TrainerModule:
             plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
             plt.legend()
             print(f'***Result Plots saved {dir_exp}***')
-            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self._)
+            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
             #Accuracy + Results Plots
