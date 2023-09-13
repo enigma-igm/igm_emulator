@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from haiku_custom_forward import small_bin_bool, MyModuleCustom, output_size, activation
-from emulator_train import TrainerModule
+#from emulator_train import TrainerModule
 import h5py
 import numpy as np
 from jax.config import config
