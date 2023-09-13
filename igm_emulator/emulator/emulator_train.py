@@ -324,3 +324,4 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
 trainer.train_loop()
 IPython.embed()
 '''
+IPython.embed()
