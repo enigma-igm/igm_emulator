@@ -206,3 +206,4 @@ if __name__ == '__main__':
     inference_fig.suptitle(f'{note}')
     inference_fig.savefig(out_path_plot + f'{save_name}.png')
     print(f'plot saved as: {save_name}.png')
+    IPython.embed()

@@ -170,6 +170,7 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
     plt.title('Test overplot in data space')
     plt.legend()
     plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
+    print('Test overplot saved')
     plt.show()
 
 def plot_residue(new_delta, out_tag, var_tag):
@@ -182,7 +183,7 @@ def plot_residue(new_delta, out_tag, var_tag):
     plt.ylabel('[Residual] [%]')
     plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100:.3f}%; std: {np.std(new_delta) * 100:.3f}%')
     plt.savefig(os.path.join(dir_exp, f'test%error_{out_tag}_{var_tag}.png'))
-    print('Test overplot saved')
+    print('Residual saved')
     plt.show()
 
 
