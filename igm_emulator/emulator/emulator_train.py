@@ -241,7 +241,7 @@ class TrainerModule:
             plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
             plt.legend()
             print(f'***Result Plots saved {dir_exp}***')
-            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
+            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self._)
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
             #Accuracy + Results Plots
@@ -265,7 +265,7 @@ class TrainerModule:
             group1 = f.create_group('haiku_nn')
             group1.attrs['redshift'] = redshift
             group1.attrs['adamw_decay'] = decay
-            group1.attrs['epochs'] = n_epochs
+            group1.attrs['epochs'] = self.n_epochs
             group1.create_dataset('layers', data = self.layer_sizes)
             group1.attrs['activation_function'] = self.activation.__name__
             group1.attrs['learning_rate'] = lr
