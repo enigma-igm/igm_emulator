@@ -288,7 +288,7 @@ class TrainerModule:
             group3.attrs['R2'] = self.test_R2
             group3.attrs['test_loss'] = self.test_loss
             group3.attrs['train_loss'] = self.batch_loss
-            group3.attrs['vali_loss'] = self.best_loss
+            group3.attrs['vali_loss'] = self.best_chi_loss
             group3.attrs['residuals_results'] = f'{jnp.mean(self.RelativeError)*100}% +/- {jnp.std(self.RelativeError) * 100}%'
             group3.create_dataset('residuals', data=self.RelativeError)
             f.close()
