@@ -308,7 +308,7 @@ lr = 1e-3
 #beta = 1e-3 #BNN
 decay = 5e-3
 l2 =0.0001
-'''
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
@@ -323,4 +323,3 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         out_tag=out_tag)
 trainer.train_loop()
 IPython.embed()
-'''
