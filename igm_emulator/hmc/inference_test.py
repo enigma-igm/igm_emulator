@@ -96,7 +96,11 @@ molly_model = h5py.File(in_path_model + molly_name, 'r')
 
 
 if __name__ == '__main__':
-    nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict)
+    nn_x = NN_HMC_X(vbins, best_params, T0s, gammas, fobs, like_dict, dense_mass=True,
+                 max_tree_depth= 10,
+                 num_warmup=1000,
+                 num_samples=2000,
+                 num_chains=8)
 
     from sample_mocks import note
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
