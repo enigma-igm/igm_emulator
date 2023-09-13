@@ -6,19 +6,22 @@ from progressbar import ProgressBar
 import igm_emulator as emu
 
 gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
-ngp = True #True: nearest grid point (mocks/emulator); False: emulator
+ngp = False #True: nearest grid point (mocks/emulator); False: emulator
 
 if gaussian == False:
     ngp = True
-    note = 'mocks_prior_x'
+    note = 'mocks_prior_x_seed_222'
 else:
-    note = 'gaussian_mocks_prior_x'
+    if ngp == True:
+        note = 'gaussian_mocks_prior_x_seed_222'
+    else:
+        note = 'gaussian_emulator_prior_x_seed_222'
 
 print('Sampling parameters from priors')
 
 # get n_inference sampled parameters
 true_theta_sampled = np.empty([n_inference, n_params])
-rng = random.PRNGKey(36)
+rng = random.PRNGKey(222) #(36)
 
 rng, init_rng = random.split(rng)
 true_temp = random.uniform(init_rng,(n_inference,), minval=T0s[0], maxval=T0s[-1])
