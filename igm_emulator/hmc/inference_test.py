@@ -65,7 +65,7 @@ else:
 # load model
 in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
 #var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
-var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]_best_param.p'
+var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]'
 best_params = dill.load(open(in_path_hdf5 + f'{out_tag}_{var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
 
 in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
