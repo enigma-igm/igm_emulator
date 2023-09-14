@@ -6,7 +6,7 @@ from progressbar import ProgressBar
 import igm_emulator as emu
 
 gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
-ngp = True #True: nearest grid point (mocks/emulator); False: emulator
+ngp = True #True: nearest grid point mocks; False: emulator
 
 if gaussian == False:
     ngp = True
