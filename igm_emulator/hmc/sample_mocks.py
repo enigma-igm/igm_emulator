@@ -32,9 +32,9 @@ true_gamma = random.uniform(init_rng,(n_inference,), minval=gammas[0], maxval=ga
 rng, init_rng = random.split(rng)
 true_fob = random.uniform(init_rng,(n_inference,), minval=fobs[0], maxval=fobs[-1])
 
-true_theta_sampled[:, 0] =true_temp
-true_theta_sampled[:, 1] =true_gamma
-true_theta_sampled[:, 2] =true_fob
+true_theta_sampled[:, 1] =true_temp
+true_theta_sampled[:, 2] =true_gamma
+true_theta_sampled[:, 0] =true_fob
 
 #get n_inference mock correlation functions
 mock_corr = np.empty([n_inference, len(vbins)])
@@ -43,17 +43,17 @@ pbar = ProgressBar()
 if gaussian:
     for mock_idx in pbar(range(n_inference)):
 
-        closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
-        closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
-        closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 2]))
+        closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 1]))
+        closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 2]))
+        closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 0]))
         if ngp:
             true_theta[mock_idx, :] = [fobs[closest_fobs_idx], T0s[closest_temp_idx], gammas[closest_gamma_idx]]
             model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
             model_dict = dill.load(open(in_path + model_name, 'rb'))
             mean = model_dict['mean_data']
         else:
-            true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 2], true_theta_sampled[mock_idx, 0],
-                                       true_theta_sampled[mock_idx, 1]]
+            true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 0], true_theta_sampled[mock_idx, 1],
+                                       true_theta_sampled[mock_idx, 2]]
             mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
 
         covariance = like_dict['covariance']
@@ -62,9 +62,9 @@ if gaussian:
 
 else:
     for mock_idx in pbar(range(n_inference)):
-        closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 0]))
-        closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 1]))
-        closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 2]))
+        closest_temp_idx = np.argmin(np.abs(T0s - true_theta_sampled[mock_idx, 1]))
+        closest_gamma_idx = np.argmin(np.abs(gammas - true_theta_sampled[mock_idx, 2]))
+        closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 0]))
 
         true_theta[mock_idx, :] = [fobs[closest_fobs_idx], T0s[closest_temp_idx], gammas[closest_gamma_idx]]
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
