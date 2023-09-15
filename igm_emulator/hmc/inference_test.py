@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
     from sample_mocks import note
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-    save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
+    save_name = f"{out_tag}_true_theta_sampled_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
     key = random.PRNGKey(642)
 
@@ -116,6 +116,7 @@ if __name__ == '__main__':
 
     #read in samples
     true_theta = dill.load(open(out_path + f'{note}_theta_inference{n_inference}_{var_tag}.p', 'rb'))
+    true_theta_sampled = dill.load(open(out_path + f'{note}_theta_sampled_inference{n_inference}_{var_tag}.p', 'rb'))
     mock_name = f'{note}_corr_inference{n_inference}_{var_tag}.p'
     mocks = dill.load(open(out_path + mock_name, 'rb'))
 
@@ -132,7 +133,8 @@ if __name__ == '__main__':
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta[mock_idx, 2]))
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta[mock_idx, 0]))
 
-        x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
+        #x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
+        x_true = nn_x.theta_to_x(true_theta_sampled[mock_idx, :])
         flux = mocks[mock_idx, :]
 
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
