@@ -7,7 +7,7 @@ def objective(trial):
     layer_sizes_tune = trial.suggest_categorical('layer_sizes', [[100, 100, 100, 59], [100, 100, 59], [100, 59]])
     activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
     dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
-    max_grad_norm_tune = trial.suggest_categorical('max_grad_norm', [0, 0.1, 0.2, 0.3, 0.4, 0.5])
+    max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 0.5, step=0.1)
     lr_tune = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
     decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=True)
     l2_tune = trial.suggest_float('l2', 1e-5, 1e-3, log=True)
