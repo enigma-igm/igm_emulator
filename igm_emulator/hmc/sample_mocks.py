@@ -38,6 +38,7 @@ true_theta_sampled[:, 0] =true_fob
 
 #get n_inference mock correlation functions
 mock_corr = np.empty([n_inference, len(vbins)])
+mock_covar = np.empty([n_inference, len(vbins),len(vbins)])
 true_theta = np.empty([n_inference, n_params])
 pbar = ProgressBar()
 if gaussian:
@@ -51,14 +52,16 @@ if gaussian:
             model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
             model_dict = dill.load(open(in_path + model_name, 'rb'))
             mean = model_dict['mean_data']
+            cov = model_dict['covariance']
         else:
             true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 0], true_theta_sampled[mock_idx, 1],
                                        true_theta_sampled[mock_idx, 2]]
             mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
-
+            cov = None
         covariance = like_dict['covariance']
         rng = random.PRNGKey(42)
         mock_corr[mock_idx, :] = random.multivariate_normal(rng, mean, covariance)
+        mock_covar[mock_idx, :, :] = cov
 
 else:
     for mock_idx in pbar(range(n_inference)):
@@ -69,7 +72,11 @@ else:
         true_theta[mock_idx, :] = [fobs[closest_fobs_idx], T0s[closest_temp_idx], gammas[closest_gamma_idx]]
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
     mocks = dill.load(open(in_path + mock_name, 'rb'))
+    model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
+    model_dict = dill.load(open(in_path + model_name, 'rb'))
+    cov = model_dict['covariance']
     mock_corr[mock_idx, :] = mocks[mock_idx, :]
+    mock_covar[mock_idx, :, :] = cov
 
 #save get n_inference sampled parameters and mock correlation functions
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
@@ -77,3 +84,4 @@ out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 dill.dump(mock_corr, open(out_path + f'{note}_corr_inference{n_inference}_{var_tag}.p', 'wb'))
 dill.dump(true_theta, open(out_path + f'{note}_theta_inference{n_inference}_{var_tag}.p', 'wb'))
 dill.dump(true_theta_sampled, open(out_path + f'{note}_theta_sampled_inference{n_inference}_{var_tag}.p', 'wb'))
+dill.dump(mock_covar, open(out_path + f'{note}_covar_inference{n_inference}_{var_tag}.p', 'wb'))

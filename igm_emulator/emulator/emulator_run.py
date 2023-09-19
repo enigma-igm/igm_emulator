@@ -10,6 +10,8 @@ import jax.numpy as jnp
 import jax
 config.update("jax_enable_x64", True)
 
+# Load the archetecture for best parameters
+# var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]'
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,59],
                         activation= jax.nn.tanh,
