@@ -6,7 +6,7 @@ import jax
 import h5py
 import jax.random as random
 from jax import jit
-from jax.scipy.stats import multivariate_normal.logpdf
+from jax.scipy.stats.multivariate_normal import logpdf
 from functools import partial
 from numpyro.infer import MCMC, NUTS
 import arviz as az
@@ -75,7 +75,7 @@ class NN_HMC_X:
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
         nbins = len(self.vbins)
-        log_like = multivariate_normal.logpdf(x=model, mean=corr, cov=covar)
+        log_like = logpdf(x=model, mean=corr, cov=covar)
         #print(f'Log_likelihood={log_like}')
         return log_like
 
