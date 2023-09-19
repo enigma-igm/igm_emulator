@@ -12,6 +12,7 @@ config.update("jax_enable_x64", True)
 
 # Load the archetecture for best parameters
 # var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]'
+'''
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,59],
                         activation= jax.nn.tanh,
@@ -23,6 +24,25 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                          init_rng=42,
                          n_epochs=1000,
                          out_tag=out_tag)
+'''
+max_grad_norm = 0.1
+lr = 1e-3
+#beta = 1e-3 #BNN
+decay = 5e-3
+l2 =0.0001
+
+trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
+                        layer_sizes=[100,100,100,59],
+                        activation= jax.nn.leaky_relu,
+                        dropout_rate=None,
+                        optimizer_hparams=[max_grad_norm, lr, decay],
+                        loss_str='chi_one_covariance',
+                        l2_weight=l2,
+                        like_dict=like_dict,
+                        init_rng=42,
+                        n_epochs=1000,
+                        pv=100,
+                        out_tag=out_tag)
 
 
 def nn_emulator(best_params_function, theta_linda):
