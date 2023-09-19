@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
     from sample_mocks import note
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-    save_name = f"{out_tag}_true_theta_sampled_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
+    save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
     key = random.PRNGKey(642)
 
@@ -134,8 +134,8 @@ if __name__ == '__main__':
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta[mock_idx, 2]))
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta[mock_idx, 0]))
 
-        #x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
-        x_true = nn_x.theta_to_x(true_theta_sampled[mock_idx, :])
+        x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
+        #x_true = nn_x.theta_to_x(true_theta_sampled[mock_idx, :])
         flux = mocks[mock_idx, :]
         covars_mock = covars[mock_idx, :, :]
 
