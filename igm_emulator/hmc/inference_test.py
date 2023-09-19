@@ -140,14 +140,14 @@ if __name__ == '__main__':
         covars_mock = covars[mock_idx, :, :]
 
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-        hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux,covars_mock, report=False)
+        hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(key, x_true, flux, v, report=False)
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
         infer_theta[mock_idx, :] = [f_mcmc[0], t_mcmc[0], g_mcmc[0]]
         samples[mock_idx, :, :] = theta_samples
         log_prob[mock_idx, :] = lnP
-        true_log_prob[mock_idx] = -1 * nn_x.potential_fun(x_true, flux)
+        true_log_prob[mock_idx] = -1 * nn_x.potential_fun(x_true, flux, covars_mock)
         #corner plot for each inference
         if mock_idx < 10:
             corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
