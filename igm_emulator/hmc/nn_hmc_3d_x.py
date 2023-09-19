@@ -6,6 +6,7 @@ import jax
 import h5py
 import jax.random as random
 from jax import jit
+from jax.scipy.stats import multivariate_normal.logpdf
 from functools import partial
 from numpyro.infer import MCMC, NUTS
 import arviz as az
@@ -61,7 +62,7 @@ class NN_HMC_X:
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
     @partial(jit, static_argnums=(0,))
-    def log_likelihood(self, x, corr):
+    def log_likelihood(self, x, corr, covar):
         '''
         Args:
             x: dimensionless parameters
@@ -73,13 +74,8 @@ class NN_HMC_X:
         theta = self.x_to_theta(x)
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
 
-        new_covariance = self.like_dict['covariance']
-        log_determinant = self.like_dict['log_determinant']
-
-        diff = corr - model
         nbins = len(self.vbins)
-        log_like = -(jnp.dot(diff, jnp.linalg.solve(new_covariance, diff)) + log_determinant + nbins * jnp.log(
-            2.0 * jnp.pi)) / 2.0
+        log_like = multivariate_normal.logpdf(x=model, mean=corr, cov=covar)
         #print(f'Log_likelihood={log_like}')
         return log_like
 
@@ -131,7 +127,7 @@ class NN_HMC_X:
         return prior
 
     @partial(jit, static_argnums=(0,))
-    def potential_fun(self,x,flux):
+    def potential_fun(self,x,flux,covar):
         '''
         Parameters
         ----------
@@ -145,16 +141,16 @@ class NN_HMC_X:
         '''
         #in physical space
         lnPrior = self.eval_prior(x)
-        lnlike = self.log_likelihood(x, flux)
+        lnlike = self.log_likelihood(x, flux, covar)
         lnP = lnlike + lnPrior
         return -lnP
 
     @partial(jit, static_argnums=(0,))
-    def numpyro_potential_fun(self, flux): #potential function for numpyro
-        return jax.tree_util.Partial(self.potential_fun, flux=flux)
+    def numpyro_potential_fun(self, flux, covar): #potential function for numpyro
+        return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
 
-    def mcmc_one(self, key, x, flux, report = True): #input dimensionless paramter x
+    def mcmc_one(self, key, x, flux, covar, report = True): #input dimensionless paramter x
         '''
 
         Parameters
@@ -163,6 +159,7 @@ class NN_HMC_X:
         key: random key
         x: dimensionless parameters
         flux: observed flux
+        covar: model-dependent covariance matrix
         report: whether to report the progress
 
         Returns
@@ -181,7 +178,7 @@ class NN_HMC_X:
         total_time: total time
         '''
         # Instantiate the NUTS kernel and the mcmc object
-        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux),
+        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux,covar),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
         # Initial position
         if report:
