@@ -6,7 +6,7 @@ from progressbar import ProgressBar
 import igm_emulator as emu
 
 gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
-ngp = True #True: nearest grid point mocks; False: emulator
+ngp = False #True: nearest grid point mocks; False: emulator
 
 if gaussian == False:
     ngp = True
@@ -57,10 +57,9 @@ if gaussian:
             true_theta[mock_idx, :] = [true_theta_sampled[mock_idx, 0], true_theta_sampled[mock_idx, 1],
                                        true_theta_sampled[mock_idx, 2]]
             mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
-            cov = None
-        covariance = like_dict['covariance']
+            cov = like_dict['covariance']
         rng = random.PRNGKey(42)
-        mock_corr[mock_idx, :] = random.multivariate_normal(rng, mean, covariance)
+        mock_corr[mock_idx, :] = random.multivariate_normal(rng, mean, cov)
         mock_covar[mock_idx, :, :] = cov
 
 else:
