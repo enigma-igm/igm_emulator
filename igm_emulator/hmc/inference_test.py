@@ -105,7 +105,9 @@ if __name__ == '__main__':
 
     from sample_mocks import note
     out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-    out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emu_infer'
+    ### change this to the correct path ###
+    out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emu_infer/'
+    ### rename the save name ###
     save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
 
     key = random.PRNGKey(642)

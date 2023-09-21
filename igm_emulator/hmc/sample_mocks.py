@@ -10,12 +10,12 @@ ngp = False #True: nearest grid point mocks; False: emulator
 
 if gaussian == False:
     ngp = True
-    note = 'mocks_prior_x_diff_covar'
+    note = 'mocks_prior_diff_covar'
 else:
     if ngp == True:
-        note = 'gaussian_mocks_prior_x_diff_covar'
+        note = 'gaussian_mocks_prior_diff_covar'
     else:
-        note = 'gaussian_emulator_prior_x_diff_covar'
+        note = 'gaussian_emulator_prior_diff_covar'
 
 print('Sampling parameters from priors')
 
