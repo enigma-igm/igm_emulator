@@ -5,15 +5,18 @@ import jax.random as random
 from progressbar import ProgressBar
 import igm_emulator as emu
 
+emu_test = True
+ngp = True #True: nearest grid point mocks/emulator; False: emulator
 gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
-ngp = False #True: nearest grid point mocks; False: emulator
 
 if gaussian == False:
     ngp = True
-    note = 'mocks_prior_diff_covar'
+    note = 'mocks_ngp_prior_diff_covar'
 else:
-    if ngp == True:
-        note = 'gaussian_mocks_prior_diff_covar'
+    if ngp == True and emu_test == False:
+        note = 'gaussian_ngp_mocks_prior_diff_covar'
+    elif ngp == True and emu_test == True:
+        note = 'gaussian_ngp_emulator_prior_diff_covar'
     else:
         note = 'gaussian_emulator_prior_diff_covar'
 
@@ -53,10 +56,17 @@ if gaussian:
             model_dict = dill.load(open(in_path + model_name, 'rb'))
             mean = model_dict['mean_data']
             cov = model_dict['covariance']
-        else:
+            if emu_test:
+                print('test emulator with ngp')
+                mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
+                cov = like_dict['covariance']
+        elif emu_test:
+            print('test emulator with off-grid')
             true_theta[mock_idx, :] = true_theta_sampled[mock_idx, :] #for emulator, true_theta = true_theta_sampled noth off-grid
             mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
             cov = like_dict['covariance']
+        else:
+            raise Exception("For off-grid inference test, must use emulator.")
         rng = random.PRNGKey(42)
         mock_corr[mock_idx, :] = random.multivariate_normal(rng, mean, cov)
         mock_covar[mock_idx, :, :] = cov
