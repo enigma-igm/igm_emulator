@@ -109,9 +109,9 @@ if __name__ == '__main__':
     ### change this to the correct path ###
     out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emu_infer/'
 
-    ### If the true LogP is NGP or not: Boundary problem solved if not###
-    true_theta_sampled = False
-    if true_theta_sampled:
+    ### If the true LogP is NGP or on prior: Boundary problem ###
+    true_log_prob_on_prior = False
+    if true_log_prob_on_prior:
         save_name = f"{out_tag}_true_theta_sampled_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
     else:
         save_name = f"{out_tag}_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         closest_gamma_idx = np.argmin(np.abs(gammas - true_theta[mock_idx, 2]))
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta[mock_idx, 0]))
 
-        if true_theta_sampled:
+        if true_log_prob_on_prior:
             x_true = nn_x.theta_to_x(true_theta_sampled[mock_idx, :])
         else:
             x_true = nn_x.theta_to_x(true_theta[mock_idx, :])
