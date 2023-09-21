@@ -5,8 +5,8 @@ import jax.random as random
 from progressbar import ProgressBar
 import igm_emulator as emu
 
-emu_test = True
-ngp = False #True: nearest grid point mocks/emulator; False: emulator
+emu_test = False
+ngp = True #True: nearest grid point mocks/emulator; False: emulator
 gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
 
 if gaussian == False:
@@ -57,6 +57,7 @@ if gaussian:
             mean = model_dict['mean_data']
             cov = model_dict['covariance']
             if emu_test:
+                print('test emulator with ngp')
                 mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
                 cov = like_dict['covariance']
         elif emu_test:
