@@ -156,14 +156,6 @@ if __name__ == '__main__':
                                        quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{var_tag}_{note}.png')
-    IPython.embed()
-    #save HMC inference results
-    with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
-        f.create_dataset('true_theta', data=true_theta)
-        f.create_dataset('log_prob_x', data=log_prob)
-        f.create_dataset('true_log_prob_x', data=true_log_prob)
-        f.create_dataset('samples_theta', data=samples)
-        f.create_dataset('infer_theta', data=infer_theta)
 
 
     '''
@@ -215,4 +207,12 @@ if __name__ == '__main__':
     inference_fig.suptitle(f'{note}')
     inference_fig.savefig(out_path_plot + f'{save_name}.png')
     print(f'plot saved as: {save_name}.png')
+
     IPython.embed()
+    #save HMC inference results
+    with h5py.File(out_path + f'{save_name}.hdf5', 'a') as f:
+        f.create_dataset('true_theta', data=true_theta)
+        f.create_dataset('log_prob_x', data=log_prob)
+        f.create_dataset('true_log_prob_x', data=true_log_prob)
+        f.create_dataset('samples_theta', data=samples)
+        f.create_dataset('infer_theta', data=infer_theta)
