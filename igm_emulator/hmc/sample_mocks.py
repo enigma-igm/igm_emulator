@@ -7,7 +7,7 @@ import igm_emulator as emu
 
 emu_test = False #True: inference test on emulator; False: inference test on mocks
 ngp = True #True: nearest grid point mocks/emulator; False: emulator
-gaussian = True #True: gaussianized mocks/emulator; False: forward-modeled mocks
+gaussian = False  #True: gaussianized mocks/emulator; False: forward-modeled mocks
 
 if gaussian == False:
     ngp = True
@@ -76,13 +76,13 @@ else:
         closest_fobs_idx = np.argmin(np.abs(fobs - true_theta_sampled[mock_idx, 0]))
 
         true_theta[mock_idx, :] = [fobs[closest_fobs_idx], T0s[closest_temp_idx], gammas[closest_gamma_idx]]
-    mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
-    mocks = dill.load(open(in_path + mock_name, 'rb'))
-    model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-    model_dict = dill.load(open(in_path + model_name, 'rb'))
-    cov = model_dict['covariance']
-    mock_corr[mock_idx, :] = mocks[mock_idx, :]
-    mock_covar[mock_idx, :, :] = cov
+        mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}.p'
+        mocks = dill.load(open(in_path + mock_name, 'rb'))
+        model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
+        model_dict = dill.load(open(in_path + model_name, 'rb'))
+        cov = model_dict['covariance']
+        mock_corr[mock_idx, :] = mocks[mock_idx, :]
+        mock_covar[mock_idx, :, :] = cov
 
 #save get n_inference sampled parameters and mock correlation functions
 out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
