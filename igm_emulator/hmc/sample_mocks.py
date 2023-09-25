@@ -7,7 +7,7 @@ import igm_emulator as emu
 
 emu_test = False #True: inference test on emulator; False: inference test on mocks
 ngp = True #True: nearest grid point mocks/emulator; False: emulator
-gaussian = False  #True: gaussianized mocks/emulator; False: forward-modeled mocks
+gaussian = True  #True: gaussianized mocks/emulator; False: forward-modeled mocks
 
 if gaussian == False:
     ngp = True
