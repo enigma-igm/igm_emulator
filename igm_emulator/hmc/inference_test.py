@@ -110,7 +110,7 @@ if __name__ == '__main__':
     out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/mock_infer/'
 
     ### If the true LogP is NGP or on prior: Boundary problem ###
-    true_log_prob_on_prior = False
+    true_log_prob_on_prior = True
     if true_log_prob_on_prior:
         save_name = f"{out_tag}_true_theta_sampled_inference_{n_inference}_{note}_samples_{nn_x.num_samples}_chains_{nn_x.num_chains}_{var_tag}"
     else:
