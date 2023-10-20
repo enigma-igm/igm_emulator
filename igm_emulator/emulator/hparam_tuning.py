@@ -11,7 +11,7 @@ def objective(trial):
     lr_tune = trial.suggest_float('lr', 1e-5,1e-3, log=True)
     decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=True)
     l2_tune = trial.suggest_categorical('l2', [0, 1e-5, 1e-4, 1e-3])
-    c_loss_tune = trial.suggest_float('c_loss', 1e-5, 0.1, log=True)
+    c_loss_tune = trial.suggest_float('c_loss', 1e-3, 1, log=True)
     percent_loss_tune = trial.suggest_categorical('percent', [True, False])
     n_epochs_tune = trial.suggest_categorical('n_epochs', [500, 1000, 2000])
     loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
