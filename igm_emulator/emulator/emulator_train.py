@@ -104,7 +104,7 @@ class TrainerModule:
                 dropout_rate: float,
                 optimizer_hparams: Sequence[Any],
                 loss_str: str,
-                loss_weights: Sequence[float],
+                loss_weights: Sequence[Any],
                 like_dict: dict,
                 out_tag: str,
                 init_rng=42,
