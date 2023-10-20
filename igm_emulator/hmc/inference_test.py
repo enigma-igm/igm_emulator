@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
+from igm_emulator.emulator.emulator_run import trainer
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
 from qso_fitting.analysis.inf_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
@@ -62,10 +63,10 @@ else:
     out_tag = f'{z_string}_training_768_bin276'
     output_size = [100, 100, 100, 276]
 
-# load model
+# load model from emulator_run.py
 in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-var_tag = f'{loss_str}_l2_{l2}_activation_{activation.__name__}_layers_{output_size}'
-#var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]'
+var_tag = trainer.var_tag
+out_tag = trainer.out_tag
 best_params = dill.load(open(in_path_hdf5 + f'{out_tag}_{var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
 
 in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'

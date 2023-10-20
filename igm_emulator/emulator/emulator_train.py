@@ -294,32 +294,33 @@ lr = 1e-3
 #beta = 1e-3 #BNN
 decay = 5e-3
 l2 =0.0001
+if __name__ == '__main__':
+    trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
+                            layer_sizes=[100,100,100,59],
+                            activation= jax.nn.leaky_relu,
+                            dropout_rate=None,
+                            optimizer_hparams=[max_grad_norm, lr, decay],
+                            loss_str='mse',
+                            loss_weights=[l2,0,False],
+                            like_dict=like_dict,
+                            init_rng=42,
+                            n_epochs=1000,
+                            pv=100,
+                            out_tag=out_tag)
+    trainer.train_loop()
 
-trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
-                        layer_sizes=[100,100,100,59],
-                        activation= jax.nn.leaky_relu,
-                        dropout_rate=None,
-                        optimizer_hparams=[max_grad_norm, lr, decay],
-                        loss_str='mse',
-                        loss_weights=[l2,0,False],
-                        like_dict=like_dict,
-                        init_rng=42,
-                        n_epochs=1000,
-                        pv=100,
-                        out_tag=out_tag)
-trainer.train_loop()
+    trainer_optuna = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
+                            layer_sizes=[100,100,59],
+                            activation= jax.nn.tanh,
+                            dropout_rate=None,
+                            optimizer_hparams=[0.30000000000000004, 0.0005946616649768666, 0.00013552715097890048],
+                            loss_str='huber',
+                            loss_weights=[1e-05,0.0033025697025815485,True],
+                            like_dict=like_dict,
+                            init_rng=42,
+                            n_epochs=1000,
+                            pv=100,
+                            out_tag=out_tag)
+    trainer_optuna.train_loop()
+    IPython.embed()
 
-trainer_optuna = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
-                        layer_sizes=[100,100,59],
-                        activation= jax.nn.tanh,
-                        dropout_rate=None,
-                        optimizer_hparams=[0.30000000000000004, 0.0005946616649768666, 0.00013552715097890048],
-                        loss_str='huber',
-                        loss_weights=[1e-05,0.0033025697025815485,True],
-                        like_dict=like_dict,
-                        init_rng=42,
-                        n_epochs=1000,
-                        pv=100,
-                        out_tag=out_tag)
-trainer_optuna.train_loop()
-IPython.embed()
