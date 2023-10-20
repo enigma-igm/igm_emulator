@@ -203,7 +203,7 @@ class TrainerModule:
 
         self.best_params = params
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
-        self.best_chi_loss = jnp.mean(jnp.abs((vali_preds - self.Y_vali) * self.stdY ) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))))
+        self.best_chi_loss = jnp.mean(jnp.abs((vali_preds - self.Y_vali) * self.stdY ) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
         self.best_chi_2_loss = -logpdf(x=custom_forward.apply(self.best_params, self.X_vali)* self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
