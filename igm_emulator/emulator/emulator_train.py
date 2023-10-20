@@ -204,7 +204,7 @@ class TrainerModule:
         self.best_params = params
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
         self.best_chi_loss = jnp.mean(jnp.abs((vali_preds - self.Y_vali) * self.stdY ) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
-        self.best_chi_2_loss = -logpdf(x=custom_forward.apply(self.best_params, self.X_vali)* self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
+        self.best_chi_2_loss = -logpdf(x=custom_forward.apply(self.best_params, self.X_vali) * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
@@ -294,19 +294,32 @@ lr = 1e-3
 #beta = 1e-3 #BNN
 decay = 5e-3
 l2 =0.0001
-'''
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
                         dropout_rate=None,
                         optimizer_hparams=[max_grad_norm, lr, decay],
-                        loss_str='chi_one_covariance',
-                        l2_weight=l2,
+                        loss_str='mse',
+                        loss_weights=[l2,0,False],
                         like_dict=like_dict,
                         init_rng=42,
                         n_epochs=1000,
                         pv=100,
                         out_tag=out_tag)
 trainer.train_loop()
+
+trainer_optuna = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
+                        layer_sizes=[100,100,59],
+                        activation= jax.nn.tanh,
+                        dropout_rate=None,
+                        optimizer_hparams=[0.30000000000000004, 0.0005946616649768666, 0.00013552715097890048],
+                        loss_str='huber',
+                        loss_weights=[1e-05,0.0033025697025815485,True],
+                        like_dict=like_dict,
+                        init_rng=42,
+                        n_epochs=1000,
+                        pv=100,
+                        out_tag=out_tag)
+trainer_optuna.train_loop()
 IPython.embed()
-'''
