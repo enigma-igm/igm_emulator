@@ -235,7 +235,7 @@ class TrainerModule:
             #bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
 
-        return self.best_params, self.best_chi_2_loss
+        return self.best_params, self.best_chi_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
