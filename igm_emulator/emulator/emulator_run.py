@@ -10,7 +10,7 @@ import jax.numpy as jnp
 import jax
 config.update("jax_enable_x64", True)
 
-# Load the archetecture for best parameters
+# Load the archetecture for best parameters after Optuna training
 # var_tag = 'chi_one_covariance_l2_1.6e-05_activation_tanh_layers_[100, 100, 59]'
 '''
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
@@ -46,6 +46,6 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
 
 
 def nn_emulator(best_params_function, theta_linda):
-    x = jnp.array((theta_linda - meanX)/ stdX)
+    x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
-    return emu_out * stdY + meanY
+    return emu_out * trainer.stdY + trainer.meanY

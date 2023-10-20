@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import multivariate_normal
 class MCMC_NGP:
+    def __int__(self, like_dict, new_param_dict, ):
     def get_covariance_log_determinant_nearest_fine(
             theta,
             fine_mean_free_paths, fine_average_fluxes, fine_covariances, fine_log_determinants,

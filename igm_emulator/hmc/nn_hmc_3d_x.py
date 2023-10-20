@@ -69,7 +69,7 @@ class NN_HMC_X:
             flux: observed flux
 
         Returns:
-            log_likelihood: log likelihood
+            log_likelihood: log likelihood to maximize on
         '''
         theta = self.x_to_theta(x)
         model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
@@ -137,7 +137,7 @@ class NN_HMC_X:
 
         Returns
         -------
-        lnP: log posterior
+        lnP: log posterior to maximize on
         '''
         #in physical space
         lnPrior = self.eval_prior(x)

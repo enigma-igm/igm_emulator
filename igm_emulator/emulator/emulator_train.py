@@ -9,6 +9,7 @@ import optax
 from tqdm import trange
 from jax.config import config
 from jax import jit
+from jax.scipy.stats.multivariate_normal import logpdf
 from functools import partial
 from sklearn.metrics import r2_score
 import sys
@@ -101,9 +102,9 @@ class TrainerModule:
                 layer_sizes: Sequence[int],
                 activation: Callable[[jnp.ndarray], jnp.ndarray],
                 dropout_rate: float,
-                optimizer_hparams: Sequence[float],
+                optimizer_hparams: Sequence[Any],
                 loss_str: str,
-                l2_weight: float,
+                loss_weights: Sequence[float],
                 like_dict: dict,
                 out_tag: str,
                 init_rng=42,
@@ -126,10 +127,10 @@ class TrainerModule:
         self.dropout_rate = dropout_rate
         self.optimizer_hparams = optimizer_hparams
         self.loss_str = loss_str
-        self.l2_weight = l2_weight
+        self.l2_weight, self.c_loss, self.percent_loss = loss_weights
         self.like_dict = like_dict
         self.out_tag = out_tag
-        self.var_tag =f'{loss_str}_l2_{l2_weight}_activation_{activation.__name__}_layers_{layer_sizes}'
+        self.var_tag =f'{loss_str}_l2_{self.l2_weight}_perc_{self.percent_loss}_activation_{activation.__name__}'
         self.init_rng = init_rng
         self.n_epochs = n_epochs
         self.pv = pv
@@ -141,30 +142,14 @@ class TrainerModule:
 
     @partial(jit, static_argnums=(0,))
     def loss_fn(self, params, X, Y):
-        _loss_fn = jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
+        _loss_fn = jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
         return _loss_fn(params, X, Y)
 
     @partial(jit, static_argnums=(0,5))
     def update(self, params, opt_state, X_train, Y_train, optimizer):
-        _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, loss_str=self.loss_str)
+        _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
         return _update(params, opt_state, X_train, Y_train, optimizer)
 
-    def predict(self, params, theta):
-        '''
-        Predicts model given parameters all in the physical space
-        Parameters
-        ----------
-        trained_params
-        theta
-
-        Returns
-        -------
-        model
-        '''
-        x = (theta - self.meanX) / self.stdX
-        model = self.custom_forward.apply(params, X)
-        model = model * self.stdY + self.meanY
-        return model
 
     def train_loop(self, plot=True):
         '''
@@ -179,7 +164,6 @@ class TrainerModule:
         '''
         custom_forward = self.custom_forward
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
-        preds = custom_forward.apply(params, self.X_train)
 
         n_samples = self.X_train.shape[0]
         total_steps = self.n_epochs*n_samples + self.n_epochs
@@ -218,14 +202,16 @@ class TrainerModule:
                     break
 
         self.best_params = params
-        self.best_chi_loss = jnp.mean(jnp.abs((custom_forward.apply(self.best_params, self.X_vali) - self.Y_vali) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))))
+        vali_preds = custom_forward.apply(self.best_params, self.X_vali)
+        self.best_chi_loss = jnp.mean(jnp.abs((vali_preds - self.Y_vali) * self.stdY ) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))))
+        self.best_chi_2_loss = -logpdf(x=custom_forward.apply(self.best_params, self.X_vali)* self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
 
         #Metrics
         self.batch_loss = batch_loss
-        test_preds = custom_forward.apply(self.best_params, self.X_test)
+        test_preds = custom_forward.apply(self.best_params, self.X_train)
         test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY)
         self.RelativeError = test_accuracy
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
@@ -233,7 +219,7 @@ class TrainerModule:
         self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
-        preds = custom_forward.apply(self.best_params, X_train)
+        preds = custom_forward.apply(self.best_params, self.X_train)
 
         if plot:
             #Prediction overplots: Training And Test
@@ -249,7 +235,7 @@ class TrainerModule:
             #bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
 
-        return self.best_params, self.best_chi_loss
+        return self.best_params, self.best_chi_2_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
