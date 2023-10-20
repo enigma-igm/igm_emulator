@@ -131,7 +131,7 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str='mse',
         loss = mse + c_loss * jnp.mean((dct(pred) - dct(y)) ** 2) + regularization
     elif loss_str=='huber':
         loss = jaxopt.loss.huber_loss(y, pred, delta=c_loss) + regularization
-    elif loss_str='mae':
+    elif loss_str=='mae':
         loss = jnp.mean(jnp.abs(diff)) + regularization
     return loss
 
