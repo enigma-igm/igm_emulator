@@ -211,7 +211,7 @@ class TrainerModule:
 
         #Metrics
         self.batch_loss = batch_loss
-        test_preds = custom_forward.apply(self.best_params, self.X_train)
+        test_preds = custom_forward.apply(self.best_params, self.X_test)
         test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY)
         self.RelativeError = test_accuracy
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
