@@ -308,6 +308,7 @@ if __name__ == '__main__':
                             pv=100,
                             out_tag=out_tag)
     trainer.train_loop()
+    trainer.save_training_info(5.4)
 
     trainer_optuna = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                             layer_sizes=[100,100,59],
@@ -322,5 +323,6 @@ if __name__ == '__main__':
                             pv=100,
                             out_tag=out_tag)
     trainer_optuna.train_loop()
+    trainer_optuna.save_training_info(5.4)   
     IPython.embed()
 
