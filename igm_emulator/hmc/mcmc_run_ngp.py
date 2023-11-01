@@ -1,5 +1,17 @@
+from jax.config import config
+config.update("jax_enable_x64", True)
 import numpy as np
-from scipy.stats import multivariate_normal
+from jax.scipy.stats import multivariate_normal
+from functools import partial
+from numpyro.infer import MCMC, NUTS
+import arviz as az
+import time
+import dill
+import corner
+import matplotlib
+import matplotlib.pyplot as plt
+import jax.random as random
+
 class HMC_NGP:
     def __int__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,dense_mass=True,
                  max_tree_depth= 10, #(8,10),
