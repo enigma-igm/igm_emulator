@@ -321,7 +321,7 @@ if __name__ == '__main__':
     T0_idx = 11  # 0-14
     g_idx = 4  # 0-8
     f_idx = 7  # 0-8
-    theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
+    theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
 
     hmc_ngp = HMC_NGP(vbins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     flux = hmc_ngp.get_model_nearest_fine(theta_true)
