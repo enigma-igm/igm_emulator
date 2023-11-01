@@ -1,7 +1,10 @@
 from jax.config import config
 config.update("jax_enable_x64", True)
 import numpy as np
+import jax.numpy as jnp
+import jax
 from jax.scipy.stats import multivariate_normal
+from jax import jit
 from functools import partial
 from numpyro.infer import MCMC, NUTS
 import arviz as az
