@@ -16,7 +16,7 @@ import dill
 import corner
 import matplotlib
 import matplotlib.pyplot as plt
-
+from IPython import embed
 class HMC_NGP:
     def __init__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,
                 dense_mass=True,
@@ -316,6 +316,7 @@ if __name__ == '__main__':
     g_idx = 4  # 0-8
     f_idx = 7  # 0-8
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
+    embed()
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     flux = hmc_ngp.get_model_nearest_fine(theta_true)
