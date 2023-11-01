@@ -99,12 +99,9 @@ class HMC_NGP:
 
         fob, T0, gamma = theta
 
-        prior = (jnp.sum(jnp.where((fob >= self.fobs[0]) & (fob <= self.fobs[1]), 0, -jnp.inf)) + \
-                 jnp.sum(jnp.where((T0 >= self.T0s[0]) & (T0 <= self.T0s[1]), 0, -jnp.inf)) + \
-                jnp.sum(jnp.where((gamma >= self.gammas[0]) & (gamma <= self.gammas[1]), 0, -jnp.inf)))
-
-        return prior
-
+        if self.fobs[0]<= fob <= self.fobs[1] and self.T0s[0]<= T0 <= self.T0s[1] and self.gammas[0]<=gamma <= self.gammas[1]:
+            return 0.0
+        return -np.inf
 
     @partial(jit, static_argnums=(0,))
     def log_probability(
