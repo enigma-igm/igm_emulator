@@ -7,6 +7,7 @@ from jax.scipy.stats import multivariate_normal
 from jax import jit
 from functools import partial
 from numpyro.infer import MCMC, NUTS
+import h5py
 import arviz as az
 import time
 import dill
