@@ -310,5 +310,4 @@ if __name__ == '__main__':
 
     hmc_ngp = HMC_NGP(vbins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     flux = hmc_ngp.get_model_nearest_fine(theta_true
-    theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-        hmc_num_steps, hmc_tree_depth, total_time =  hmc_ngp.mcmc_one(key, theta_true, flux)
+    theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, hmc_num_steps, hmc_tree_depth, total_time =  hmc_ngp.mcmc_one(key, theta_true, flux)
