@@ -99,7 +99,7 @@ class HMC_NGP:
 
         fob, T0, gamma = theta
 
-        if self.fobs[0]<= fob <= self.fobs[1] and self.T0s[0]<= T0 <= self.T0s[1] and self.gammas[0]<=gamma <= self.gammas[1]:
+        if self.fobs[0]<= fob <= self.fobs[-1] and self.T0s[0]<= T0 <= self.T0s[-1] and self.gammas[0]<=gamma <= self.gammas[-1]:
             return 0.0
         return -np.inf
 
