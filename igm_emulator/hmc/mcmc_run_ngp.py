@@ -261,8 +261,6 @@ if __name__ == '__main__':
     n_f = len(fobs)
 
     noise_idx = 0
-    like_name_0 = f'likelihood_dicts_R_30000_nf_9_T{true_temp_idx}_G{true_gamma_idx}_SNR0_F{true_fobs_idx}_ncovar_500000_P{skewers_per_data}{bin_label}.p'
-    like_dict_0 = dill.load(open(in_path_molly + like_name_0, 'rb'))
     in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{n_covar}_' \
                          f'P{skewers_per_data}{bin_label}_params.p'
     new_param_dict = dill.load(open(in_path_molly + in_name_new_params, 'rb'))
