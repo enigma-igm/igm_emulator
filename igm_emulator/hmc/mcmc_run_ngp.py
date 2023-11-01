@@ -18,7 +18,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 class HMC_NGP:
-    def __int__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,dense_mass=True,
+    def __init__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,
+                dense_mass=True,
                  max_tree_depth= 10, #(8,10),
                  num_warmup=1000,
                  num_samples=1000,
