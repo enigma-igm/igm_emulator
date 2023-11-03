@@ -95,7 +95,7 @@ class HMC_NGP:
 
         return log_like
 
-    @partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(1,))
     def log_prior(self, theta):
 
         fob, T0, gamma = theta
