@@ -12,6 +12,7 @@ config.update("jax_enable_x64", True)
 
 # Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
+'''
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,59],
                         activation= jax.nn.tanh,
@@ -24,6 +25,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=1000,
                         pv=100,
                         out_tag=out_tag)
+                        
 '''
 ###Standard pre-optuna MSE training
 
@@ -46,7 +48,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         pv=100,
                         out_tag=out_tag)
 
-'''
+'
 def nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
