@@ -165,7 +165,7 @@ if __name__ == '__main__':
         if mock_idx < 10:
             corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                        truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
-                                       quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
+                                       quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 12},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             if true_log_prob_on_prior:
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{var_tag}_{note}_true_theta_sampled.png')
