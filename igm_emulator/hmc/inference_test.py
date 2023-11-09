@@ -88,7 +88,23 @@ f_idx = 4
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 
-
+x_size = 3.5
+dpi_value = 200
+plt_params = {'legend.fontsize': 7,
+              'legend.frameon': False,
+              'axes.labelsize': 8,
+              'axes.titlesize': 8,
+              'figure.titlesize': 8,
+              'xtick.labelsize': 7,
+              'ytick.labelsize': 7,
+              'lines.linewidth': 1,
+              'lines.markersize': 2,
+              'errorbar.capsize': 3,
+              'font.family': 'serif',
+              # 'text.usetex': True,
+              'xtick.minor.visible': True,
+              }
+plt.rcParams.update(plt_params)
 
 '''
 in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
@@ -165,7 +181,7 @@ if __name__ == '__main__':
         if mock_idx < 10:
             corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                        truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
-                                       quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 10}, label_kwargs={'fontsize': 20},
+                                       quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 20},
                                        data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
             if true_log_prob_on_prior:
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{var_tag}_{note}_true_theta_sampled.png')
@@ -176,28 +192,11 @@ if __name__ == '__main__':
     '''
     plot HMC inference test results
     '''
+    print('plotting')
+
     alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
     coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, log_prob, true_log_prob,
                                                                               title='Gaussian Lhood MSE', show=False)
-
-    x_size = 3.5
-    dpi_value = 200
-    plt_params = {'legend.fontsize': 7,
-                  'legend.frameon': False,
-                  'axes.labelsize': 8,
-                  'axes.titlesize': 8,
-                  'figure.titlesize': 8,
-                  'xtick.labelsize': 7,
-                  'ytick.labelsize': 7,
-                  'lines.linewidth': 1,
-                  'lines.markersize': 2,
-                  'errorbar.capsize': 3,
-                  'font.family': 'serif',
-                  # 'text.usetex': True,
-                  'xtick.minor.visible': True,
-                  }
-    plt.rcParams.update(plt_params)
-    print('plotting')
 
     inference_fig = plt.figure(figsize=(x_size, x_size * .9), constrained_layout=True,
                                dpi=dpi_value,
