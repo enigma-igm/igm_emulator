@@ -48,7 +48,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         pv=100,
                         out_tag=out_tag)
 
-'
+
 def nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
