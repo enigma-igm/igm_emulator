@@ -40,7 +40,7 @@ class HMC_NGP(NN_HMC_X):
         self.fine_models = fine_models
         self.fine_covariances = fine_covariances
         self.fine_log_dets = fine_log_dets
-    @partial(jit, static_argnums=(0,))
+
     def get_covariance_log_determinant_nearest_fine(
             self, theta
     ):
