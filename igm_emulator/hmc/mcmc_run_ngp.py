@@ -47,9 +47,9 @@ class HMC_NGP(NN_HMC_X):
 
         fob, T0, gamma = theta
 
-        closest_temp_idx = np.argmin(np.abs(self.T0s - T0))
-        closest_gamma_idx = np.argmin(np.abs(self.gammas - gamma))
-        closest_fobs_idx = np.argmin(np.abs(self.fobs - fob))
+        closest_temp_idx = jnp.argmin(jnp.abs(self.T0s - T0))
+        closest_gamma_idx = jnp.argmin(jnp.abs(self.gammas - gamma))
+        closest_fobs_idx = jnp.argmin(jnp.abs(self.fobs - fob))
 
 
         covariance = self.fine_covariances[closest_temp_idx, closest_gamma_idx, closest_fobs_idx, :, :]
@@ -64,9 +64,9 @@ class HMC_NGP(NN_HMC_X):
 
         fob, T0, gamma = theta
 
-        closest_temp_idx = np.argmin(np.abs(self.T0s - T0))
-        closest_gamma_idx = np.argmin(np.abs(self.gammas - gamma))
-        closest_fobs_idx = np.argmin(np.abs(self.fobs - fob))
+        closest_temp_idx = jnp.argmin(jnp.abs(self.T0s - T0))
+        closest_gamma_idx = jnp.argmin(jnp.abs(self.gammas - gamma))
+        closest_fobs_idx = jnp.argmin(jnp.abs(self.fobs - fob))
 
         model = self.fine_models[closest_temp_idx, closest_gamma_idx, closest_fobs_idx, :]
 
