@@ -101,7 +101,8 @@ if __name__ == '__main__':
     with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
         params = dict(f['params'].attrs.items())
     fobs = params['average_observed_flux']
-    R_value = params['R']
+    R_value = params['R'
+    n_path = 20
     v_bins = params['v_bins']
     t_0s = 10.**params['logT_0']
     gammas = params['gamma']
