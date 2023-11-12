@@ -180,4 +180,6 @@ if __name__ == '__main__':
     flux = mocks[0,:]
     x_true = hmc_ngp.theta_to_x(theta_true)
     cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
-    theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, hmc_num_steps, hmc_tree_depth, total_time =  hmc_ngp.mcmc_one(key, x_true, flux, cov, report=True)
+    x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
+        hmc_num_steps, hmc_tree_depth, total_time = hmc_ngp.mcmc_one(key, x_true, flux, cov, report=True)
+    hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str='ngp_hmc_test')
