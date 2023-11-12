@@ -58,7 +58,6 @@ class HMC_NGP(NN_HMC_X):
         return covariance, log_determinant
 
 
-    @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
             self, theta
     ):
