@@ -311,3 +311,4 @@ class NN_HMC_X:
 
         corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
