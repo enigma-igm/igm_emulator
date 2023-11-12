@@ -17,29 +17,30 @@ import corner
 import matplotlib
 import matplotlib.pyplot as plt
 from IPython import embed
-class HMC_NGP:
+from nn_hmc_3d_x import NN_HMC_X
+class HMC_NGP(NN_HMC_X
     def __init__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,
                 dense_mass=True,
                  max_tree_depth= 10, #(8,10),
                  num_warmup=1000,
                  num_samples=1000,
                  num_chains=4):
+        super().__init__(vbins=vbins,
+                         best_params=None,
+                         T0s=T0s,
+                         gammas=gammas,
+                         fobs=fobs,
+                         like_dict=None,
+                         dense_mass=dense_mass,
+                         max_tree_depth= max_tree_depth,
+                         num_warmup=num_warmup,
+                         num_samples=num_samples,
+                         num_chains=num_chains)
 
-        self.vbins = vbins
-        self.max_tree_depth = max_tree_depth
-        self.num_chains = num_chains
-        self.num_warmup = num_warmup
-        self.dense_mass = dense_mass
-        self.mcmc_nsteps_tot = num_samples * num_chains
-        self.num_samples = num_samples
-        self.T0s = T0s
-        self.gammas = gammas
-        self.fobs = fobs
-        self.theta_ranges = [[self.fobs[0], self.fobs[-1]], [self.T0s[0], self.T0s[-1]],
-                             [self.gammas[0], self.gammas[-1]]]
         self.fine_models = fine_models
         self.fine_covariances = fine_covariances
         self.fine_log_dets = fine_log_dets
+    @partial(jit, static_argnums=(0,))
     def get_covariance_log_determinant_nearest_fine(
             self, theta
     ):
@@ -57,6 +58,7 @@ class HMC_NGP:
         return covariance, log_determinant
 
 
+    @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
             self, theta
     ):
@@ -70,169 +72,6 @@ class HMC_NGP:
         model = self.fine_models[closest_temp_idx, closest_gamma_idx, closest_fobs_idx, :]
 
         return model
-
-
-    def log_likelihood(
-            self, theta, data_auto_correlation,
-            alpha_const=None,
-            fixed_covariance_bool=False,
-            fixed_covariance=None,
-    ):
-
-        model = self.get_model_nearest_fine(theta)
-
-        if fixed_covariance_bool:
-            covariance = fixed_covariance
-        else:
-            covariance, log_determinant = self.get_covariance_log_determinant_nearest_fine(
-                theta
-            )
-
-        if alpha_const:
-            covariance = covariance * alpha_const ** -1
-
-        log_like = multivariate_normal.logpdf(data_auto_correlation, mean=model, cov=covariance)
-
-        return log_like
-
-    @partial(jit, static_argnums=(1,))
-    def log_prior(self, theta):
-
-        fob, T0, gamma = theta
-
-        if self.fobs[0]<= fob <= self.fobs[-1] and self.T0s[0]<= T0 <= self.T0s[-1] and self.gammas[0]<=gamma <= self.gammas[-1]:
-            return 0.0
-        return -np.inf
-
-    @partial(jit, static_argnums=(0,))
-    def log_probability(
-            self, theta, data_auto_correlation,
-            alpha_const=None,
-            fixed_covariance_bool=False,
-            fixed_covariance=None
-    ):
-
-
-        lp = self.log_prior(theta)
-
-        if not np.isfinite(lp):
-            return -np.inf
-
-        return lp + self.log_likelihood(
-            theta, data_auto_correlation,
-            alpha_const=alpha_const,
-            fixed_covariance_bool=fixed_covariance_bool,
-            fixed_covariance=fixed_covariance,
-        )
-
-    @partial(jit, static_argnums=(0,))
-    def numpyro_potential_fun(self, corr): #potential function for numpyro
-        return jax.tree_util.Partial(self.log_probability, data_auto_correlation=corr)
-
-    def mcmc_one(self, key, theta, corr, report=True):  # input dimensionless paramter x
-        # Instantiate the NUTS kernel and the mcmc object
-        nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(corr),
-                           adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
-        # Initial position
-        if report:
-            mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
-                        num_chains=self.num_chains,
-                        jit_model_args=True,
-                        chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
-        else:
-            mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
-                        num_chains=self.num_chains,
-                        jit_model_args=True,
-                        chain_method='vectorized',
-                        progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
-        theta_init = theta + 1e-4 * np.random.randn(self.num_chains, 3)
-
-        # Run the MCMC
-        start_time = time.time()
-        # IPython.embed()
-        mcmc.run(key, init_params=theta_init.squeeze(), extra_fields=('potential_energy', 'num_steps'))
-        total_time = time.time() - start_time
-
-        # Compute the neff and summarize cost
-        az_summary = az.summary(az.from_numpyro(mcmc))
-        neff = az_summary["ess_bulk"].to_numpy()
-        neff_mean = np.mean(neff)
-        r_hat = az_summary["r_hat"].to_numpy()
-        r_hat_mean = np.mean(r_hat)
-        sec_per_neff = (total_time / neff_mean)
-        ms_per_neff = 1e3 * sec_per_neff
-
-        # Grab the samples and lnP
-        #theta_samples = self.x_to_theta(mcmc.get_samples(group_by_chain=False))  # (mcmc_nsteps_tot, ndim)
-        theta_samples = mcmc.get_samples(group_by_chain=True)  # (num_chain, num_samples, ndim)
-        lnP = -mcmc.get_extra_fields()['potential_energy']
-        hmc_num_steps = mcmc.get_extra_fields()[
-            'num_steps']  # Number of steps in the Hamiltonian trajectory (for diagnostics).
-        hmc_tree_depth = np.log2(hmc_num_steps).astype(
-            int) + 1  # Tree depth of the Hamiltonian trajectory (for diagnostics).
-        hit_max_tree_depth = np.sum(
-            hmc_tree_depth == self.max_tree_depth)  # Number of transitions that hit the maximum tree depth.
-        ms_per_step = 1e3 * total_time / np.sum(hmc_num_steps)
-
-        if report:
-            print(f"*** SUMMARY FOR HMC ***")
-            print(f"total_time = {total_time} seconds for the HMC")
-            print(f"total_steps = {np.sum(hmc_num_steps)} total steps")
-            print(f"ms_per_step = {ms_per_step} ms per step of the HMC")
-            print(
-                f"n_eff_mean = {neff_mean} effective sample size, compared to ntot = {self.mcmc_nsteps_tot} total samples.")
-            print(f"ms_per_neff = {ms_per_neff:.3f} ms per effective sample")
-            print(f"r_hat_mean = {r_hat_mean}")
-            print(f"max_tree_depth encountered = {hmc_tree_depth.max()} in chain")
-            print(f"There were {hit_max_tree_depth} transitions that exceeded the max_tree_depth = {self.max_tree_depth}")
-            print("*************************")
-
-        # Return the values needed
-        return  theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-            hmc_num_steps, hmc_tree_depth, total_time
-
-
-    def save_HMC(self, zstr, note, f_idx, T0_idx, g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff,
-                 neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-                 hmc_num_steps, hmc_tree_depth, total_time):
-        # Save the results
-        with h5py.File(os.path.expanduser(
-                '~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{note}_hmc_results.hdf5',
-                       'w') as f:
-            f.create_dataset('x_samples', data=x_samples)
-            f.create_dataset('theta_samples', data=theta_samples)
-            f.create_dataset('lnP', data=lnP)
-            f.create_dataset('neff', data=neff)
-            f.create_dataset('neff_mean', data=neff_mean)
-            f.create_dataset('sec_per_neff', data=sec_per_neff)
-            f.create_dataset('ms_per_step', data=ms_per_step)
-            f.create_dataset('r_hat', data=r_hat)
-            f.create_dataset('r_hat_mean', data=r_hat_mean)
-            f.create_dataset('hmc_num_steps', data=hmc_num_steps)
-            f.create_dataset('hmc_tree_depth', data=hmc_tree_depth)
-            f.create_dataset('total_time', data=total_time)
-            f.create_dataset('f_infer', data=f_mcmc)
-            f.create_dataset('t_infer', data=t_mcmc)
-            f.create_dataset('g_infer', data=g_mcmc)
-            f.close()
-        print(f"hmc results saved for {note}")
-
-
-    def corner_plot(self, z_string, theta_samples, theta_true, save_str=None):
-
-        closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
-        closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
-        closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
-        var_label = ['fobs', 'T0s', 'gammas']
-
-        corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
-                                         truths=np.array(theta_true), truth_color='red', show_titles=True,
-                                         title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
-                                         data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-        corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
-
-        corner_fig_theta.savefig(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
 
 if __name__ == '__main__':
     zstr = 'z54'
@@ -321,4 +160,5 @@ if __name__ == '__main__':
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     flux = hmc_ngp.get_model_nearest_fine(theta_true)
-    theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, hmc_num_steps, hmc_tree_depth, total_time =  hmc_ngp.mcmc_one(key, theta_true, flux)
+    x_true = hmc_ngp.theta_to_x(theta_true)
+    theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, hmc_num_steps, hmc_tree_depth, total_time =  hmc_ngp.mcmc_one(key, x_true, flux)
