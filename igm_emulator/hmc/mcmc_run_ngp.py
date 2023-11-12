@@ -85,7 +85,7 @@ class HMC_NGP(NN_HMC_X):
         theta = self.x_to_theta(x)
         model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
 
-        log_like = logpdf(x=model, mean=corr, cov=covar)
+        log_like = multivariate_normal.logpdf(x=model, mean=corr, cov=covar)
         return log_like
 
 if __name__ == '__main__':
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
-    embed()
+    #embed()
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     flux = mocks[0,:]
