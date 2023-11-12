@@ -18,7 +18,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from IPython import embed
 from nn_hmc_3d_x import NN_HMC_X
-class HMC_NGP(NN_HMC_X
+class HMC_NGP(NN_HMC_X):
     def __init__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,
                 dense_mass=True,
                  max_tree_depth= 10, #(8,10),
