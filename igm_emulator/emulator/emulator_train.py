@@ -24,66 +24,6 @@ config.update("jax_enable_x64", True)
 dtype=jnp.float64
 
 '''
-Load Train and Test Data
-'''
-redshift = 5.4 #choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
-# get the appropriate string and pathlength for chosen redshift
-zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-z_idx = np.argmin(np.abs(zs - redshift))
-z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-z_string = z_strings[z_idx]
-dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-
-if small_bin_bool==True:
-    train_num = '_training_768_bin59'
-    test_num = '_test_89_bin59'
-    vali_num = '_vali_358_bin59'
-    n_path = 20  # 17->20
-    n_covar = 500000
-    bin_label = '_set_bins_3'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
-    out_tag = f'{z_string}{train_num}'
-else:
-    train_num = '_training_768'
-    test_num = '_test_89'
-    vali_num = '_vali_358'
-    n_path = 17
-    n_covar = 500000
-    bin_label = '_set_bins_4'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-    out_tag = f'{z_string}{train_num}_bin276'
-
-T0_idx = 8 #0-14
-g_idx = 4 #0-8
-f_idx = 4 #0-8
-   
-like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-like_dict = dill.load(open(in_path + like_name, 'rb'))
-
-
-X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p', 'rb')) # load normalized cosmological parameters from grab_models.py
-X_test = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
-X_vali = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
-meanX = X.mean(axis=0)
-stdX = X.std(axis=0)
-X_train = (X - meanX) / stdX
-X_test = (X_test - meanX) / stdX
-X_vali = (X_vali - meanX) / stdX
-
-
-Y = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
-Y_test = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
-Y_vali = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
-meanY = Y.mean(axis=0)
-stdY = Y.std(axis=0)
-Y_train = (Y - meanY) / stdY
-Y_test = (Y_test - meanY) / stdY
-Y_vali = (Y_vali - meanY) / stdY
-
-print('***Data Loaded***')
-print(f'Train datasize: {X_train.shape[0]}; Test datasize: {X_test.shape[0]}; Validation datasize: {X_vali.shape[0]}')
-
-'''
 Training Loop Module + Visualization of params
 '''
 class TrainerModule:
@@ -106,7 +46,6 @@ class TrainerModule:
                 loss_str: str,
                 loss_weights: Sequence[Any],
                 like_dict: dict,
-                out_tag: str,
                 init_rng=42,
                 n_epochs=1000,
                 pv=100):
