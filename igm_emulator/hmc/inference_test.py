@@ -268,7 +268,8 @@ class INFERENCE_TEST():
             new_models = jnp.array(new_models_np)
             new_covariances = jnp.array(new_covariances_np)
             new_log_dets = jnp.array(new_log_dets_np)
-            hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
+            #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
+            hmc_inf = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
 
         '''
         File names for saving
@@ -395,8 +396,11 @@ class INFERENCE_TEST():
         print(f'Inference test results saved as {self.save_name}.hdf5 saved')
 
 
-IPython.embed()
-#emulator-emulator model test
+#IPython.embed()
+##emulator-emulator model test
 #hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
-#gaussian mocks-NGP model
-#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+##gaussian mocks-NGP model
+hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+hmc_infer.mocks_sampling()
+hmc_infer.inference_test_run()
+hmc_infer.coverage_plot()
