@@ -311,7 +311,7 @@ class INFERENCE_TEST():
             closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta[mock_idx, 2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta[mock_idx, 0]))
 
-            if self.true_log_prob_on_prior_bool:
+            if self.true_log_prob_on_prior:
                 x_true = hmc_inf.theta_to_x(true_theta_sampled[mock_idx, :])
             else:
                 x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
@@ -337,7 +337,7 @@ class INFERENCE_TEST():
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-                if self.true_log_prob_on_prior_bool:
+                if self.true_log_prob_on_prior:
                     corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{self.var_tag}_{note}_true_theta_sampled.png')
                 else:
                     corner_fig.savefig(
