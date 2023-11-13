@@ -108,7 +108,7 @@ class INFERENCE_TEST():
         g_idx = 4
         f_idx = 4
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
-        self.like_dict = dill.load(open(in_path + like_name, 'rb'))
+        self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
 
 
     def mocks_sampling(self):
