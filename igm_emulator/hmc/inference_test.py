@@ -269,7 +269,7 @@ class INFERENCE_TEST():
             new_covariances = jnp.array(new_covariances_np)
             new_log_dets = jnp.array(new_log_dets_np)
             #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
-            hmc_inf = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
+            hmc_inf = HMC_NGP(self.v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
 
         '''
         File names for saving
