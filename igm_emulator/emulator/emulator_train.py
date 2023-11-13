@@ -46,6 +46,7 @@ class TrainerModule:
                 loss_str: str,
                 loss_weights: Sequence[Any],
                 like_dict: dict,
+                out_tag: str,
                 init_rng=42,
                 n_epochs=1000,
                 pv=100):
