@@ -91,7 +91,7 @@ class INFERENCE_TEST():
         '''
         Load Parameter Grid
         '''
-        in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
+        in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{self.bin_label}.hdf5'
         with h5py.File(in_path + in_name_h5py, 'r') as f:
             params = dict(f['params'].attrs.items())
         self.fobs = params['average_observed_flux']
