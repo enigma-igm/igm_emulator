@@ -161,12 +161,12 @@ class INFERENCE_TEST():
                     mean = model_dict['mean_data']
                     cov = model_dict['covariance']
                     if self.emu_test_bool:
-                        mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
+                        mean = emu.nn_emulator(self.best_params, true_theta[mock_idx, :])
                         cov = like_dict['covariance']
                 elif self.emu_test_bool:
                     true_theta[mock_idx, :] = true_theta_sampled[mock_idx,
                                               :]  # for emulator, true_theta = true_theta_sampled noth off-grid
-                    mean = emu.nn_emulator(best_params, true_theta[mock_idx, :])
+                    mean = emu.nn_emulator(self.best_params, true_theta[mock_idx, :])
                     cov = self.like_dict['covariance']
                 else:
                     raise Exception("For off-grid inference test, must use emulator.")
