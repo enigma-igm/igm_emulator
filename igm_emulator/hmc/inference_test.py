@@ -212,7 +212,7 @@ class INFERENCE_TEST():
                         num_chains=4)
         else:
             in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{self.n_covar}_' \
-                                 f'P{self.n_path}{bin_label}_params.p'
+                                 f'P{self.n_path}{self.bin_label}_params.p'
             new_param_dict = dill.load(open(self.in_path + in_name_new_params, 'rb'))
             new_temps = new_param_dict['new_temps']
             new_gammas = new_param_dict['new_gammas']
