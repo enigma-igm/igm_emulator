@@ -380,7 +380,7 @@ class INFERENCE_TEST():
         skew_ax.set_xlabel(r'$P_{{\rm true}}$', fontsize=16)
         skew_ax.set_ylabel(r'$P_{{\rm inf}}$', fontsize=16)
 
-        inference_fig.suptitle(f'{note}')
+        inference_fig.suptitle(f'{self.note}')
         inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
         print(f'plot saved as: {self.save_name}.png')
 
