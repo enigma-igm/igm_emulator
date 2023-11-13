@@ -386,7 +386,7 @@ class INFERENCE_TEST():
             f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
             f.create_dataset('samples_theta', data=self.true_theta_sampled)
             f.create_dataset('infer_theta', data=self.infer_theta)
-        print(f'Inference test results saved as {self.save_name}.hdf5 saved'))
+        print(f'Inference test results saved as {self.save_name}.hdf5 saved')
 
 
 IPython.embed()
