@@ -338,10 +338,10 @@ class INFERENCE_TEST():
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
                 if self.true_log_prob_on_prior:
-                    corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{self.var_tag}_{note}_true_theta_sampled.png')
+                    corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
                 else:
                     corner_fig.savefig(
-                        out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{self.var_tag}_{note}_ngp.png')
+                        out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_ngp.png')
 
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
