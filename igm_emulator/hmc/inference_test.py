@@ -97,7 +97,7 @@ class INFERENCE_TEST():
             params = dict(f['params'].attrs.items())
         self.fobs = params['average_observed_flux']
         self.R_value = params['R']
-        self.vbins = params['v_bins']
+        self.v_bins = params['v_bins']
         self.T0s = 10. ** params['logT_0']
         self.gammas = params['gamma']
         self.n_f = len(self.fobs)
@@ -144,8 +144,8 @@ class INFERENCE_TEST():
 
 
         # get n_inference mock correlation functions
-        mock_corr = np.empty([self.n_inference, len(self.vbins)])
-        mock_covar = np.empty([self.n_inference, len(self.vbins), len(self.vbins)])
+        mock_corr = np.empty([self.n_inference, len(self.v_bins)])
+        mock_covar = np.empty([self.n_inference, len(self.v_bins), len(self.v_bins)])
         true_theta = np.empty([self.n_inference, self.n_params])
         pbar = ProgressBar()
         if self.gaussian_bool:
@@ -205,7 +205,7 @@ class INFERENCE_TEST():
         Load model for inference
         '''
         if self.model_emulator_bool== True:
-            hmc_inf = NN_HMC_X(self.vbins, self.best_params, self.T0s, self.gammas, self.fobs, self.like_dict, dense_mass=True,
+            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, self.like_dict, dense_mass=True,
                         max_tree_depth= 10,
                         num_warmup=1000,
                         num_samples=1000,
