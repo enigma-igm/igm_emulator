@@ -280,7 +280,7 @@ class INFERENCE_TEST():
 
         infer_theta = np.empty([self.n_inference, self.n_params])
         log_prob = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains])
-        true_log_prob = np.empty([n_inference])
+        true_log_prob = np.empty([self.n_inference])
         samples = np.empty([n_inference, hmc_inf.num_samples*hmc_inf.num_chains, n_params])
 
         #read in samples
