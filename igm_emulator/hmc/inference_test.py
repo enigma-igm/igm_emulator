@@ -302,7 +302,7 @@ class INFERENCE_TEST():
         '''
         var_label = ['fobs', 'T0s', 'gammas']
         pbar = ProgressBar()
-        print(f'Start {self.n_inference} inference test for:{save_name}')
+        print(f'Start {self.n_inference} inference test for:{self.save_name}')
         for mock_idx in pbar(range(self.n_inference)):
             key, subkey = random.split(key)
 
