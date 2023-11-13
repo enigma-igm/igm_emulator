@@ -99,9 +99,9 @@ class INFERENCE_TEST():
         self.vbins = params['v_bins']
         self.T0s = 10. ** params['logT_0']
         self.gammas = params['gamma']
-        self.n_f = len(fobs)
-        self.n_temps = len(T0s)
-        self.n_gammas = len(gammas)
+        self.n_f = len(self.fobs)
+        self.n_temps = len(self.T0s)
+        self.n_gammas = len(self.gammas)
         self.noise_idx = 0
 
         T0_idx = 8
