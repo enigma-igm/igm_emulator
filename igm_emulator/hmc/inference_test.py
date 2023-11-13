@@ -273,7 +273,7 @@ class INFERENCE_TEST():
         File names for saving
         '''
         ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
+        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
         out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 
         ### If the true LogP is NGP or on prior: Boundary problem ###
