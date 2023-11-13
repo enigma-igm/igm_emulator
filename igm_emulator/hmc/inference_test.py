@@ -88,7 +88,7 @@ class INFERENCE_TEST():
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
         if self.model_emulator_bool==False:
-            self.var_tag=+ '_NGP_model'
+            self.var_tag += '_NGP_model'
         '''
         Load Parameter Grid
         '''
