@@ -85,7 +85,7 @@ class INFERENCE_TEST():
         in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
-        self.best_params = dill.load(open(in_path_hdf5 + f'{out_tag}_{var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
+        self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
         if self.model_emulator_bool==False:
             self.var_tag=+ '_NGP_model'
         '''
