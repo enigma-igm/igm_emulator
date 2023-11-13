@@ -199,7 +199,7 @@ class INFERENCE_TEST():
         self.mock_covar = mock_covar
         self.true_theta = true_theta
         self.true_theta_sampled = true_theta_sampled
-    def inference_test_run(self):
+    def inference_test_run(self,out_path_plot):
         if self.model_emulator_bool== True:
             hmc_inf = NN_HMC_X(self.vbins, self.best_params, self.T0s, self.gammas, self.fobs, self.like_dict, dense_mass=True,
                         max_tree_depth= 10,
@@ -266,7 +266,7 @@ class INFERENCE_TEST():
             hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
 
         ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
+        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
         out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 
         ### If the true LogP is NGP or on prior: Boundary problem ###
@@ -338,6 +338,8 @@ class INFERENCE_TEST():
         self.log_prob_x = log_prob
         self.true_log_prob_x = true_log_prob
         self.samples_theta = samples
+        self.out_path = out_path
+        self.out_path_plot = out_path_plot
 
         '''
         plot HMC inference test results
@@ -370,12 +372,12 @@ class INFERENCE_TEST():
         skew_ax.set_ylabel(r'$P_{{\rm inf}}$', fontsize=16)
 
         inference_fig.suptitle(f'{note}')
-        inference_fig.savefig(out_path_plot + f'{self.save_name}.png')
+        inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
         print(f'plot saved as: {self.save_name}.png')
 
         IPython.embed()
         #save HMC inference results
-        with h5py.File(out_path + f'{self.save_name}.hdf5', 'a') as f:
+        with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
             f.create_dataset('true_theta', data=self.true_theta)
             f.create_dataset('log_prob_x', data=self.log_prob_x)
             f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
