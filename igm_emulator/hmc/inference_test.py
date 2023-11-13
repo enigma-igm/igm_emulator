@@ -1,6 +1,7 @@
 import sys
 import os
 from nn_hmc_3d_x import NN_HMC_X
+import igm_emulator as emu
 import dill
 import numpy as np
 import IPython
