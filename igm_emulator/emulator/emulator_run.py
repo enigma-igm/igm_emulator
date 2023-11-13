@@ -8,6 +8,7 @@ import numpy as np
 from jax.config import config
 import jax.numpy as jnp
 import jax
+import dill
 config.update("jax_enable_x64", True)
 
 '''
