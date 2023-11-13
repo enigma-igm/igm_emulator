@@ -202,18 +202,6 @@ class INFERENCE_TEST():
         self.true_theta_sampled = true_theta_sampled
     def inference_test_run(self):
         '''
-        File names for saving
-        '''
-        ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
-        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-        ### If the true LogP is NGP or on prior: Boundary problem ###
-        if self.true_log_prob_on_prior:
-            self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
-        else:
-            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
-
-        '''
         Load model for inference
         '''
         if self.model_emulator_bool== True:
@@ -281,6 +269,21 @@ class INFERENCE_TEST():
             new_log_dets = jnp.array(new_log_dets_np)
             hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
 
+        '''
+        File names for saving
+        '''
+        ### change this to the correct path ###
+        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
+        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
+        ### If the true LogP is NGP or on prior: Boundary problem ###
+        if self.true_log_prob_on_prior:
+            self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+        else:
+            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+
+        '''
+        True and Infered models
+        '''
         #getting ready for inference samples
         key = random.PRNGKey(self.key_hmc)
         infer_theta = np.empty([self.n_inference, self.n_params])
