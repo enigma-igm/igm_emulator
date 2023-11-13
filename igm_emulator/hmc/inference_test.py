@@ -46,7 +46,7 @@ class INFERENCE_TEST():
     def __init__(self, redshift,
                  model_emulator_bool, gaussian_bool, ngp_bool,
                  emu_test_bool=False,
-                 true_log_prob_on_prior_bool=True,
+                 true_log_prob_on_prior_bool=True, # If the true LogP is NGP or on prior: Boundary problem
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
                  key_sample=36,
@@ -275,6 +275,7 @@ class INFERENCE_TEST():
         ### change this to the correct path ###
         out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
         out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
+
         ### If the true LogP is NGP or on prior: Boundary problem ###
         if self.true_log_prob_on_prior:
             self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
@@ -310,7 +311,7 @@ class INFERENCE_TEST():
             closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta[mock_idx, 2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta[mock_idx, 0]))
 
-            if true_log_prob_on_prior:
+            if self.true_log_prob_on_prior_bool:
                 x_true = hmc_inf.theta_to_x(true_theta_sampled[mock_idx, :])
             else:
                 x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
@@ -336,7 +337,7 @@ class INFERENCE_TEST():
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-                if true_log_prob_on_prior:
+                if self.true_log_prob_on_prior_bool:
                     corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{n_path}{bin_label}_mock_{mock_idx}_{self.var_tag}_{note}_true_theta_sampled.png')
                 else:
                     corner_fig.savefig(
