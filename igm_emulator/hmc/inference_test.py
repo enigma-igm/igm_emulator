@@ -45,7 +45,7 @@ class INFERENCE_TEST():
     def __init__(self, redshift,
                  model_emulator_bool, gaussian_bool, ngp_bool,
                  emu_test_bool=False,
-                 true_log_prob_on_prior_bool=True
+                 true_log_prob_on_prior_bool=True,
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
                  key_sample=36,
