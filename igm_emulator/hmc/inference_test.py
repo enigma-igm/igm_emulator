@@ -243,11 +243,11 @@ class INFERENCE_TEST():
                             added_t_range = n_new_t + 2
                         else:
                             added_t_range = n_new_t + 1
-                        if old_g_below_idx == n_gammas - 2:
+                        if old_g_below_idx == self.n_gammas - 2:
                             added_g_range = n_new_g + 2
                         else:
                             added_g_range = n_new_g + 1
-                        if old_f_below_idx == n_f - 2:
+                        if old_f_below_idx == self.n_f - 2:
                             added_f_range = n_new_f + 2
                         else:
                             added_f_range = n_new_f + 1
