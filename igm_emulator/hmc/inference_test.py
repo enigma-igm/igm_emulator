@@ -200,7 +200,22 @@ class INFERENCE_TEST():
         self.mock_covar = mock_covar
         self.true_theta = true_theta
         self.true_theta_sampled = true_theta_sampled
-    def inference_test_run(self,out_path_plot):
+    def inference_test_run(self):
+        '''
+        File names for saving
+        '''
+        ### change this to the correct path ###
+        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
+        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
+        ### If the true LogP is NGP or on prior: Boundary problem ###
+        if self.true_log_prob_on_prior:
+            self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+        else:
+            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+
+        '''
+        Load model for inference
+        '''
         if self.model_emulator_bool== True:
             hmc_inf = NN_HMC_X(self.vbins, self.best_params, self.T0s, self.gammas, self.fobs, self.like_dict, dense_mass=True,
                         max_tree_depth= 10,
@@ -266,25 +281,14 @@ class INFERENCE_TEST():
             new_log_dets = jnp.array(new_log_dets_np)
             hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
 
-        ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
-        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-
-        ### If the true LogP is NGP or on prior: Boundary problem ###
-        if self.true_log_prob_on_prior:
-            self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
-        else:
-            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
-
-
+        #getting ready for inference samples
         key = random.PRNGKey(self.key_hmc)
-
         infer_theta = np.empty([self.n_inference, self.n_params])
         log_prob = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains])
         true_log_prob = np.empty([self.n_inference])
-        samples = np.empty([n_inference, hmc_inf.num_samples*hmc_inf.num_chains, n_params])
+        samples = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains, self.n_params])
 
-        #read in samples
+        #read in true mocks
         true_theta = self.true_theta
         true_theta_sampled = self.true_theta_sampled
         mocks = self.mock_corr
