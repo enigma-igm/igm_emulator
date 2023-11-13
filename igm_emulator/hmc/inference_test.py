@@ -73,12 +73,12 @@ class INFERENCE_TEST():
             self.n_path = 20  # 17->20
             self.n_covar = 500000
             self.bin_label = '_set_bins_3'
-            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{self.z_string}/'
         else:
             self.n_path = 17
             self.n_covar = 500000
             self.bin_label = '_set_bins_4'
-            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{self.z_string}/final_135/'
 
 
         # load model from emulator_run.py
@@ -111,11 +111,6 @@ class INFERENCE_TEST():
         self.like_dict = dill.load(open(in_path + like_name, 'rb'))
 
 
-    '''
-    in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-    molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
-    molly_model = h5py.File(in_path_model + molly_name, 'r')
-    '''
     def mocks_sampling(self):
         if self.gaussian_bool == False:
             self.ngp_bool = True
@@ -271,7 +266,7 @@ class INFERENCE_TEST():
             hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
 
         ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/mock_infer/'
+        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
         out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 
         ### If the true LogP is NGP or on prior: Boundary problem ###
