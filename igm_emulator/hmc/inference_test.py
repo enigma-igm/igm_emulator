@@ -384,7 +384,6 @@ class INFERENCE_TEST():
         inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
         print(f'plot saved as: {self.save_name}.png')
 
-        IPython.embed()
         #save HMC inference results
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
             f.create_dataset('true_theta', data=self.true_theta)
@@ -396,3 +395,7 @@ class INFERENCE_TEST():
 
 
 IPython.embed()
+#emulator-emulator model test
+#hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
+#gaussian mocks-NGP model
+#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
