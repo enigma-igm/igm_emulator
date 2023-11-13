@@ -7,7 +7,6 @@ import os
 import dill
 import h5py
 import os
-from haiku_custom_forward import small_bin_bool
 from matplotlib import cm
 
 '''
@@ -15,6 +14,7 @@ Visualization of hyperparameters
 '''
 
 zstr = 'z54'
+small_bin_bool = True
 dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
 if small_bin_bool==True:
