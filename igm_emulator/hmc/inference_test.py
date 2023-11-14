@@ -417,7 +417,7 @@ hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
 ##gaussian mocks -- NGP model
 '''
 
-3hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
 
 hmc_infer.mocks_sampling()
 hmc_infer.inference_test_run()
