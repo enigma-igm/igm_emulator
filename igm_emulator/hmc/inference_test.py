@@ -275,7 +275,13 @@ class INFERENCE_TEST():
         File names for saving
         '''
         ### change this to the correct path ###
-        out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
+        if self.model_emulator_bool:
+            if self.emu_test_bool:
+                out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
+            else:
+                out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
+        else:
+            out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
         out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
 
         ### If the true LogP is NGP or on prior: Boundary problem ###
@@ -397,10 +403,22 @@ class INFERENCE_TEST():
 
 
 #IPython.embed()
-##emulator-emulator model test
+'''
+##emulator -- emulator model test
+'''
 #hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
-##gaussian mocks-NGP model
-hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+
+'''
+##emulator -- emulator model test
+'''
+hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
+
+'''
+##gaussian mocks -- NGP model
+'''
+
+3hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+
 hmc_infer.mocks_sampling()
 hmc_infer.inference_test_run()
 hmc_infer.coverage_plot()
