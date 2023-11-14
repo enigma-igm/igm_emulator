@@ -45,8 +45,10 @@ plt_params = {'legend.fontsize': 7,
 plt.rcParams.update(plt_params)
 class INFERENCE_TEST():
     def __init__(self, redshift,
-                 model_emulator_bool, gaussian_bool, ngp_bool,
-                 emu_test_bool=False,
+                 model_emulator_bool, # True: emulator model; False: NGP model
+                 gaussian_bool,  #True: Gaussian sampling around mean; False: Forward mocks sampling
+                 ngp_bool, #True: NGP for theta points in inferece; False: theta points on priors
+                 emu_test_bool=False, #True: perfect inference test with emulator mocks; False: inference test with mocks
                  true_log_prob_on_prior_bool=True, # If the true LogP is NGP or on prior: Boundary problem
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
@@ -191,11 +193,10 @@ class INFERENCE_TEST():
                 mock_covar[mock_idx, :, :] = cov
 
         # save get n_inference sampled parameters and mock correlation functions
-        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
-        dill.dump(mock_corr, open(out_path + f'{self.note}_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(true_theta, open(out_path + f'{self.note}_theta_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(true_theta_sampled, open(out_path + f'{self.note}_theta_sampled_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(mock_covar, open(out_path + f'{self.note}_covar_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(mock_corr, open(self.out_path + f'{self.note}_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(true_theta, open(self.out_path + f'{self.note}_theta_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
 
         self.mock_corr = mock_corr
         self.mock_covar = mock_covar
@@ -282,7 +283,7 @@ class INFERENCE_TEST():
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
         else:
             out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
-        out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/'
+        out_path = self.out_path
 
         ### If the true LogP is NGP or on prior: Boundary problem ###
         if self.true_log_prob_on_prior:
