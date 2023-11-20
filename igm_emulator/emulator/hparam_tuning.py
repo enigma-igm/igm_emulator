@@ -117,6 +117,7 @@ if __name__ == '__main__':
     trial = study.best_trial
     print(f'\nBest Validation Loss: {trial.value}')
     print(f'Best Params:')
+    
     for key, value in trial.params.items():
         print(f'-> {key}: {value}')
     dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'wb'))
