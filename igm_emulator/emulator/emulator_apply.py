@@ -5,6 +5,7 @@ from emulator_trainer import TrainerModule
 from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict
 import dill
 import IPython
+import jax
 
 ### Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
@@ -26,7 +27,7 @@ hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_par
 IPython.embed()
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=hparams['layer_sizes'],
-                        activation=hparams['activation'],
+                        activation=eval(hparams['activation']),
                         dropout_rate=hparams['dropout_rate'],
                         optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
                         loss_str=hparams['loss_str'],
