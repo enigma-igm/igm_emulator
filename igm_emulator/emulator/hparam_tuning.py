@@ -96,7 +96,6 @@ def objective(trial):
                             loss_str=loss_str_tune,
                             loss_weights=[l2_tune,c_loss_tune,percent_loss_tune],
                             like_dict=like_dict,
-                            small_bin_bool=True,
                             init_rng=42,
                             n_epochs=n_epochs_tune,
                             pv=100,
