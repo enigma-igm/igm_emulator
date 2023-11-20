@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
+from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag
 import dill
 
 ### Load the archetecture for best parameters after Optuna training
