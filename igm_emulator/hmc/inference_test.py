@@ -1,6 +1,6 @@
 import sys
 import os
-from nn_hmc_3d_x import NN_HMC_X
+from hmc_nn_inference import NN_HMC_X
 import igm_emulator as emu
 import dill
 import numpy as np
@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
-from igm_emulator.emulator.emulator_run import trainer,small_bin_bool
-from mcmc_run_ngp import HMC_NGP
+from igm_emulator.emulator.emulator_apply import trainer,small_bin_bool
+from mcmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
 from qso_fitting.analysis.inf_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
@@ -85,7 +85,7 @@ class INFERENCE_TEST():
             self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{self.z_string}/final_135/'
 
 
-        # load model from emulator_run.py
+        # load model from emulator_apply.py
         in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag

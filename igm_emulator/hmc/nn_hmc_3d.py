@@ -10,7 +10,7 @@ from numpyro.infer import MCMC, NUTS
 import arviz as az
 import time
 import IPython
-from igm_emulator.emulator.emulator_run import nn_emulator
+from igm_emulator.emulator.emulator_apply import nn_emulator
 import sys
 sys.path.append('/home/zhenyujin/dw_inference/dw_inference/inference')
 from utils import walker_plot, corner_plot
