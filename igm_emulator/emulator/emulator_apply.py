@@ -3,7 +3,6 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
 import dill
-config.update("jax_enable_x64", True)
 
 ### Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
