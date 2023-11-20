@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag
+from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict
 import dill
 
 ### Load the archetecture for best parameters after Optuna training
@@ -21,9 +21,18 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         pv=100,
                         out_tag=out_tag)          
 '''
+hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb')),
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
-                        dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb')),
+                        layer_sizes=hparams['layer_sizes'],
+                        activation=hparams['activation'],
+                        dropout_rate=hparams['dropout_rate'],
+                        optimizer_hparams=hparams['optimizer_hparams'],
+                        loss_str=hparams['loss_str'],
+                        loss_weights=hparams['loss_weights'],
+                        like_dict=like_dict,
                         init_rng=42,
+                        n_epochs=hparams['n_epochs']
                         pv=100,
                         out_tag=out_tag)
 
