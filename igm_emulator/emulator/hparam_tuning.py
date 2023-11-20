@@ -5,7 +5,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
-from emulator_trainer import TrainerModulefrom
+from emulator_trainer import TrainerModule
 import h5py
 import numpy as np
 from jax.config import config
