@@ -108,7 +108,7 @@ def objective(trial):
 print('*** Running the hyperparameter tuning ***')
 
 # create the study
-number_of_trials = 50
+number_of_trials = 2
 sampler = TPESampler(seed=10)  # 10
 study = optuna.create_study(direction="minimize", sampler=sampler)
 study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
