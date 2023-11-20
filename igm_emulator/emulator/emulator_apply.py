@@ -9,20 +9,7 @@ import jax
 
 ### Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
-'''
-trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
-                        layer_sizes=[100,100,59],
-                        activation= jax.nn.tanh,
-                        dropout_rate=None,
-                        optimizer_hparams=[0.30000000000000004, 0.0005946616649768666, 0.00013552715097890048],
-                        loss_str='huber',
-                        loss_weights=[1e-05,0.0033025697025815485,True],
-                        like_dict=like_dict,
-                        init_rng=42,
-                        n_epochs=1000,
-                        pv=100,
-                        out_tag=out_tag)          
-'''
+
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb'))
 
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
@@ -37,7 +24,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=hparams['n_epochs'],
                         pv=100,
                         out_tag=out_tag)
-IPython.embed()
+
 ###Standard pre-optuna MSE training
 max_grad_norm = 0.1
 lr = 1e-3
