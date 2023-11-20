@@ -6,6 +6,7 @@ from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX
 import dill
 import IPython
 import jax
+import jax.numpy as jnp
 
 ### Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
