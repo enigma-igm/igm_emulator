@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
-from igm_emulator.emulator.emulator_apply import trainer,small_bin_bool
+from igm_emulator.emulator.emulator_apply import trainer
+from igm_emulator.emulator.hparam_tuning import small_bin_bool
 from mcmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
