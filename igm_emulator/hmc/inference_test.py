@@ -326,11 +326,10 @@ class INFERENCE_TEST():
             else:
                 x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
             flux = mocks[mock_idx, :]
-            if self.model_emulator_bool:
-                covars_mock = covars[mock_idx, :, :]
-            else:
-                covars_mock, log_det = hmc_inf.get_covariance_log_determinant_nearest_fine(true_theta_sampled[mock_idx, :])
-                #covariance matrix using NGP model
+
+            #Use one coarse grid NGP covariance matrix for both NGP & Emulator models
+            covars_mock = covars[mock_idx, :, :]
+
 
             x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time = hmc_inf.mcmc_one(key, x_true, flux, covars_mock, report=False)
@@ -411,15 +410,15 @@ class INFERENCE_TEST():
 #hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 
 '''
-##emulator -- emulator model test
+##emulator -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
+#hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
 
 '''
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
 
 hmc_infer.mocks_sampling()
 hmc_infer.inference_test_run()
