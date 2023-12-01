@@ -70,8 +70,8 @@ if __name__ == '__main__':
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
     print(nn_emulator(best_params, X[0]).shape)
-    plt.plot(nn_emulator(best_params, X[0]), label='emulator_jvmap')
-    plt.plot(Y[0], label='data')
-    plt.plot(_nn_emulator(best_params, X[0]), label='emulator_single')
+    plt.plot(nn_emulator(best_params, X[0]), label='emulator_jvmap',color='r'
+    plt.plot(Y[0], label='data',color='g')
+    plt.plot(_nn_emulator(best_params, X[0]), label='emulator_single', linestyle='--',color='k')
     plt.legend()
     plt.savefig('emulator_apply_test.png')
