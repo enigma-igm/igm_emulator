@@ -153,6 +153,7 @@ class INFERENCE_TEST():
         true_theta = np.empty([self.n_inference, self.n_params])
         pbar = ProgressBar()
         if self.gaussian_bool:
+            rng = random.PRNGKey(42)
             for mock_idx in pbar(range(self.n_inference)):
 
                 closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
@@ -174,8 +175,10 @@ class INFERENCE_TEST():
                     cov = self.like_dict['covariance']
                 else:
                     raise Exception("For off-grid inference test, must use emulator.")
-                rng = random.PRNGKey(42)
-                mock_corr[mock_idx, :] = random.multivariate_normal(rng, mean, cov)
+                #split rng!
+                rng, init_rng = random.split(rng)
+
+                mock_corr[mock_idx, :] = random.multivariate_normal(init_rng, mean, cov)
                 mock_covar[mock_idx, :, :] = cov
 
         else:
