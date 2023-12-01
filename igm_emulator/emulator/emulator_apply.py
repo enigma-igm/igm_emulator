@@ -10,7 +10,6 @@ import jax.numpy as jnp
 import matplotlib
 import matplotlib.pyplot as plt
 import IPython
-matplotlib.use('MacOSX')
 
 ### Load the archetecture for best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
