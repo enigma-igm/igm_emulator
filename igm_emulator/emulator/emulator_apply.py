@@ -7,6 +7,7 @@ import dill
 import IPython
 import jax
 import jax.numpy as jnp
+import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('GTK')
 
