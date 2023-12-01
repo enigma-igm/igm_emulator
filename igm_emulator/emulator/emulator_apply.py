@@ -73,4 +73,4 @@ if __name__ == '__main__':
     plt.plot(nn_emulator(best_params, X_test[0]), label='emulator')
     plt.plot(Y_test[0]* trainer.stdY + trainer.meanY, label='data')
     plt.show()
-    IPython.embed()
+    plt.savefig('emulator_apply_test.png')
