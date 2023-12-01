@@ -57,7 +57,7 @@ def nn_emulator(best_params_function, theta_linda):
     '''
     give emulator prediction for multiple sets of [fob, T0, gamma]
     '''
-    emu_out = jax.vmap(_nn_emulator, in_axes=(None,0), out_axes=0)(best_params_function, theta_linda)
+    emu_out = jax.vmap(_nn_emulator, in_axes=(None,0), out_axes=0)(best_params_function, jnp.atleast_2d(theta_linda))
 
     return emu_out.squeeze()
 
