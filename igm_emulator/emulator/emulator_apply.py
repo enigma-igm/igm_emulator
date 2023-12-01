@@ -63,9 +63,13 @@ def nn_emulator(best_params_function, theta_linda):
 
     return emu_out.squeeze()
 
-in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
-print(nn_emulator(best_params, X_test[0]).shape)
-plt.plot(nn_emulator(best_params, X_test[0]), label='emulator')
-plt.plot(Y_test[0]* trainer.stdY + trainer.meanY, label='data')
-plt.show()
+'''
+Check if jvmap works
+'''
+if __name__ == '__main__':
+    in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
+    best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
+    print(nn_emulator(best_params, X_test[0]).shape)
+    plt.plot(nn_emulator(best_params, X_test[0]), label='emulator')
+    plt.plot(Y_test[0]* trainer.stdY + trainer.meanY, label='data')
+    plt.show()
