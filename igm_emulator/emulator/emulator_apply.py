@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict
+from hparam_tuning import X,Y,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict
 import dill
 import IPython
 import jax
@@ -69,8 +69,9 @@ Check if jvmap works
 if __name__ == '__main__':
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
-    print(nn_emulator(best_params, X_test[0]).shape)
-    plt.plot(nn_emulator(best_params, X_test[0]), label='emulator')
-    plt.plot(Y_test[0]* trainer.stdY + trainer.meanY, label='data')
-    plt.show()
+    print(nn_emulator(best_params, X[0]).shape)
+    plt.plot(nn_emulator(best_params, X[0]), label='emulator_jvmap')
+    plt.plot(Y[0], label='data')
+    plt.plot(_nn_emulator(best_params, X[0]), label='emulator_single')
+    plt.legend()
     plt.savefig('emulator_apply_test.png')
