@@ -47,7 +47,15 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         out_tag=out_tag)
 
 '''
-def nn_emulator(best_params_function, theta_linda):
+def _nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
     return emu_out * trainer.stdY + trainer.meanY
+
+def nn_emulator(best_params_function, theta_linda):
+    '''
+    give emulator prediction for multiple sets of [fob, T0, gamma]
+    '''
+    emu_out = jax.vmap(_nn_emulator, in_axes=(None,0), out_axes=0)(best_params_function, theta_linda)
+
+    return emu_out.squeeze()

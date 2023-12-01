@@ -358,7 +358,10 @@ class INFERENCE_TEST():
         self.samples_theta = samples
         self.out_path = out_path
         self.out_path_plot = out_path_plot
-
+        if self.model_emulator_bool:
+            self.infer_model = emu.nn_emulator(self.best_params, self.infer_theta)
+        else:
+            self.infer_model = hmc_inf.get_model_nearest_fine(self.infer_theta)
         '''
         plot HMC inference test results
         '''
@@ -400,6 +403,9 @@ class INFERENCE_TEST():
             f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
             f.create_dataset('samples_theta', data=self.true_theta_sampled)
             f.create_dataset('infer_theta', data=self.infer_theta)
+            f.create_dataset('inferred_model', data=self.infer_model)
+            f.create_dataset('mock_corr', data=self.mock_corr)
+            f.create_dataset('mock_covar', data=self.mock_covar)
         print(f'Inference test results saved as {self.save_name}.hdf5 saved')
 
 
@@ -412,13 +418,13 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model
 '''
-#hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
+hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
 
 '''
 ##gaussian mocks -- NGP model
 '''
 
-hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
 
 hmc_infer.mocks_sampling()
 hmc_infer.inference_test_run()
