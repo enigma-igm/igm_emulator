@@ -15,7 +15,7 @@ import IPython
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb'))
-
+'''
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=hparams['layer_sizes'],
                         activation=eval(hparams['activation']),
@@ -28,6 +28,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=hparams['n_epochs'],
                         pv=100,
                         out_tag=out_tag)
+'''
 
 ###Standard pre-optuna MSE training
 max_grad_norm = 0.1
@@ -35,7 +36,7 @@ lr = 1e-3
 #beta = 1e-3 #BNN
 decay = 5e-3
 l2 =0.0001
-'''
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=[100,100,100,59],
                         activation= jax.nn.leaky_relu,
@@ -49,7 +50,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         pv=100,
                         out_tag=out_tag)
 
-'''
+
 def _nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
