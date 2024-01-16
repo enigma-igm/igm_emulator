@@ -28,7 +28,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=hparams['n_epochs'],
                         pv=100,
                         out_tag=out_tag)
-
+trainer.train_loop(False)
 trainer.save_training_info(5.4)
 
 ###Standard pre-optuna MSE training
