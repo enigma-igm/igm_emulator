@@ -199,9 +199,6 @@ class TrainerModule:
             group1.attrs['loss_fn'] = self.loss_str
 
             group2 = f.create_group('data')
-            group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
-            group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
-            group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
             group2.create_dataset('test_param', data = self.X_test)
             group2.create_dataset('train_param', data = self.X_train)
             group2.create_dataset('vali_param', data = self.X_vali)
