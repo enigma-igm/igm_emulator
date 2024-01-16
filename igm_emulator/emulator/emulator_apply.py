@@ -29,6 +29,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         pv=100,
                         out_tag=out_tag)
 
+trainer.save_training_info(5.4)
 
 ###Standard pre-optuna MSE training
 '''
