@@ -202,9 +202,12 @@ class TrainerModule:
             group2.attrs['train_dir'] = dir_lhs + f'{z_string}_param{train_num}.p'
             group2.attrs['test_dir'] = dir_lhs + f'{z_string}_param{test_num}.p'
             group2.attrs['vali_dir'] = dir_lhs + f'{z_string}_param{vali_num}.p'
-            group2.create_dataset('test_data', data = self.X_test)
-            group2.create_dataset('train_data', data = self.X_train)
-            group2.create_dataset('vali_data', data = self.X_vali)
+            group2.create_dataset('test_param', data = self.X_test)
+            group2.create_dataset('train_param', data = self.X_train)
+            group2.create_dataset('vali_param', data = self.X_vali)
+            group2.create_dataset('test_model', data = self.Y_test)
+            group2.create_dataset('train_model', data = self.Y_train)
+            group2.create_dataset('vali_model', data = self.Y_vali)
             group2.create_dataset('meanX', data=self.meanX)
             group2.create_dataset('stdX', data=self.stdX)
             group2.create_dataset('meanY', data=self.meanY)
