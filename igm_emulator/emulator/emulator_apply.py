@@ -11,11 +11,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 import IPython
 
-### Load the archetecture for best parameters after Optuna training
+### Load best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb'))
-'''
+
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                         layer_sizes=hparams['layer_sizes'],
                         activation=eval(hparams['activation']),
@@ -28,9 +28,10 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=hparams['n_epochs'],
                         pv=100,
                         out_tag=out_tag)
-'''
+
 
 ###Standard pre-optuna MSE training
+'''
 max_grad_norm = 0.1
 lr = 1e-3
 #beta = 1e-3 #BNN
@@ -49,7 +50,7 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,m
                         n_epochs=1000,
                         pv=100,
                         out_tag=out_tag)
-
+'''
 
 def _nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
