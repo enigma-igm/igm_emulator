@@ -199,12 +199,12 @@ class TrainerModule:
             group1.attrs['loss_fn'] = self.loss_str
 
             group2 = f.create_group('data')
-            group2.create_dataset('test_param', data = self.X_test)
-            group2.create_dataset('train_param', data = self.X_train)
-            group2.create_dataset('vali_param', data = self.X_vali)
-            group2.create_dataset('test_model', data = self.Y_test)
-            group2.create_dataset('train_model', data = self.Y_train)
-            group2.create_dataset('vali_model', data = self.Y_vali)
+            group2.create_dataset('test_param', data = self.X_test*self.stdX+self.meanX)
+            group2.create_dataset('train_param', data = self.X_train*self.stdX+self.meanX)
+            group2.create_dataset('vali_param', data = self.X_vali*self.stdX+self.meanX)
+            group2.create_dataset('test_model', data = self.Y_test*self.stdY+self.meanY)
+            group2.create_dataset('train_model', data = self.Y_train*self.stdY+self.meanY)
+            group2.create_dataset('vali_model', data = self.Y_vali*self.stdY+self.meanY)
             group2.create_dataset('meanX', data=self.meanX)
             group2.create_dataset('stdX', data=self.stdX)
             group2.create_dataset('meanY', data=self.meanY)
