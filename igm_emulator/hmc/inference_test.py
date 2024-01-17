@@ -415,12 +415,12 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
+hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 
 '''
 ##emulator -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
+#hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
 
 '''
 ##gaussian mocks -- NGP model
