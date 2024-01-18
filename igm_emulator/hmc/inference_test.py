@@ -192,7 +192,8 @@ class INFERENCE_TEST():
                 model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
                 model_dict = dill.load(open(self.in_path + model_name, 'rb'))
                 cov = model_dict['covariance']
-                mock_corr[mock_idx, :] = mocks[mock_idx, :]
+                rng, init_rng = random.split(rng)
+                mock_corr[mock_idx, :] = random.choice(key=init_rng, a=mocks, shape=(1,), replace=False)
                 mock_covar[mock_idx, :, :] = cov
 
         # save get n_inference sampled parameters and mock correlation functions
@@ -415,12 +416,12 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
+#hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 
 '''
 ##emulator -- emulator model
 '''
-#hmc_infer = INFERENCE_TEST(5.4,True,True,True,False)
+hmc_infer = INFERENCE_TEST(5.4,True,False,True,False)
 
 '''
 ##gaussian mocks -- NGP model
