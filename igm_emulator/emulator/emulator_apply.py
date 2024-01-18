@@ -75,8 +75,8 @@ if __name__ == '__main__':
     test_preds = nn_emulator(best_params, X_test_og)
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
-    ax1 = plt.subplot2grid((2, 1), (0, 0))
-    ax2 = plt.subplot2grid((2, 1), (1, 0))
+    ax1 = plt.subplot2grid((1, 2), (0, 0))
+    ax2 = plt.subplot2grid((1, 2), (0, 1))
     for i in range(10):
         ax1.plot(v_bins, test_preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X_test_og[corr_idx[i], 0]:.2f},'
                                                      r'$T_0$='f'{X_test_og[corr_idx[i], 1]:.2f},'
