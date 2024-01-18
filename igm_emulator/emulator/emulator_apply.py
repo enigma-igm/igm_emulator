@@ -83,5 +83,5 @@ if __name__ == '__main__':
                                                      r'$\gamma$='f'{X_test_og[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
         ax1.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
         ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
-    plt.legend()
     plt.savefig('emulator_apply_test.png')
+    print('emulator_apply_test.png saved')
