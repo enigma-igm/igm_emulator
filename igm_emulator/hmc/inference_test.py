@@ -191,7 +191,7 @@ class INFERENCE_TEST():
                 else:
                     true_theta[mock_idx, :] = true_theta_sampled[mock_idx,:]
 
-                mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}.p'
+                mock_name = f'mocks_R_{int(self.R_value)}_nf_{self.n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}.p'
                 mocks = dill.load(open(self.in_path + mock_name, 'rb'))
                 model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
                 model_dict = dill.load(open(self.in_path + model_name, 'rb'))
