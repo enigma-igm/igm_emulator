@@ -8,6 +8,7 @@ import dill
 import IPython
 import jax
 import jax.numpy as jnp
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import IPython
