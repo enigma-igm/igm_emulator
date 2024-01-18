@@ -2,7 +2,8 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X,Y,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict
+from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,out_tag,like_dict,X_test_og,Y_test_og
+from utils_plot import v_bins
 import dill
 import IPython
 import jax
@@ -70,9 +71,12 @@ Check if jvmap works
 if __name__ == '__main__':
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
-    print(nn_emulator(best_params, X[0]).shape)
-    plt.plot(nn_emulator(best_params, X[0]), label='emulator_jvmap',color='r')
-    plt.plot(Y[0], label='data',color='g')
-    plt.plot(_nn_emulator(best_params, X[0]), label='emulator_single', linestyle='--',color='k')
+    test_preds = nn_emulator(best_params, X_test_og)
+    corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
+    for i in range(10):
+        plt.plot(v_bins, test_preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X_test_og[corr_idx[i], 0]:.2f},'
+                                                     r'$T_0$='f'{X_test_og[corr_idx[i], 1]:.2f},'
+                                                     r'$\gamma$='f'{X_test_og[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
+        plt.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
     plt.legend()
     plt.savefig('emulator_apply_test.png')

@@ -57,24 +57,24 @@ like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_nco
 like_dict = dill.load(open(in_path + like_name, 'rb'))
 
 # load the training, test and validation data
-X = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
+X_og = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
                    'rb'))  # load normalized cosmological parameters from grab_models.py
-X_test = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
-X_vali = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
+X_test_og = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
+X_vali_og = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
 meanX = X.mean(axis=0)
 stdX = X.std(axis=0)
-X_train = (X - meanX) / stdX
-X_test = (X_test - meanX) / stdX
-X_vali = (X_vali - meanX) / stdX
+X_train = (X_og - meanX) / stdX
+X_test = (X_test_og - meanX) / stdX
+X_vali = (X_vali_og - meanX) / stdX
 
-Y = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
-Y_test = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
-Y_vali = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
+Y_og = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
+Y_test_og = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
+Y_vali_og = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
 meanY = Y.mean(axis=0)
 stdY = Y.std(axis=0)
 Y_train = (Y - meanY) / stdY
-Y_test = (Y_test - meanY) / stdY
-Y_vali = (Y_vali - meanY) / stdY
+Y_test = (Y_test_og - meanY) / stdY
+Y_vali = (Y_vali_og - meanY) / stdY
 
 if __name__ == '__main__':
     def objective(trial):
