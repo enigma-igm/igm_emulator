@@ -159,7 +159,7 @@ class INFERENCE_TEST():
                 closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
                 closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
                 closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta_sampled[mock_idx, 0]))
-                if self.ngp_bool and self.emu_test_bool:
+                if self.ngp_bool:
                     true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
                     model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
                     model_dict = dill.load(open(self.in_path + model_name, 'rb'))
@@ -401,7 +401,7 @@ class INFERENCE_TEST():
 
         inference_fig.suptitle(f'{self.note}')
         inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
-        print(f'plot saved as: {self.save_name}.png')
+        print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
 
         #save HMC inference results
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
@@ -413,7 +413,7 @@ class INFERENCE_TEST():
             f.create_dataset('inferred_model', data=self.infer_model)
             f.create_dataset('mock_corr', data=self.mock_corr)
             f.create_dataset('mock_covar', data=self.mock_covar)
-        print(f'Inference test results saved as {self.save_name}.hdf5 saved')
+        print(f'Inference test results saved as {self.out_path}{self.save_name}.hdf5 saved')
 
 
 #IPython.embed()
