@@ -61,8 +61,8 @@ X_og = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
                    'rb'))  # load normalized cosmological parameters from grab_models.py
 X_test_og = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
 X_vali_og = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
-meanX = X.mean(axis=0)
-stdX = X.std(axis=0)
+meanX = X_og.mean(axis=0)
+stdX = X_og.std(axis=0)
 X_train = (X_og - meanX) / stdX
 X_test = (X_test_og - meanX) / stdX
 X_vali = (X_vali_og - meanX) / stdX
@@ -70,9 +70,9 @@ X_vali = (X_vali_og - meanX) / stdX
 Y_og = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
 Y_test_og = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
 Y_vali_og = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
-meanY = Y.mean(axis=0)
-stdY = Y.std(axis=0)
-Y_train = (Y - meanY) / stdY
+meanY = Y_og.mean(axis=0)
+stdY = Y_og.std(axis=0)
+Y_train = (Y_og - meanY) / stdY
 Y_test = (Y_test_og - meanY) / stdY
 Y_vali = (Y_vali_og - meanY) / stdY
 
