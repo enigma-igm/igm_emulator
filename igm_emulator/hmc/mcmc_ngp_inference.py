@@ -62,7 +62,9 @@ class HMC_NGP(NN_HMC_X):
             self, theta
     ):
 
-        fob, T0, gamma = theta
+        fob = theta[0]
+        T0 = theta[1]
+        gamma = theta[2]
 
         closest_temp_idx = jnp.argmin(jnp.abs(self.T0s - T0))
         closest_gamma_idx = jnp.argmin(jnp.abs(self.gammas - gamma))
