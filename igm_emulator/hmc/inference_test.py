@@ -119,14 +119,14 @@ class INFERENCE_TEST():
     def mocks_sampling(self):
         if self.gaussian_bool == False:
             self.ngp_bool = True
-            self.note = 'forward_mocks_ngp_prior_diff_covar'
+            self.note = 'forward_mocks_ngp_emulator_prior_diff_covar'
         else:
             if self.ngp_bool == True and self.emu_test_bool == False:
                 self.note = 'gaussian_ngp_mocks_prior_diff_covar'
             elif self.ngp_bool == True and self.emu_test_bool == True:
-                self.note = 'gaussian_ngp_emulator_prior_diff_covar'
+                self.note = 'gaussian_ngp_emulator_test_prior_diff_covar'
             else:
-                self.note = 'gaussian_emulator_prior_diff_covar'
+                self.note = 'gaussian_emulator_test_prior_diff_covar'
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
@@ -420,10 +420,10 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
+#hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 
 '''
-##emulator -- emulator model
+##forward mocks -- emulator model
 '''
 #hmc_infer = INFERENCE_TEST(5.4,True,False,True,False)
 
@@ -432,6 +432,8 @@ hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 '''
 
 #hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
+hmc_infer = INFERENCE_TEST(5.4,False,False,True,False)
+
 
 hmc_infer.mocks_sampling()
 hmc_infer.inference_test_run()
