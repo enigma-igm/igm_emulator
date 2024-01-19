@@ -41,6 +41,7 @@ class HMC_NGP(NN_HMC_X):
         self.fine_covariances = fine_covariances
         self.fine_log_dets = fine_log_dets
 
+    @partial(jit, static_argnums=(0,))
     def get_covariance_log_determinant_nearest_fine(
             self, theta
     ):
@@ -57,14 +58,12 @@ class HMC_NGP(NN_HMC_X):
 
         return covariance, log_determinant
 
-
+    @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
             self, theta
     ):
 
-        fob = theta[0]
-        T0 = theta[1]
-        gamma = theta[2]
+        fob, T0, gamma = theta
 
         closest_temp_idx = jnp.argmin(jnp.abs(self.T0s - T0))
         closest_gamma_idx = jnp.argmin(jnp.abs(self.gammas - gamma))

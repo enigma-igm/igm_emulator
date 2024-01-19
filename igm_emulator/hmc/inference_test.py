@@ -368,7 +368,7 @@ class INFERENCE_TEST():
         if self.model_emulator_bool:
             self.infer_model = emu.nn_emulator(self.best_params, self.infer_theta)
         else:
-            self.infer_model = hmc_inf.get_model_nearest_fine(self.infer_theta)
+            self.infer_model = None #hmc_inf.get_model_nearest_fine(self.infer_theta)
         '''
         plot HMC inference test results
         '''
