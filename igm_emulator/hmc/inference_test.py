@@ -177,7 +177,7 @@ class INFERENCE_TEST():
                 #split rng!
                 rng, init_rng = random.split(rng)
 
-                mock_corr[mock_idx, :] = mean #random.multivariate_normal(init_rng, mean, cov)
+                mock_corr[mock_idx, :] = random.multivariate_normal(init_rng, mean, cov)
                 mock_covar[mock_idx, :, :] = cov
 
         else:
