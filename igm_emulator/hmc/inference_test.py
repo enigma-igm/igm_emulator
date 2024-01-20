@@ -339,7 +339,7 @@ class INFERENCE_TEST():
 
 
             x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-            hmc_num_steps, hmc_tree_depth, total_time = hmc_inf.mcmc_one(key, x_true, flux, covars_mock, report=False)
+            hmc_num_steps, hmc_tree_depth, total_time = hmc_inf.mcmc_one(subkey, x_true, flux, covars_mock, report=False)
             f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                          zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
@@ -420,7 +420,7 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
+hmc_infer = INFERENCE_TEST(5.4,True,True,True,True)
 
 '''
 ##forward mocks -- emulator model
@@ -432,7 +432,7 @@ class INFERENCE_TEST():
 '''
 
 #hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
-hmc_infer = INFERENCE_TEST(5.4,False,False,True,False)
+#hmc_infer = INFERENCE_TEST(5.4,False,False,True,False)
 
 
 hmc_infer.mocks_sampling()
