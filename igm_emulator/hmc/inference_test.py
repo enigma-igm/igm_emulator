@@ -153,7 +153,6 @@ class INFERENCE_TEST():
         true_theta = np.empty([self.n_inference, self.n_params])
         pbar = ProgressBar()
         if self.gaussian_bool:
-            rng = random.PRNGKey(42)
             for mock_idx in pbar(range(self.n_inference)):
 
                 closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
