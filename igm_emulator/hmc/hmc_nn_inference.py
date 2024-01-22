@@ -298,7 +298,7 @@ class NN_HMC_X:
         corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
 
-    def fit_plot(self,z_string,best_params,theta_samples,theta_true,model_corr,mock_corr,infer_model,covariance,save_bool=False,save_str=None):
+    def fit_plot(self,z_string,best_params,theta_samples,lnP,theta_true,model_corr,mock_corr,infer_model,covariance,save_bool=False,save_str=None):
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         y_error = np.sqrt(np.diag(covariance))
