@@ -346,7 +346,7 @@ class NN_HMC_X:
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
         fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        fit_axis.errorbar(self.vbins, flux,
+        fit_axis.errorbar(self.vbins, model_corr,
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=1, capsize=0,
                           label='Mock Data')
@@ -368,11 +368,11 @@ class NN_HMC_X:
         fit_axis.text(
             1510, 0.026,
             tabulate([[r' $R_2$',
-                       np.round(r2_score(flux, max_P_model), decimals=4)],
+                       np.round(r2_score(model_corr, max_P_model), decimals=4)],
                       ['MSE',
-                       np.format_float_scientific(mean_squared_error(flux, max_P_model), precision=3)],
+                       np.format_float_scientific(mean_squared_error(model_corr, max_P_model), precision=3)],
                       ['Distance',
-                       np.format_float_scientific(minkowski(flux, max_P_model), precision=3)]],
+                       np.format_float_scientific(minkowski(model_corr, max_P_model), precision=3)]],
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 10},
         )
