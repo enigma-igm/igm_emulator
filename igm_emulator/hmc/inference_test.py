@@ -149,21 +149,24 @@ class INFERENCE_TEST():
 
         # get n_inference mock correlation functions
         mock_corr = np.empty([self.n_inference, len(self.v_bins)])
+        model_corr = np.empty([self.n_inference, len(self.v_bins)])
         mock_covar = np.empty([self.n_inference, len(self.v_bins), len(self.v_bins)])
         true_theta = np.empty([self.n_inference, self.n_params])
         pbar = ProgressBar()
-        if self.gaussian_bool:
-            for mock_idx in pbar(range(self.n_inference)):
 
-                closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
-                closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
-                closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta_sampled[mock_idx, 0]))
+        for mock_idx in pbar(range(self.n_inference)):
+
+            closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
+            closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
+            closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta_sampled[mock_idx, 0]))
+            model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
+            model_dict = dill.load(open(self.in_path + model_name, 'rb'))
+            model_corr[mock_idx, :] = model_dict['mean_data']
+            cov = model_dict['covariance']
+            if self.gaussian_bool:
                 if self.ngp_bool:
                     true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
-                    model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
-                    model_dict = dill.load(open(self.in_path + model_name, 'rb'))
-                    mean = model_dict['mean_data']
-                    cov = model_dict['covariance']
+                    mean = model_corr[mock_idx, :]
                     if self.emu_test_bool:
                         mean = emu.nn_emulator(self.best_params, true_theta[mock_idx, :])
                 elif self.ngp_bool==False and self.emu_test_bool==True:
@@ -179,34 +182,30 @@ class INFERENCE_TEST():
                 mock_corr[mock_idx, :] = random.multivariate_normal(init_rng, mean, cov)
                 mock_covar[mock_idx, :, :] = cov
 
-        else:
-            for mock_idx in pbar(range(self.n_inference)):
-                closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
-                closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
-                closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta_sampled[mock_idx, 0]))
+            else:
                 if self.ngp_bool:
-                    true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx],
-                                               self.gammas[closest_gamma_idx]]
+                    true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
                 else:
                     true_theta[mock_idx, :] = true_theta_sampled[mock_idx,:]
 
                 mock_name = f'mocks_R_{int(self.R_value)}_nf_{self.n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}.p'
                 mocks = dill.load(open(self.in_path + mock_name, 'rb'))
-                model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
-                model_dict = dill.load(open(self.in_path + model_name, 'rb'))
-                cov = model_dict['covariance']
+                #split rng!
                 rng, init_rng = random.split(rng)
+
                 mock_corr[mock_idx, :] = random.choice(key=init_rng, a=mocks, shape=(1,), replace=False)
                 mock_covar[mock_idx, :, :] = cov
 
         # save get n_inference sampled parameters and mock correlation functions
-        dill.dump(mock_corr, open(self.out_path + f'{self.note}_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(mock_corr, open(self.out_path + f'{self.note}_mock_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(model_corr, open(self.out_path + f'{self.note}_model_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
         dill.dump(true_theta, open(self.out_path + f'{self.note}_theta_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
         dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
         dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
 
         self.mock_corr = mock_corr
         self.mock_covar = mock_covar
+        self.model_corr = model_corr
         self.true_theta = true_theta
         self.true_theta_sampled = true_theta_sampled
     def inference_test_run(self):
@@ -352,11 +351,14 @@ class INFERENCE_TEST():
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+                fit_fig =  hmc_inf.fit_plot(z_string='z54',best_params=self.best_params,theta_samples=theta_samples,theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],infer_model= emu.nn_emulator(self.best_params, infer_theta[mock_idx, :]),covariance=covars_mock)
                 if self.true_log_prob_on_prior:
                     corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
+                    fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
                 else:
                     corner_fig.savefig(
                         out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_ngp.png')
+                    fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_ngp.png')
 
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob

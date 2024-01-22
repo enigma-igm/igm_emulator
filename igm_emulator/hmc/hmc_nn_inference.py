@@ -238,21 +238,6 @@ class NN_HMC_X:
         return x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time
 
-    '''
-    def plot_HMC(self,x_samples,theta_samples,theta,note,zstr):
-        var_label = ['fobs', 'T0s', 'gammas']
-        out_prefix = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{zstr}/'
-        walkerfile = out_prefix + '_walkers_' + note + '.pdf'
-        cornerfile = out_prefix + '_corner_' + note + '.pdf'
-        x_cornerfile = out_prefix + '_x-corner_' + '.pdf'
-        specfile = out_prefix + '_spec_' + '.pdf'
-        walker_plot(np.swapaxes(x_samples, 0, 1), var_label,
-                    truths= self.theta_to_x(theta),
-                    walkerfile=walkerfile, linewidth=1.0) #in dimensiless space
-        corner_plot(theta_samples, var_label,
-                    theta_true=jnp.asarray(theta),
-                    cornerfile=cornerfile)
-    '''
     def save_HMC(self,zstr,note,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time):
         # Save the results
@@ -312,3 +297,88 @@ class NN_HMC_X:
         corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
+
+    def fit_plot(self,z_string,best_params,theta_samples,theta_true,model_corr,infer_model,covariance,save_bool=False,save_str=None):
+        f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
+                                     zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
+        y_error = np.sqrt(np.diag(covariance))
+
+        plt_params = {'legend.fontsize': 7,
+                      'legend.frameon': False,
+                      'axes.labelsize': 12,
+                      'axes.titlesize': 12,
+                      'figure.titlesize': 12,
+                      'xtick.labelsize': 12,
+                      'ytick.labelsize': 12,
+                      'lines.linewidth': .7,
+                      'lines.markersize': 2.3,
+                      'lines.markeredgewidth': .9,
+                      'errorbar.capsize': 2,
+                      'font.family': 'serif',
+                      'xtick.minor.visible': True,
+                      }
+        x_size = 5
+        dpi_value = 200
+        plt.rcParams.update(plt_params)
+        fit_fig = plt.figure(figsize=(x_size * 2., x_size * .65), constrained_layout=True,
+                             dpi=dpi_value)
+        grid = fit_fig.add_gridspec(nrows=1, ncols=1)
+        fit_axis = fit_fig.add_subplot(grid[0])
+        inds = np.random.randint(len(theta_samples), size=100)
+        for idx, ind in enumerate(inds):
+            sample = theta_samples[ind]
+            model_plot = nn_emulator(best_params, sample)
+            if idx == 0:
+                fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
+            else:
+                fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
+        max_P = max(lnP)
+        max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
+        print(f'max_P:{theta_samples[max_P_idx, :][0]}')
+        print(f'inferred:{[f_mcmc[0], t_mcmc[0], g_mcmc[0]]}')
+        max_P_model = nn_emulator(best_params, theta_samples[max_P_idx, :][0])
+        fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=5, lw=1,
+                      path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+        fit_axis.plot(self.vbins, model_corr, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
+                      path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
+        fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=3, lw=1,
+                      path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+        fit_axis.errorbar(self.vbins, flux,
+                          yerr=y_error,
+                          color='k', marker='.', linestyle=' ', zorder=1, capsize=0,
+                          label='Mock Data')
+
+        fit_axis.text(
+            500, 0.0248,
+            'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
+            {'color': 'lightgreen', 'fontsize': 10},
+        )
+
+        fit_axis.text(
+            1000, 0.024,
+            'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
+            f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
+            f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
+            {'color': 'r', 'fontsize': 10},
+        )
+
+        fit_axis.text(
+            1510, 0.026,
+            tabulate([[r' $R_2$',
+                       np.round(r2_score(flux, max_P_model), decimals=4)],
+                      ['MSE',
+                       np.format_float_scientific(mean_squared_error(flux, max_P_model), precision=3)],
+                      ['Distance',
+                       np.format_float_scientific(minkowski(flux, max_P_model), precision=3)]],
+                     headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
+            {'color': 'm', 'fontsize': 10},
+        )
+        fit_axis.set_xlim(vbins[0], vbins[-1])
+        fit_axis.set_xlabel("Velocity (km/s)")
+        fit_axis.set_ylabel("Correlation Function")
+        fit_axis.legend()
+        if save_bool:
+            fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emulator_fit_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            print(f"fitting plot saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
+        else:
+            return fit_fig
