@@ -337,8 +337,6 @@ class NN_HMC_X:
                 fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
         max_P = max(lnP)
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
-        print(f'max_P:{theta_samples[max_P_idx, :][0]}')
-        print(f'inferred:{[f_mcmc[0], t_mcmc[0], g_mcmc[0]]}')
         max_P_model = nn_emulator(best_params, theta_samples[max_P_idx, :][0])
         fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=5, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
@@ -350,17 +348,17 @@ class NN_HMC_X:
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.errorbar(self.vbins, model_corr,
                           yerr=y_error,
-                          color='k', marker='.', linestyle=' ', zorder=1, capsize=0,
-                          label='Mock Data')
+                          color='k', marker='.', linestyle=' ', zorder=1, capsize=10,
+                          label='Covariance')
 
         fit_axis.text(
-            500, 0.0248,
+            500, 0.02,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
             {'color': 'lightgreen', 'fontsize': 10},
         )
 
         fit_axis.text(
-            1000, 0.024,
+            1000, 0.02,
             'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
             f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
             f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
@@ -368,7 +366,7 @@ class NN_HMC_X:
         )
 
         fit_axis.text(
-            1510, 0.026,
+            1510, 0.02,
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, max_P_model), decimals=4)],
                       ['MSE',
