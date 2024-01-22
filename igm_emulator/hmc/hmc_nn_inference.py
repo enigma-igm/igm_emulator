@@ -19,9 +19,10 @@ from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta, bo
 import corner
 import matplotlib
 import matplotlib.pyplot as plt
-#from utils import walker_plot, corner_plot
+from matplotlib.ticker import MaxNLocator
+import matplotlib.patheffects as pe
+from tabulate import tabulate
 import struct
-print(struct.calcsize("P") * 8)
 
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
