@@ -7,6 +7,8 @@ import h5py
 import jax.random as random
 from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
+from sklearn.metrics import mean_squared_error,r2_score
+from scipy.spatial.distance import minkowski
 from functools import partial
 from numpyro.infer import MCMC, NUTS
 import arviz as az
