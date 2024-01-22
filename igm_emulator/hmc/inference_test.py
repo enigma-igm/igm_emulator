@@ -197,11 +197,11 @@ class INFERENCE_TEST():
                 mock_covar[mock_idx, :, :] = cov
 
         # save get n_inference sampled parameters and mock correlation functions
-        dill.dump(mock_corr, open(self.out_path + f'{self.note}_mock_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(model_corr, open(self.out_path + f'{self.note}_model_corr_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(true_theta, open(self.out_path + f'{self.note}_theta_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
-        dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference{self.n_inference}_{self.var_tag}.p', 'wb'))
+        dill.dump(mock_corr, open(self.out_path + f'{self.note}_mock_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
+        dill.dump(model_corr, open(self.out_path + f'{self.note}_model_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
+        dill.dump(true_theta, open(self.out_path + f'{self.note}_theta_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
+        dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
+        dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
 
         self.mock_corr = mock_corr
         self.mock_covar = mock_covar
