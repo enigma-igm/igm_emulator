@@ -378,11 +378,14 @@ class NN_HMC_X:
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 10},
         )
-        fit_axis.set_xlim(vbins[0], vbins[-1])
+        fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
         fit_axis.legend()
         if save_bool:
+            closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
+            closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
+            closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
             fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emulator_fit_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
             print(f"fitting plot saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
         else:
