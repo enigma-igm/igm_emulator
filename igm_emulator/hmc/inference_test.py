@@ -312,7 +312,7 @@ class INFERENCE_TEST():
         true_theta_sampled = self.true_theta_sampled
         mocks = self.mock_corr
         covars = self.mock_covar #covariance matrix for each mock in emulator using ngp
-
+        infer_model = np.empty([self.n_inference, len(self.v_bins)])
         '''
         Run inference test for each mock
         '''
@@ -342,6 +342,8 @@ class INFERENCE_TEST():
                                          zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
             infer_theta[mock_idx, :] = [f_mcmc[0], t_mcmc[0], g_mcmc[0]]
+            infer_model[mock_idx, :] = hmc_inf.get_model_nearest_fine(infer_theta[mock_idx, :])
+
             samples[mock_idx, :, :] = theta_samples
             log_prob[mock_idx, :] = lnP
             true_log_prob[mock_idx] = -1 * hmc_inf.potential_fun(x_true, flux, covars_mock)
@@ -368,10 +370,7 @@ class INFERENCE_TEST():
         self.samples_theta = samples
         self.out_path = out_path
         self.out_path_plot = out_path_plot
-        if self.model_emulator_bool:
-            self.infer_model = emu.nn_emulator(self.best_params, self.infer_theta)
-        else:
-            self.infer_model = None hmc_inf.get_model_nearest_fine(self.infer_theta)
+        self.infer_model = infer_model
         '''
         plot HMC inference test results
         '''
