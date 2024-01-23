@@ -94,7 +94,6 @@ def regular_grid(plot_bool = False):
         final_samples[sample_idx, 0] = fobs[fobs_idx]
         final_samples[sample_idx, 1] = T0s[T0_idx]
         final_samples[sample_idx, 2] = gammas[gamma_idx]
-        IPython.embed()
 
         # get the corresponding model autocorrelation for each parameter location
         # **smaller bins**
