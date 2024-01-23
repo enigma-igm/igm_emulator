@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
-    hmc_nn = NN_HMC_X(v_bins, best_params, t_0s0s, gammas, fobs, dense_mass=True,
+    hmc_nn = NN_HMC_X(v_bins, best_params, t_0s, gammas, fobs, dense_mass=True,
                         max_tree_depth= 10,
                         num_warmup=1000,
                         num_samples=1000,
