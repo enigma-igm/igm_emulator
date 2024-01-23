@@ -9,6 +9,7 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 import h5py
 import IPython
+import jax
 
 # redshift to get models for -- can make this an input to this script if desired
 num = 'bin59'
