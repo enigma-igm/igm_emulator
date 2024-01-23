@@ -167,7 +167,7 @@ if __name__ == '__main__':
 
     best_params = dill.load(
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
-    if self.model_emulator_bool == False:
+
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     hmc_nn = NN_HMC_X(v_bins, best_params, t_0s0s, gammas, fobs, dense_mass=True,
