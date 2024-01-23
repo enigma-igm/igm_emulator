@@ -243,7 +243,7 @@ def random_split(seed, plot_bool = False):
     if plot_bool:
         H = X_train
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv , c=b, alpha=0.5, linewidth=0.5)
+        ax.scatter(xv, yv, zv)
         ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5)
         A = X_vali
         ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
