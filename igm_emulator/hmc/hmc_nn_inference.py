@@ -26,6 +26,21 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 import struct
 
+plt_params = {'legend.fontsize': 7,
+              'legend.frameon': False,
+              'axes.labelsize': 8,
+              'axes.titlesize': 8,
+              'figure.titlesize': 8,
+              'xtick.labelsize': 8,
+              'ytick.labelsize': 8,
+              'lines.linewidth': 1,
+              'lines.markersize': 2,
+              'errorbar.capsize': 3,
+              'font.family': 'serif',
+              # 'text.usetex': True,
+              'xtick.minor.visible': True,
+              }
+plt.rcParams.update(plt_params)
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, dense_mass=True,
@@ -292,15 +307,17 @@ class NN_HMC_X:
         var_label = ['fobs', 'T0s', 'gammas']
 
         corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
-                                         truths=np.array(theta_true), truth_color='red', show_titles=True,
-                                         title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
-                                         data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+                                   truths=np.array(theta_true), truth_color='red', show_titles=True,
+                                   quantiles=(0.16, 0.5, 0.84), title_kwargs={"fontsize": 15},
+                                   label_kwargs={'fontsize': 15},
+                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
 
         x_true = self.theta_to_x(theta_true)
         corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
                                      truths=np.array(x_true), truth_color='red', show_titles=True,
-                                     title_kwargs={"fontsize": 9}, label_kwargs={'fontsize': 20},
+                                     quantiles=(0.16, 0.5, 0.84), title_kwargs={"fontsize": 15},
+                                     label_kwargs={'fontsize': 15},
                                      data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
 
@@ -332,23 +349,9 @@ class NN_HMC_X:
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         y_error = np.sqrt(np.diag(covariance))
 
-        plt_params = {'legend.fontsize': 7,
-                      'legend.frameon': False,
-                      'axes.labelsize': 12,
-                      'axes.titlesize': 12,
-                      'figure.titlesize': 12,
-                      'xtick.labelsize': 12,
-                      'ytick.labelsize': 12,
-                      'lines.linewidth': .7,
-                      'lines.markersize': 2.3,
-                      'lines.markeredgewidth': .9,
-                      'errorbar.capsize': 2,
-                      'font.family': 'serif',
-                      'xtick.minor.visible': True,
-                      }
+
         x_size = 5
         dpi_value = 200
-        plt.rcParams.update(plt_params)
         fit_fig = plt.figure(figsize=(x_size * 2., x_size * .65), constrained_layout=True,
                              dpi=dpi_value)
         grid = fit_fig.add_gridspec(nrows=1, ncols=1)
