@@ -62,7 +62,7 @@ all_data = np.array([xv.flatten(),yv.flatten(), zv.flatten()])
 all_data = all_data.T
 # all_data.shape = (1215, 3)
 
-def regular_grid(plot_bool = False):
+def regular_grid(seed = None, plot_bool = False):
 
     # Construct regular grid for training
     x = np.linspace(0,1,8)
@@ -182,12 +182,13 @@ def regular_grid(plot_bool = False):
         plt.savefig("params.png")
         plt.show()
 
-    return final_samples, models, testing_param, testing_corr, vali_param, vali_corr
+    return final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed
 
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr = regular_grid(plot_bool = False)
+# Different sampling methods
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool = False)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
-num = 'bin59'
+num = f'bin59_seed_{seed}'
 
 train_num = f'_training_{models.shape[0]}'
 dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),'wb'))
