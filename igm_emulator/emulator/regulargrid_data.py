@@ -189,7 +189,7 @@ def random_split(seed, plot_bool = False):
     -------
 
     '''
-    X_train, X_test_vali = train_test_split(all_data, train_size=100, random_state=seed)
+    X_train, X_test_vali = train_test_split(all_data, train_size=100, test_size=400, random_state=seed)
     X_test, X_vali = train_test_split(X_test_vali, train_size=0.2, random_state=seed)
     train_corr = []
     test_corr = []
@@ -243,7 +243,7 @@ def random_split(seed, plot_bool = False):
     if plot_bool:
         H = X_train
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv, c = 'b', alpha=0.5, linewidth=0.5, label='all data')
+        ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label='all data')
         ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
         A = X_vali
         ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g', cmap='spring', linewidth=0.2, label='validation data')
