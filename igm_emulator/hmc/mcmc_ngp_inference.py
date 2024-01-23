@@ -75,21 +75,6 @@ class HMC_NGP(NN_HMC_X):
 
         return model
 
-    @partial(jit, static_argnums=(0,))
-    def log_likelihood(self, x, corr, covar):
-        '''
-        Args:
-            x: dimensionless parameters
-            flux: observed flux
-
-        Returns:
-            log_likelihood: log likelihood to maximize on
-        '''
-        theta = self.x_to_theta(x)
-        model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
-
-        log_like = multivariate_normal.logpdf(x=model, mean=corr, cov=covar)
-        return log_like
 
 if __name__ == '__main__':
     zstr = 'z54'
@@ -176,6 +161,9 @@ if __name__ == '__main__':
     f_idx = 7  # 0-8
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
+    model_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
+    model_dict = dill.load(open(in_path_molly + model_name, 'rb'))
+    model = model_dict['mean_data']
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
     #embed()
 
@@ -186,3 +174,4 @@ if __name__ == '__main__':
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = hmc_ngp.mcmc_one(key, x_true, flux, cov, report=True)
     hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str='ngp_hmc_test')
+    hmc_ngp.fit_plot(zstr,theta_samples,lnP,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')

@@ -65,19 +65,28 @@ class NN_HMC_X:
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
 
     @partial(jit, static_argnums=(0,))
+    def get_model_nearest_fine(
+            self, theta
+    ):
+        model = nn_emulator(self.best_params, theta)
+
+        return model
+
+    @partial(jit, static_argnums=(0,))
     def log_likelihood(self, x, corr, covar):
         '''
         Args:
             x: dimensionless parameters
-            flux: observed flux
+            corr: observed flux
+            covar: model-dependent covariance matrix
 
         Returns:
             log_likelihood: log likelihood to maximize on
         '''
         theta = self.x_to_theta(x)
-        model = nn_emulator(self.best_params,theta) #theta is in physical dimension for this function
+        model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
 
-        nbins = len(self.vbins)
+
         log_like = logpdf(x=model, mean=corr, cov=covar)
         #print(f'Log_likelihood={log_like}')
         return log_like
@@ -297,11 +306,30 @@ class NN_HMC_X:
                                      data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
 
-        corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
-        corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
-        print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
+        corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
 
-    def fit_plot(self,z_string,best_params,theta_samples,lnP,theta_true,model_corr,mock_corr,infer_model,covariance,save_bool=False,save_str=None):
+    def fit_plot(self,z_string,theta_samples,lnP,theta_true,model_corr,mock_corr,covariance,save_bool=False,save_str=None):
+        '''
+        Plot the fit for the HMC results
+        Parameters
+        ----------
+        z_string: str of redshift ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+        theta_samples: list of samples from HMC in theta space, shape (nwalkers * nsteps, ndim)
+        lnP: list of log likelihood from HMC, shape (nwalkers * nsteps,)
+        theta_true: list of true values of theta [fob, T0, gamma], shape (ndim,)
+        model_corr: true model correlation function ['mean_data']
+        mock_corr: true mock correlation function for inference
+        covariance: model-dependent covariant matrix
+        save_bool: True for save at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/
+        save_str: 'ngp_hmc_test' for NGP model; None for emulator
+
+        Returns
+        -------
+        fit_fig: fit plot
+
+        '''
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         y_error = np.sqrt(np.diag(covariance))
@@ -330,14 +358,15 @@ class NN_HMC_X:
         inds = np.random.randint(len(theta_samples), size=100)
         for idx, ind in enumerate(inds):
             sample = theta_samples[ind]
-            model_plot = nn_emulator(best_params, sample)
+            model_plot = self.get_model_nearest_fine(sample)
             if idx == 0:
                 fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
             else:
                 fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
         max_P = max(lnP)
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
-        max_P_model = nn_emulator(best_params, theta_samples[max_P_idx, :][0])
+        max_P_model = self.get_model_nearest_fine(theta_samples[max_P_idx, :][0])
+        infer_model = self.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
         fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=5, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.plot(self.vbins, model_corr, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
@@ -384,7 +413,7 @@ class NN_HMC_X:
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
-            fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/emulator_fit_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
-            print(f"fitting plot saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/")
+            fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/emulator_fit_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            print(f"fitting plot saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
         else:
             return fit_fig
