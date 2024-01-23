@@ -213,7 +213,7 @@ class INFERENCE_TEST():
         Load model for inference
         '''
         if self.model_emulator_bool== True:
-            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, self.like_dict, dense_mass=True,
+            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, dense_mass=True,
                         max_tree_depth= 10,
                         num_warmup=1000,
                         num_samples=1000,

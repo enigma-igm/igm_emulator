@@ -20,6 +20,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from IPython import embed
 from hmc_nn_inference import NN_HMC_X
+from igm_emulator.emulator.emulator_apply import trainer
 class HMC_NGP(NN_HMC_X):
     def __init__(self, vbins, T0s, gammas, fobs, fine_models, fine_covariances, fine_log_dets,
                 dense_mass=True,
@@ -32,7 +33,6 @@ class HMC_NGP(NN_HMC_X):
                          T0s=T0s,
                          gammas=gammas,
                          fobs=fobs,
-                         like_dict=None,
                          dense_mass=dense_mass,
                          max_tree_depth= max_tree_depth,
                          num_warmup=num_warmup,
@@ -154,8 +154,6 @@ if __name__ == '__main__':
     new_covariances = jnp.array(new_covariances_np)
     new_log_dets = jnp.array(new_log_dets_np)
 
-    key = random.PRNGKey(642)
-    key, subkey = random.split(key)
     T0_idx = 11  # 0-14
     g_idx = 4  # 0-8
     f_idx = 7  # 0-8
@@ -167,11 +165,35 @@ if __name__ == '__main__':
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
     #embed()
 
+    best_params = dill.load(
+        open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
+    if self.model_emulator_bool == False:
+
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
+    hmc_nn = NN_HMC_X(v_bins, best_params, t_0s0s, gammas, fobs, dense_mass=True,
+                        max_tree_depth= 10,
+                        num_warmup=1000,
+                        num_samples=1000,
+                        num_chains=4)
     flux = mocks[0,:]
     x_true = hmc_ngp.theta_to_x(theta_true)
     cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
+
+    key = random.PRNGKey(642)
+    key, subkey = random.split(key)
+    '''
+    Emulator HMC
+    '''
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-        hmc_num_steps, hmc_tree_depth, total_time = hmc_ngp.mcmc_one(key, x_true, flux, cov, report=True)
-    hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str='ngp_hmc_test')
-    hmc_ngp.fit_plot(zstr,theta_samples,lnP,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')
+        hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_true, flux, cov, report=True)
+    hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
+    hmc_ngp.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
+                     save_bool=True, save_str=None)
+    '''
+    NGP HMC 
+    '''
+    key, subkey = random.split(key)
+    x_samples_ngp, theta_samples_ngp, lnP_ngp, neff_ngp, neff_mean_ngp, sec_per_neff_ngp, ms_per_step_ngp, r_hat_ngp, r_hat_mean_ngp, \
+        hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_true, flux, cov, report=True)
+    hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
+    hmc_ngp.fit_plot(zstr,theta_samples_ngp,lnP_ngp,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')

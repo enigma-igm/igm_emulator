@@ -28,7 +28,7 @@ import struct
 
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
-    def __init__(self, vbins, best_params, T0s, gammas, fobs, like_dict,dense_mass=True,
+    def __init__(self, vbins, best_params, T0s, gammas, fobs, dense_mass=True,
                  max_tree_depth= 10, #(8,10),
                  num_warmup=1000,
                  num_samples=1000,
@@ -40,7 +40,6 @@ class NN_HMC_X:
             T0s: temperature array
             gammas: gamma array
             fobs: frequency array
-            like_dict: dictionary containing the covariance matrix, log determinant, and inverse covariance matrix
             dense_mass: whether to use dense mass matrix
             max_tree_depth: maximum tree depth
             num_warmup: number of warmup steps
@@ -52,7 +51,6 @@ class NN_HMC_X:
         '''
         self.vbins = vbins
         self.best_params = best_params
-        self.like_dict = like_dict
         self.max_tree_depth = max_tree_depth
         self.num_chains = num_chains
         self.num_warmup = num_warmup
@@ -413,7 +411,7 @@ class NN_HMC_X:
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
-            fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/emulator_fit_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            fit_fig.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/fit_plot_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
             print(f"fitting plot saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
         else:
             return fit_fig
