@@ -149,14 +149,6 @@ def regular_grid(plot_bool = False):
     dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),'wb'))
     dill.dump(models,open(os.path.join(dir, f'{z_string}_model{train_num}_{num}.p'),'wb'))
 
-    H = final_samples
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    ax.scatter(H[:, 0], H[:, 1], H[:, 2], c =H[:, 1], cmap='viridis', linewidth=0.5)
-    ax.set_xlabel(r'$<F>$')
-    ax.set_ylabel(r'$T_0$')
-    ax.set_zlabel(r'$\gamma$')
-    plt.show()
 
     # Test data
     test_param = []
@@ -188,14 +180,6 @@ def regular_grid(plot_bool = False):
     print(test_corr.shape)
     print(test_param.shape)
 
-    A = test_param
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
-    ax.set_xlabel(r'$<F>$')
-    ax.set_ylabel(r'$T_0$')
-    ax.set_zlabel(r'$\gamma$')
-    plt.show()
 
     n_testing = round(test_corr.shape[0] * 0.2)
     n_validation = round(test_corr.shape[0] * 0.8)
@@ -210,15 +194,22 @@ def regular_grid(plot_bool = False):
     print(vali_param.shape)
     print(testing_param.shape)
 
-    T = testing_param
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
-    ax.set_xlabel(r'$<F>$')
-    ax.set_ylabel(r'$T_0$')
-    ax.set_zlabel(r'$\gamma$')
-    plt.savefig("params.png")
-    plt.show()
+    if plot_bool:
+        H = final_samples
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5)
+        A = test_param
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
+        T = testing_param
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
+        ax.set_xlabel(r'$<F>$')
+        ax.set_ylabel(r'$T_0$')
+        ax.set_zlabel(r'$\gamma$')
+        plt.savefig("params.png")
+        plt.show()
 
     test_num=f'_test_{testing_param.shape[0]}'
     dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}_{num}.p'),'wb'))
@@ -227,3 +218,5 @@ def regular_grid(plot_bool = False):
     vali_num=f'_vali_{vali_param.shape[0]}'
     dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}_{num}.p'),'wb'))
     dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}_{num}.p'),'wb'))
+
+regular_grid(plot_bool = False)

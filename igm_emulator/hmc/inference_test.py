@@ -435,7 +435,7 @@ class INFERENCE_TEST():
 '''
 
 #hmc_infer = INFERENCE_TEST(5.4,False,True,True,False)
-hmc_infer = INFERENCE_TEST(5.4,False,False,True,False,key_sample=222,key_hmc=42)
+hmc_infer = INFERENCE_TEST(5.4,False,False,True,False,key_sample=42,key_hmc=66)
 
 
 hmc_infer.mocks_sampling()
