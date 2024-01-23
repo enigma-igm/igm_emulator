@@ -31,7 +31,7 @@ z_string = z_strings[z_idx]
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
 
 if small_bin_bool == True:
-    train_num = '_training_768_bin59'
+    train_num = '_train_768_bin59'
     test_num = '_test_89_bin59'
     vali_num = '_vali_358_bin59'
     n_path = 20  # 17->20
@@ -40,7 +40,7 @@ if small_bin_bool == True:
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
     out_tag = f'{z_string}{train_num}'
 else:
-    train_num = '_training_768'
+    train_num = '_train_768'
     test_num = '_test_89'
     vali_num = '_vali_358'
     n_path = 17
