@@ -191,7 +191,7 @@ dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 num = 'bin59'
 
 train_num = f'_training_{models.shape[0]}'
-dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),
+dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),wb'))
 dill.dump(models,open(os.path.join(dir, f'{z_string}_model{train_num}_{num}.p'),'wb'))
 
 test_num=f'_test_{testing_param.shape[0]}'
