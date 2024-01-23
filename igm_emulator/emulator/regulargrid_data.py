@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import tensorflow as tf
 import h5py
+import IPython
 
 # redshift to get models for -- can make this an input to this script if desired
 num = 'bin59'
@@ -90,6 +91,7 @@ def regular_grid(plot_bool = False):
     n_samples = x.shape[0]*y.shape[0]*z.shape[0]
     print(f'n_sample: {n_samples}')
     final_samples = np.empty([n_samples, 3])
+    final_samples_ = np.empty([n_samples, 3])
     xg, yg, zg = np.meshgrid(x, y, z)
 
     if plot_bool:
@@ -105,8 +107,9 @@ def regular_grid(plot_bool = False):
     sample_params = sample_params.T
     print(f'sample: {sample_params.shape}')
 
-    for sample_idx, sample in enumerate(sample_params):
+    for sample_idx in np.arrange(n_samples):
 
+        sample = sample_params[sample_idx]
         # determine the closest model to each lhs sample
         fobs_idx = np.argmin(np.abs(fobs - sample[0]))
         T0_idx = np.argmin(np.abs(T0s - sample[1]))
@@ -116,6 +119,11 @@ def regular_grid(plot_bool = False):
         final_samples[sample_idx, 0] = fobs[fobs_idx]
         final_samples[sample_idx, 1] = T0s[T0_idx]
         final_samples[sample_idx, 2] = gammas[gamma_idx]
+
+        final_samples_[sample_idx,:] = transform_params_on_grid([xg[sample_idx],yg[sample_idx],zg[sample_idx]], [fobs, T0s, gammas])
+
+        print(final_samples_[sample_idx,:]==final_samples[sample_idx, :])
+        IPython.embed()
 
         # get the corresponding model autocorrelation for each parameter location
         #smaller bins
