@@ -159,20 +159,20 @@ def regular_grid(seed = None, plot_bool = False):
     vali_param, vali_corr = test_param[~test_selection], test_corr[~test_selection] #validation dataset = (358, )
     testing_param, testing_corr = test_param[test_selection], test_corr[test_selection] #testing dataset = (89, )
 
-
     if plot_bool:
         H = final_samples
-        fig = plt.figure()
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv , c=b, alpha=0.5, linewidth=0.5)
-        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5)
+        ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label='all data')
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
         A = vali_param
-        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g',  linewidth=0.2, label='validation data')
         T = testing_param
-        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label='testing data')
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
+        ax.legend()
+        ax.grid(True)
         plt.savefig("params_sampling_regular_grid.png")
         plt.show()
 
@@ -246,9 +246,9 @@ def random_split(seed, plot_bool = False):
         ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label='all data')
         ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
         A = X_vali
-        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g', cmap='spring', linewidth=0.2, label='validation data')
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g',  linewidth=0.2, label='validation data')
         T = X_test
-        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='m', cmap='hot', linewidth=0.2, label='testing data')
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label='testing data')
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
@@ -262,7 +262,7 @@ def random_split(seed, plot_bool = False):
 
 
 # Different sampling methods
-#final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid()
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
 final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(42,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
