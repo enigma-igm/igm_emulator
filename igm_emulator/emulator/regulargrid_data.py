@@ -243,12 +243,12 @@ def random_split(seed, plot_bool = False):
     if plot_bool:
         H = X_train
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv, c = 'b', alpha=0.5, linewidth=0.5
-        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.5,label='training data
+        ax.scatter(xv, yv, zv, c = 'b', alpha=0.5, linewidth=0.5, label='all data')
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
         A = X_vali
-        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g', cmap='spring', linewidth=0.5, label='validation data'
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g', cmap='spring', linewidth=0.2, label='validation data')
         T = X_test
-        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='m', cmap='hot', linewidth=0.5, label='testing data')
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='m', cmap='hot', linewidth=0.2, label='testing data')
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
