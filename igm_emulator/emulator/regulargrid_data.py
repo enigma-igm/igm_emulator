@@ -164,22 +164,21 @@ def regular_grid(seed = None, plot_bool = False):
         H = final_samples
         fig = plt.figure()
         ax = plt.axes(projection='3d')
+        ax.scatter(xv, yv, zv , c=b, alpha=0.5, linewidth=0.5)
         ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5)
-        A = test_param
-        fig = plt.figure()
-        ax = plt.axes(projection='3d')
+        A = vali_param
         ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
         T = testing_param
         ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
-        plt.savefig("params.png")
+        plt.savefig("params_sampling_regular_grid.png")
         plt.show()
 
     return final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed
 
-def random_split(seed):
+def random_split(seed, plot_bool = False):
     '''
 
     Parameters
@@ -241,13 +240,28 @@ def random_split(seed):
         vali_corr.append(like_dict['mean_data'])
     vali_corr = np.asarray(vali_corr)
 
+    if plot_bool:
+        H = X_train
+        ax = plt.axes(projection='3d')
+        ax.scatter(xv, yv, zv , c=b, alpha=0.5, linewidth=0.5)
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c=H[:, 1], cmap='viridis', linewidth=0.5)
+        A = X_vali
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c =A[:, 1], cmap='spring', linewidth=0.5)
+        T = X_test
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c =T[:, 1], cmap='hot', linewidth=0.5)
+        ax.set_xlabel(r'$<F>$')
+        ax.set_ylabel(r'$T_0$')
+        ax.set_zlabel(r'$\gamma$')
+        plt.savefig("params_sampling_random_split.png")
+        plt.show()
+
     return X_train, train_corr, X_test, test_corr, X_vali, vali_corr, seed
 
 
 
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid()
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(42)
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(42,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 if small_bin_bool:
