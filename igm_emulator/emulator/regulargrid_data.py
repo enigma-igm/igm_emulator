@@ -55,24 +55,24 @@ print(f'T0s: {T0s}')
 print(f'gammas:{gammas}')
 
 
-def transform_params_on_grid(xs, x_ranges):
+def transform_params_on_grid(xs, x_range):
     """
     Convert the output of lhs (between 0 and 1 for each parameter) to our model grid
     Parameters
     ----------
-    xs: LHC results from 0 to 1, shape (n_params,)
-    x_ranges: list of parameter ranges, shape (n_params, n_range)
+    xs: LHC results from 0 to 1, shape (n_samples,)
+    x_ranges: list of parameter ranges, shape (n_range,)
 
     Returns
     -------
-    x_out: transformed parameters on grid, shape (n_params,)
+    x_out: transformed parameters on grid, shape (n_samples,)
     """
     def _transform_params_on_grid(x, x_range):
         x_trans = param_transform(x, x_range[0], x_range[-1])
         x_idx = np.argmin(np.abs(x_range - x_trans.flatten()))
         return x_range[x_idx]
 
-    x_out = jax.vmap(_transform_params_on_grid, in_axes=(0, 0), out_axes=0)(jnp.atleast_2d(xs), jnp.atleast_2d(x_ranges))
+    x_out = jax.vmap(_transform_params_on_grid, in_axes=(0, None), out_axes=0)(jnp.atleast_2d(xs), x_range)
 
     return x_out.squeeze()
 def regular_grid(plot_bool = False):
@@ -109,6 +109,8 @@ def regular_grid(plot_bool = False):
     sample_params = sample_params.T
     print(f'sample: {sample_params.shape}')
 
+    final_samples_[:, 0] = transform_params_on_grid(xg,fobs)
+
     for sample_idx in np.arange(n_samples):
 
         sample = sample_params[sample_idx]
@@ -122,9 +124,8 @@ def regular_grid(plot_bool = False):
         final_samples[sample_idx, 1] = T0s[T0_idx]
         final_samples[sample_idx, 2] = gammas[gamma_idx]
 
-        final_samples_[sample_idx,:] = transform_params_on_grid([xg[sample_idx],yg[sample_idx],zg[sample_idx]], [fobs, T0s, gammas])
 
-        print(final_samples_[sample_idx,:]==final_samples[sample_idx, :])
+        print(final_samples_[sample_idx,0]==final_samples[sample_idx, 0])
         IPython.embed()
 
         # get the corresponding model autocorrelation for each parameter location
