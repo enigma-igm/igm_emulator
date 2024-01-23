@@ -164,7 +164,7 @@ if __name__ == '__main__':
     model = model_dict['mean_data']
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
     #embed()
-
+    in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     best_params = dill.load(
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
 
@@ -179,11 +179,11 @@ if __name__ == '__main__':
     x_true = hmc_ngp.theta_to_x(theta_true)
     cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
 
-    key = random.PRNGKey(642)
-    key, subkey = random.split(key)
     '''
     Emulator HMC
     '''
+    key = random.PRNGKey(642)
+    key, subkey = random.split(key)
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_true, flux, cov, report=True)
     hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
