@@ -13,7 +13,6 @@ import jax
 import jax.numpy as jnp
 
 # redshift to get models for -- can make this an input to this script if desired
-num = 'bin59'
 redshift = 5.4
 # get the appropriate string and pathlength for chosen redshift
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -54,34 +53,26 @@ print(f'fobs:{fobs}')
 print(f'T0s: {T0s}')
 print(f'gammas:{gammas}')
 
+# Construct all data
+xv, yv, zv = np.meshgrid(fobs, T0s, gammas)
+print(xv.flatten()[:15])
+print(yv.flatten()[:15])
+print(zv.flatten()[:15])
+all_data = np.array([xv.flatten(),yv.flatten(), zv.flatten()])
+all_data = all_data.T
+# all_data.shape = (1215, 3)
 
 def regular_grid(plot_bool = False):
 
-    # Construct all data
-    xv, yv, zv = np.meshgrid(fobs, T0s, gammas)
-    print(xv.flatten()[:15])
-    print(yv.flatten()[:15])
-    print(zv.flatten()[:15])
-    all_data = np.array([xv.flatten(),yv.flatten(), zv.flatten()])
-    all_data = all_data.T
-    print(all_data.shape)
-
-    # Construct regular grid for training + validation
+    # Construct regular grid for training
     x = np.linspace(0,1,8)
     y = np.linspace(0,1,12)
     z = np.linspace(0,1,8)
-    n_samples = x.shape[0]*y.shape[0]*z.shape[0]
-    print(f'n_sample: {n_samples}')
+    n_samples = x.shape[0]*y.shape[0]*z.shape[0] #n_sample = 768
     final_samples = np.empty([n_samples, 3])
-    final_samples_ = np.empty([n_samples, 3])
     xg, yg, zg = np.meshgrid(x, y, z)
 
-    if plot_bool:
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(xv, yv, zv)
-
-    # convert the output of lhs (between 0 and 1 for each parameter) to our model grid
+    # convert the output of grid (between 0 and 1 for each parameter) to our model grid
     xg_trans = param_transform(xg, fobs[0], fobs[-1])
     yg_trans = param_transform(yg, T0s[0], T0s[-1])
     zg_trans = param_transform(zg, gammas[0], gammas[-1])
@@ -106,10 +97,12 @@ def regular_grid(plot_bool = False):
         IPython.embed()
 
         # get the corresponding model autocorrelation for each parameter location
-        #smaller bins
+        # **smaller bins**
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_3.p'
-        #larger bins
+
+        # **larger bins**
         #like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{n_path}_set_bins_4.p'
+
         like_dict = dill.load(open(in_path + like_name, 'rb'))
         model_autocorrelation = like_dict['mean_data']
         if sample_idx == 0:
@@ -131,12 +124,6 @@ def regular_grid(plot_bool = False):
     final_samples = np.asarray(final_params)
     models = np.asarray(final_corr)
     print(final_samples.shape)
-
-    dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
-    train_num = f'_training_{models.shape[0]}'
-    dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),'wb'))
-    dill.dump(models,open(os.path.join(dir, f'{z_string}_model{train_num}_{num}.p'),'wb'))
-
 
     # Test data
     test_param = []
@@ -168,14 +155,11 @@ def regular_grid(plot_bool = False):
     print(test_corr.shape)
     print(test_param.shape)
 
-
     n_testing = round(test_corr.shape[0] * 0.2)
     n_validation = round(test_corr.shape[0] * 0.8)
-
     test_selection = tf.random.shuffle([True]*n_testing+[False]*n_validation)#, lambda:random.gauss(0.5,0.1))
 
     #test_selection =  1 >= test_selection
-
 
     vali_param, vali_corr = test_param[~test_selection], test_corr[~test_selection]
     testing_param, testing_corr = test_param[test_selection], test_corr[test_selection]
@@ -199,12 +183,21 @@ def regular_grid(plot_bool = False):
         plt.savefig("params.png")
         plt.show()
 
-    test_num=f'_test_{testing_param.shape[0]}'
-    dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}_{num}.p'),'wb'))
-    dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}_{num}.p'),'wb'))
+    return final_samples, models, testing_param, testing_corr, vali_param, vali_corr
 
-    vali_num=f'_vali_{vali_param.shape[0]}'
-    dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}_{num}.p'),'wb'))
-    dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}_{num}.p'),'wb'))
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr = regular_grid(plot_bool = False)
 
-regular_grid(plot_bool = False)
+dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
+num = 'bin59'
+
+train_num = f'_training_{models.shape[0]}'
+dill.dump(final_samples,open(os.path.join(dir, f'{z_string}_param{train_num}_{num}.p'),
+dill.dump(models,open(os.path.join(dir, f'{z_string}_model{train_num}_{num}.p'),'wb'))
+
+test_num=f'_test_{testing_param.shape[0]}'
+dill.dump(testing_param,open(os.path.join(dir, f'{z_string}_param{test_num}_{num}.p'),'wb'))
+dill.dump(testing_corr,open(os.path.join(dir, f'{z_string}_model{test_num}_{num}.p'),'wb'))
+
+vali_num=f'_vali_{vali_param.shape[0]}'
+dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}_{num}.p'),'wb'))
+dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}_{num}.p'),'wb'))
