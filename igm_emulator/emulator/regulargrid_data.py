@@ -107,7 +107,7 @@ def regular_grid(plot_bool = False):
     sample_params = sample_params.T
     print(f'sample: {sample_params.shape}')
 
-    for sample_idx in np.arrange(n_samples):
+    for sample_idx in np.arange(n_samples):
 
         sample = sample_params[sample_idx]
         # determine the closest model to each lhs sample
