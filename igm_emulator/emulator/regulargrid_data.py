@@ -189,7 +189,7 @@ def random_split(seed, plot_bool = False):
     -------
 
     '''
-    X_train, X_test_vali = train_test_split(all_data, train_size=100, test_size=400, random_state=seed)
+    X_train, X_test_vali = train_test_split(all_data, train_size=300, test_size=400, random_state=seed)
     X_test, X_vali = train_test_split(X_test_vali, train_size=0.2, random_state=seed)
     train_corr = []
     test_corr = []
@@ -262,8 +262,8 @@ def random_split(seed, plot_bool = False):
 
 
 # Different sampling methods
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(42,plot_bool=True)
+#final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(66,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 if small_bin_bool:
