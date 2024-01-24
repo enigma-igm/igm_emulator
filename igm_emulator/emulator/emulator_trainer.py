@@ -166,7 +166,9 @@ class TrainerModule:
             plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
             plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
             plt.legend()
-            print(f'***Result Plots saved {dir_exp}***')
+            plt.savefig(os.path.join(dir_exp, f'epoch_loss_{out_tag}_{var_tag}.png'))
+
+            #Fitting plots
             train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
@@ -174,6 +176,7 @@ class TrainerModule:
             plot_residue(self.RelativeError,self.out_tag, self.var_tag)
             #bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
+            print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
         return self.best_params, self.best_chi_loss
 

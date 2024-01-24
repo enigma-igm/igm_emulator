@@ -31,9 +31,9 @@ z_string = z_strings[z_idx]
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
 
 if small_bin_bool == True:
-    train_num = '_train_768_bin59'
-    test_num = '_test_89_bin59'
-    vali_num = '_vali_358_bin59'
+    train_num = '_train_100_bin59_seed_42'
+    test_num = '_test_80_bin59_seed_42'
+    vali_num = '_vali_320_bin59_seed_42'
     n_path = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
@@ -47,7 +47,7 @@ else:
     n_covar = 500000
     bin_label = '_set_bins_4'
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-    out_tag = f'{z_string}{train_num}_bin276'
+    out_tag = f'{z_string}{train_num}'
 
 #get the fixed covariance dictionary for likelihood
 T0_idx = 8  # 0-14
@@ -131,7 +131,7 @@ if __name__ == '__main__':
                                 pv=100,
                                 out_tag=out_tag)
 
-        best_vali_loss = trainer.train_loop(False)[1]
+        trainer.train_loop(True)
         trainer.save_training_info(redshift)
         del trainer
 
