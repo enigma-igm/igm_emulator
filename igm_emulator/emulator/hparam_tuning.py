@@ -31,9 +31,9 @@ z_string = z_strings[z_idx]
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
 
 if small_bin_bool == True:
-    train_num = '_train_100_bin59_seed_42'
-    test_num = '_test_80_bin59_seed_42'
-    vali_num = '_vali_320_bin59_seed_42'
+    train_num ='_train_300_bin59_seed_66' #'_train_100_bin59_seed_42'
+    test_num = '_test_80_bin59_seed_66'#'_test_80_bin59_seed_42'
+    vali_num = '_vali_320_bin59_seed_66'#'_vali_320_bin59_seed_42'
     n_path = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
