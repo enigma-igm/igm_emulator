@@ -70,6 +70,10 @@ def nn_emulator(best_params_function, theta_linda):
 Check if jvmap works
 '''
 if __name__ == '__main__':
+    trainer.train_loop(True)
+    trainer.save_training_info(redshift)
+    del trainer
+
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
     test_preds = nn_emulator(best_params, X_test_og)

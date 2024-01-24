@@ -166,7 +166,7 @@ class TrainerModule:
             plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
             plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
             plt.legend()
-            plt.savefig(os.path.join(dir_exp, f'epoch_loss_{out_tag}_{var_tag}.png'))
+            plt.savefig(os.path.join(dir_exp, f'epoch_loss_{self.out_tag}_{self.var_tag}.png'))
 
             #Fitting plots
             train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
