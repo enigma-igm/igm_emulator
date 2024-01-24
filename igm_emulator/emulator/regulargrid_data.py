@@ -162,12 +162,12 @@ def regular_grid(seed = None, plot_bool = False):
     if plot_bool:
         H = final_samples
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label='all data')
-        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
+        ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label=f'all data: {all_data.shape[0]}')
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label=f'training data: {H.shape[0]}')
         A = vali_param
-        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g',  linewidth=0.2, label='validation data')
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g',  linewidth=0.2, label=f'validation data: {A.shape[0]}')
         T = testing_param
-        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label='testing data')
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label=f'testing data: {T.shape[0]}')
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
@@ -243,12 +243,12 @@ def random_split(seed, plot_bool = False):
     if plot_bool:
         H = X_train
         ax = plt.axes(projection='3d')
-        ax.scatter(xv, yv, zv, c = 'b', alpha=0.1, linewidth=0.5, label='all data')
-        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label='training data')
+        ax.scatter(xv, yv, zv, c='b', alpha=0.1, linewidth=0.5, label=f'all data: {all_data.shape[0]}')
+        ax.scatter(H[:, 0], H[:, 1], H[:, 2], c='r', linewidth=0.2, label=f'training data: {H.shape[0]}')
         A = X_vali
-        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c ='g',  linewidth=0.2, label='validation data')
+        ax.scatter(A[:, 0], A[:, 1], A[:, 2], c='g', linewidth=0.2, label=f'validation data: {A.shape[0]}')
         T = X_test
-        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label='testing data')
+        ax.scatter(T[:, 0], T[:, 1], T[:, 2], c='k', linewidth=0.2, label=f'testing data: {T.shape[0]}')
         ax.set_xlabel(r'$<F>$')
         ax.set_ylabel(r'$T_0$')
         ax.set_zlabel(r'$\gamma$')
