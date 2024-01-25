@@ -407,15 +407,15 @@ class INFERENCE_TEST():
 
         #save HMC inference results
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
-            f.create_dataset('true_theta', data=self.true_theta)
-            f.create_dataset('log_prob_x', data=self.log_prob_x)
-            f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
-            f.create_dataset('samples_theta', data=self.true_theta_sampled)
-            f.create_dataset('infer_theta', data=self.infer_theta)
-            f.create_dataset('inferred_model', data=self.infer_model)
-            f.create_dataset('model_corr', data=self.model_corr)
-            f.create_dataset('mock_corr', data=self.mock_corr)
-            f.create_dataset('mock_covar', data=self.mock_covar)
+            f.get('true_theta') or f.create_dataset('true_theta', data=self.true_theta)
+            f.get('log_prob_x') or f.create_dataset('log_prob_x', data=self.log_prob_x)
+            f.get('true_log_prob_x') or f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
+            f.get('samples_theta')  or f.create_dataset('samples_theta', data=self.true_theta_sampled)
+            f.get('infer_theta') or f.create_dataset('infer_theta', data=self.infer_theta)
+            f.get('inferred_model') or f.create_dataset('inferred_model', data=self.infer_model)
+            f.get('model_corr') or f.create_dataset('model_corr', data=self.model_corr)
+            f.get('mock_corr') or f.create_dataset('mock_corr', data=self.mock_corr)
+            f.get('mock_covar') or f.create_dataset('mock_covar', data=self.mock_covar)
         print(f'Inference test results saved as {self.out_path}{self.save_name}.hdf5 saved')
 
 
@@ -423,12 +423,12 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=True,ngp_bool=True,emu_test_bool=True,n_inference=500,key_sample=222,key_hmc=42)
+hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=True,ngp_bool=True,emu_test_bool=True,n_inference=500,key_sample=222,key_hmc=42)
 
 '''
 ##forward mocks -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=False,ngp_bool=True,emu_test_bool=False,n_inference=100,key_sample=222,key_hmc=42)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=False,ngp_bool=True,emu_test_bool=False,n_inference=100,key_sample=222,key_hmc=42)
 
 '''
 ##gaussian mocks -- NGP model
