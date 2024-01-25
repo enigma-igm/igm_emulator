@@ -173,7 +173,7 @@ def regular_grid(seed = None, plot_bool = False):
         ax.set_zlabel(r'$\gamma$')
         ax.legend()
         ax.grid(True)
-        plt.savefig("params_sampling_regular_grid.png")
+        plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"params_sampling_regular_grid_train_{final_samples.shape[0]}.png"))
         plt.show()
 
     return final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed
@@ -189,7 +189,7 @@ def random_split(seed, plot_bool = False):
     -------
 
     '''
-    X_train, X_test_vali = train_test_split(all_data, train_size=300, test_size=400, random_state=seed)
+    X_train, X_test_vali = train_test_split(all_data, train_size=30, test_size=400, random_state=seed)
     X_test, X_vali = train_test_split(X_test_vali, train_size=0.2, random_state=seed)
     train_corr = []
     test_corr = []
@@ -254,7 +254,7 @@ def random_split(seed, plot_bool = False):
         ax.set_zlabel(r'$\gamma$')
         ax.legend()
         ax.grid(True)
-        plt.savefig("params_sampling_random_split.png")
+        plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"params_sampling_random_split_train_{X_train.shape[0]}_seed_{seed}.png"))
         plt.show()
 
     return X_train, train_corr, X_test, test_corr, X_vali, vali_corr, seed
@@ -263,7 +263,7 @@ def random_split(seed, plot_bool = False):
 
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(66,plot_bool=True)
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(22,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 if small_bin_bool:
