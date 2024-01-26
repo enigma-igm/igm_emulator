@@ -22,7 +22,7 @@ from igm_emulator.emulator.hparam_tuning import small_bin_bool
 from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
-from qso_fitting.analysis.inf_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
+from qso_fitting.analysis.inference_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
 import corner
 import h5py
 from progressbar import ProgressBar
