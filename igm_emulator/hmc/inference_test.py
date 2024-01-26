@@ -19,7 +19,7 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 from igm_emulator.emulator.emulator_apply import trainer
 from igm_emulator.emulator.hparam_tuning import small_bin_bool
-from mcmc_ngp_inference import HMC_NGP
+from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
 from qso_fitting.analysis.inf_test import run_inference_test, compute_importance_weights, C_ge, inference_test_plot
@@ -46,11 +46,9 @@ plt_params = {'legend.fontsize': 7,
 plt.rcParams.update(plt_params)
 class INFERENCE_TEST():
     def __init__(self, redshift,
-                 model_emulator_bool, # True: emulator model; False: NGP model
                  gaussian_bool,  #True: Gaussian sampling around mean; False: Forward mocks sampling
-                 ngp_bool, #True: NGP for theta points in inferece; False: theta points on priors
+                 ngp_bool, #True: NGP model; False: emulator model
                  emu_test_bool=False, #True: perfect inference test with emulator mocks; False: inference test with mocks
-                 true_log_prob_on_prior_bool=True, # If the true LogP is NGP or on prior: Boundary problem
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
                  key_sample=36,
@@ -63,13 +61,11 @@ class INFERENCE_TEST():
         z_idx = np.argmin(np.abs(zs - redshift))
         z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
         self.z_string = z_strings[z_idx]
-        self.model_emulator_bool = model_emulator_bool
         self.gaussian_bool = gaussian_bool
         self.ngp_bool = ngp_bool
         self.n_inference = n_inference
         self.n_params = n_params
         self.emu_test_bool = emu_test_bool
-        self.true_log_prob_on_prior = true_log_prob_on_prior_bool
         self.out_path = out_path
         self.key_sample = key_sample
         self.key_hmc = key_hmc
@@ -91,7 +87,7 @@ class INFERENCE_TEST():
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
-        if self.model_emulator_bool==False:
+        if self.ngp_bool:
             self.var_tag += '_NGP_model'
         '''
         Load Parameter Grid
@@ -151,10 +147,12 @@ class INFERENCE_TEST():
         mock_corr = np.empty([self.n_inference, len(self.v_bins)])
         model_corr = np.empty([self.n_inference, len(self.v_bins)])
         mock_covar = np.empty([self.n_inference, len(self.v_bins), len(self.v_bins)])
-        true_theta = np.empty([self.n_inference, self.n_params])
+        true_theta_ngp = np.empty([self.n_inference, self.n_params])
         pbar = ProgressBar()
 
         for mock_idx in pbar(range(self.n_inference)):
+
+            true_theta_ngp = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
 
             closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
@@ -163,19 +161,14 @@ class INFERENCE_TEST():
             model_dict = dill.load(open(self.in_path + model_name, 'rb'))
             model_corr[mock_idx, :] = model_dict['mean_data']
             cov = model_dict['covariance']
+
             if self.gaussian_bool:
-                if self.ngp_bool:
-                    true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
-                    mean = model_corr[mock_idx, :]
-                    if self.emu_test_bool:
-                        mean = emu.nn_emulator(self.best_params, true_theta[mock_idx, :])
-                elif self.ngp_bool==False and self.emu_test_bool==True:
-                    true_theta[mock_idx, :] = true_theta_sampled[mock_idx,
-                                              :]  # for emulator, true_theta = true_theta_sampled: off-grid
-                    mean = emu.nn_emulator(self.best_params, true_theta[mock_idx, :])
+                if self.emu_test_bool:
+                    mean = emu.nn_emulator(self.best_params, true_theta_sampled[mock_idx, :])
                     cov = self.like_dict['covariance']
                 else:
-                    raise Exception("For off-grid inference test, must use emulator.")
+                    mean = model_corr[mock_idx, :]
+
                 #split rng!
                 rng, init_rng = random.split(rng)
 
@@ -183,11 +176,6 @@ class INFERENCE_TEST():
                 mock_covar[mock_idx, :, :] = cov
 
             else:
-                if self.ngp_bool:
-                    true_theta[mock_idx, :] = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
-                else:
-                    true_theta[mock_idx, :] = true_theta_sampled[mock_idx,:]
-
                 mock_name = f'mocks_R_{int(self.R_value)}_nf_{self.n_f}_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}.p'
                 mocks = dill.load(open(self.in_path + mock_name, 'rb'))
                 #split rng!
@@ -199,26 +187,20 @@ class INFERENCE_TEST():
         # save get n_inference sampled parameters and mock correlation functions
         dill.dump(mock_corr, open(self.out_path + f'{self.note}_mock_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
         dill.dump(model_corr, open(self.out_path + f'{self.note}_model_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-        dill.dump(true_theta, open(self.out_path + f'{self.note}_theta_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
+        dill.dump(true_theta_ngp, open(self.out_path + f'{self.note}_theta_ngp_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
         dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
         dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
 
         self.mock_corr = mock_corr
         self.mock_covar = mock_covar
         self.model_corr = model_corr
-        self.true_theta = true_theta
-        self.true_theta_sampled = true_theta_sampled
+        self.true_theta = true_theta_sampled
+        self.true_theta_ngp = true_theta_ngp
     def inference_test_run(self):
         '''
         Load model for inference
         '''
-        if self.model_emulator_bool== True:
-            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, dense_mass=True,
-                        max_tree_depth= 10,
-                        num_warmup=1000,
-                        num_samples=1000,
-                        num_chains=4)
-        else:
+        if self.ngp_bool == True:
             in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{self.n_covar}_' \
                                  f'P{self.n_path}{self.bin_label}_params.p'
             new_param_dict = dill.load(open(self.in_path + in_name_new_params, 'rb'))
@@ -278,24 +260,28 @@ class INFERENCE_TEST():
             #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
             hmc_inf = HMC_NGP(self.v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
 
+        else:
+            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, dense_mass=True,
+                        max_tree_depth= 10,
+                        num_warmup=1000,
+                        num_samples=1000,
+                        num_chains=4)
+
         '''
         File names for saving
         '''
         ### change this to the correct path ###
-        if self.model_emulator_bool:
+        if self.ngp_bool:
+            out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
+        else:
             if self.emu_test_bool:
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/emu_infer/'
             else:
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
-        else:
-            out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/ngp_infer/'
-        out_path = self.out_path
 
-        ### If the true LogP is NGP or on prior: Boundary problem ###
-        if self.true_log_prob_on_prior:
-            self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
-        else:
-            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+        out_path = self.out_path
+        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+
 
         '''
         True and Infered models
@@ -309,10 +295,11 @@ class INFERENCE_TEST():
 
         #read in true mocks
         true_theta = self.true_theta
-        true_theta_sampled = self.true_theta_sampled
+        true_theta_ngp = self.true_theta_ngp
         mocks = self.mock_corr
         covars = self.mock_covar #covariance matrix for each mock in emulator using ngp
         infer_model = np.empty([self.n_inference, len(self.v_bins)])
+
         '''
         Run inference test for each mock
         '''
@@ -326,10 +313,9 @@ class INFERENCE_TEST():
             closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta[mock_idx, 2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta[mock_idx, 0]))
 
-            if self.true_log_prob_on_prior:
-                x_true = hmc_inf.theta_to_x(true_theta_sampled[mock_idx, :])
-            else:
-                x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
+
+            x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
+
             flux = mocks[mock_idx, :]
 
             #Use one coarse grid NGP covariance matrix for both NGP & Emulator models
@@ -356,13 +342,10 @@ class INFERENCE_TEST():
                 fit_fig =  hmc_inf.fit_plot(z_string='z54',theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
-                if self.true_log_prob_on_prior:
-                    corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
-                    fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
-                else:
-                    corner_fig.savefig(
-                        out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_ngp.png')
-                    fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_ngp.png')
+
+                corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
+                fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
+
 
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
@@ -423,19 +406,19 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=True,ngp_bool=True,emu_test_bool=True,n_inference=100)
+hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100)
 
 '''
 ##forward mocks -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(redshift=5.4,model_emulator_bool=True,gaussian_bool=False,ngp_bool=True,emu_test_bool=False,n_inference=100,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,n_inference=100,key_sample=42,key_hmc=66)
 
 '''
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,False,True,True,False,key_sample=42,key_hmc=66)
-#hmc_infer = INFERENCE_TEST(5.4,False,False,True,False,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(5.4,True,True,False,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
 
 
 hmc_infer.mocks_sampling()
