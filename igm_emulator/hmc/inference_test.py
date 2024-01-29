@@ -155,7 +155,7 @@ class INFERENCE_TEST():
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
-        true_theta_sampled = np.empty([self.n_inference, self.n_params])                                                            .
+        true_theta_sampled = np.empty([self.n_inference, self.n_params])
         rng = random.PRNGKey(self.key_sample)
 
         rng, init_rng = random.split(rng)
