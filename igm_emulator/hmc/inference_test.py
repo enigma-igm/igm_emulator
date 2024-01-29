@@ -323,7 +323,7 @@ class INFERENCE_TEST():
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
 
         out_path = self.out_path
-        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
 
 
         '''
@@ -460,7 +460,7 @@ hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_t
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,True,True,False,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(5.4,True,True,False,key_sample=42,key_hmc=66)
 #hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
 
 
