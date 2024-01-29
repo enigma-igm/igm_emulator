@@ -152,11 +152,11 @@ class INFERENCE_TEST():
 
         for mock_idx in pbar(range(self.n_inference)):
 
-            true_theta_ngp = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
-
             closest_temp_idx = np.argmin(np.abs(self.T0s - true_theta_sampled[mock_idx, 1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - true_theta_sampled[mock_idx, 2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - true_theta_sampled[mock_idx, 0]))
+
+            true_theta_ngp = [self.fobs[closest_fobs_idx], self.T0s[closest_temp_idx], self.gammas[closest_gamma_idx]]
             model_name = f'likelihood_dicts_R_30000_nf_9_T{closest_temp_idx}_G{closest_gamma_idx}_SNR0_F{closest_fobs_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
             model_dict = dill.load(open(self.in_path + model_name, 'rb'))
             model_corr[mock_idx, :] = model_dict['mean_data']
