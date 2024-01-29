@@ -430,9 +430,9 @@ class INFERENCE_TEST():
         #save HMC inference results
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
             f.get('true_theta') or f.create_dataset('true_theta', data=self.true_theta)
+            f.get('true_theta_ngp') or f.create_dataset('true_theta_ngp', data=self.true_theta_ngp)
             f.get('log_prob_x') or f.create_dataset('log_prob_x', data=self.log_prob_x)
             f.get('true_log_prob_x') or f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
-            f.get('samples_theta')  or f.create_dataset('samples_theta', data=self.true_theta_sampled)
             f.get('infer_theta') or f.create_dataset('infer_theta', data=self.infer_theta)
             f.get('inferred_model') or f.create_dataset('inferred_model', data=self.infer_model)
             f.get('model_corr') or f.create_dataset('model_corr', data=self.model_corr)
