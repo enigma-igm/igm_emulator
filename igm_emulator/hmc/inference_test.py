@@ -139,19 +139,23 @@ class INFERENCE_TEST():
 
         '''
         if self.gaussian_bool == False:
-            self.ngp_bool = True
-            self.note = 'forward_mocks_ngp_emulator_prior_diff_covar'
+            if self.ngp_bool == True:
+                self.note = 'forward_mocks_ngp_prior_diff_covar'
+            else:
+                self.note = 'forward_mocks_emulator_prior_diff_covar'
         else:
             if self.ngp_bool == True and self.emu_test_bool == False:
-                self.note = 'gaussian_ngp_mocks_prior_diff_covar'
-            elif self.ngp_bool == True and self.emu_test_bool == True:
-                self.note = 'gaussian_ngp_emulator_test_prior_diff_covar'
+                self.note = 'gaussian_mocks_ngp_prior_diff_covar'
+            elif self.ngp_bool == False and self.emu_test_bool == True:
+                self.note = 'gaussian_mocks_emulator_TEST_prior_diff_covar'
+            elif self.ngp_bool == False and self.emu_test_bool == False:
+                self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
-                self.note = 'gaussian_emulator_test_prior_diff_covar'
+                raise ValueError('Invalid combination of ngp_bool and emu_test_bool; if emu_test_bool is True, ngp_bool must be False')
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
-        true_theta_sampled = np.empty([self.n_inference, self.n_params])
+        true_theta_sampled = np.empty([self.n_inference, self.n_params])                                                            .
         rng = random.PRNGKey(self.key_sample)
 
         rng, init_rng = random.split(rng)
