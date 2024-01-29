@@ -45,6 +45,9 @@ plt_params = {'legend.fontsize': 7,
               }
 plt.rcParams.update(plt_params)
 class INFERENCE_TEST():
+    '''
+    A class to run inference test in HMC for NGP and Emulator models
+    '''
     def __init__(self, redshift,
                  gaussian_bool,  #True: Gaussian sampling around mean; False: Forward mocks sampling
                  ngp_bool, #True: NGP model; False: emulator model
@@ -55,6 +58,18 @@ class INFERENCE_TEST():
                  key_hmc=642
     ):
 
+    '''
+    Args:
+        redshift: float, redshift of the data [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
+        gaussian_bool: bool, True: Gaussian sampling around mean; False: Forward mocks sampling
+        ngp_bool: bool, True: NGP model; False: Emulator model
+        emu_test_bool: bool, True: perfect inference test with emulator mocks; False: inference test with real mocks
+        n_inference: int, number of mocks for inference test
+        n_params: int, number of parameters for inference test
+        out_path: str, path to save inference test results
+        key_sample: int, random key for sampling parameters
+        key_hmc: int, random key for HMC inference test
+    '''
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -113,6 +128,16 @@ class INFERENCE_TEST():
 
 
     def mocks_sampling(self):
+        '''
+        Sample parameters from priors and get mock correlation functions
+        Parameters
+        ----------
+        self
+
+        Returns
+        -------
+
+        '''
         if self.gaussian_bool == False:
             self.ngp_bool = True
             self.note = 'forward_mocks_ngp_emulator_prior_diff_covar'
@@ -198,8 +223,21 @@ class INFERENCE_TEST():
         self.true_theta_ngp = true_theta_ngp
     def inference_test_run(self):
         '''
-        Load model for inference
+        Run HMC inference test
+        Parameters
+        ----------
+        self
+
+        Returns
+        -------
+
         '''
+
+        '''
+        Load HMC inference class
+        '''
+
+        ### NGP model inference class load in###
         if self.ngp_bool == True:
             in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{self.n_covar}_' \
                                  f'P{self.n_path}{self.bin_label}_params.p'
@@ -260,6 +298,7 @@ class INFERENCE_TEST():
             #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
             hmc_inf = HMC_NGP(self.v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
 
+        ### Emulator model inference class load in###
         else:
             hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, dense_mass=True,
                         max_tree_depth= 10,
@@ -406,7 +445,7 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100)
 
 '''
 ##forward mocks -- emulator model
@@ -417,7 +456,7 @@ hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_te
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,True,True,False,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(5.4,True,True,False)
 #hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
 
 
