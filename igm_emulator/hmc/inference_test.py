@@ -58,18 +58,18 @@ class INFERENCE_TEST():
                  key_hmc=642
     ):
 
-    '''
-    Args:
-        redshift: float, redshift of the data [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
-        gaussian_bool: bool, True: Gaussian sampling around mean; False: Forward mocks sampling
-        ngp_bool: bool, True: NGP model; False: Emulator model
-        emu_test_bool: bool, True: perfect inference test with emulator mocks; False: inference test with real mocks
-        n_inference: int, number of mocks for inference test
-        n_params: int, number of parameters for inference test
-        out_path: str, path to save inference test results
-        key_sample: int, random key for sampling parameters
-        key_hmc: int, random key for HMC inference test
-    '''
+        '''
+        Args:
+            redshift: float, redshift of the data [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
+            gaussian_bool: bool, True: Gaussian sampling around mean; False: Forward mocks sampling
+            ngp_bool: bool, True: NGP model; False: Emulator model
+            emu_test_bool: bool, True: perfect inference test with emulator mocks; False: inference test with real mocks
+            n_inference: int, number of mocks for inference test
+            n_params: int, number of parameters for inference test
+            out_path: str, path to save inference test results
+            key_sample: int, random key for sampling parameters
+            key_hmc: int, random key for HMC inference test
+        '''
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
