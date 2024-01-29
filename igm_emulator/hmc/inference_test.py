@@ -460,7 +460,7 @@ hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_t
 ##gaussian mocks -- NGP model
 '''
 
-hmc_infer = INFERENCE_TEST(5.4,True,True,False,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(5.4,True,True,False) #,key_sample=42,key_hmc=66)
 #hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
 
 
