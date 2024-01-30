@@ -147,7 +147,7 @@ class INFERENCE_TEST():
             if self.ngp_bool == True and self.emu_test_bool == False:
                 self.note = 'gaussian_mocks_ngp_prior_diff_covar'
             elif self.ngp_bool == False and self.emu_test_bool == True:
-                self.note = 'gaussian_mocks_emulator_TEST_prior_one_covar'
+                self.note = 'gaussian_mocks_emulator_TEST_prior_diff_covar'
             elif self.ngp_bool == False and self.emu_test_bool == False:
                 self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
@@ -194,7 +194,7 @@ class INFERENCE_TEST():
             if self.gaussian_bool:
                 if self.emu_test_bool:
                     mean = emu.nn_emulator(self.best_params, true_theta_sampled[mock_idx, :])
-                    cov = self.like_dict['covariance']
+                    #cov = self.like_dict['covariance']
                 else:
                     mean = model_corr[mock_idx, :]
 
