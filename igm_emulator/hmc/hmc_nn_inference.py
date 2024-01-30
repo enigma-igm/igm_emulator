@@ -14,6 +14,7 @@ from numpyro.infer import MCMC, NUTS
 import arviz as az
 import time
 import IPython
+import igm_emulator as emu
 from igm_emulator.emulator.emulator_apply import nn_emulator,trainer
 import sys
 sys.path.append('/home/zhenyujin/qso_fitting/')
@@ -81,7 +82,7 @@ class NN_HMC_X:
     def get_model_nearest_fine(
             self, theta
     ):
-        model = nn_emulator(self.best_params, theta)
+        model = emu.nn_emulator(self.best_params, theta)
 
         return model
 
