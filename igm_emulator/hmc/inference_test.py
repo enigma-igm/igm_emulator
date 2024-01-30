@@ -147,7 +147,7 @@ class INFERENCE_TEST():
             if self.ngp_bool == True and self.emu_test_bool == False:
                 self.note = 'gaussian_mocks_ngp_prior_diff_covar'
             elif self.ngp_bool == False and self.emu_test_bool == True:
-                self.note = 'gaussian_mocks_emulator_TEST_prior_diff_covar'
+                self.note = 'gaussian_mocks_emulator_TEST_prior_one_covar'
             elif self.ngp_bool == False and self.emu_test_bool == False:
                 self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
@@ -449,13 +449,13 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100) #,key_sample=42,key_hmc=66)
 
 '''
 ##forward mocks -- emulator model
 '''
 #hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
 ##gaussian mocks -- NGP model
