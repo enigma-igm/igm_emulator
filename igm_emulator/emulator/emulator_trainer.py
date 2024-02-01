@@ -180,7 +180,7 @@ class TrainerModule:
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
             print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
-        return self.best_params, np.abs(self.best_chi_loss-1)
+        return self.best_params, self.best_chi_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
