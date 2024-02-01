@@ -143,8 +143,7 @@ class TrainerModule:
 
         self.best_params = params
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
-        self.best_chi_loss = jnp.mean(jnp.abs((vali_preds - self.Y_vali) * self.stdY ) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
-        self.best_chi_2_loss = -logpdf(x=custom_forward.apply(self.best_params, self.X_vali) * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
+        self.best_chi_2_loss = -logpdf(x=vali_preds * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
@@ -157,6 +156,7 @@ class TrainerModule:
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
         self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
+        self.vali_loss = self.loss_fn(params, self.X_vali, self.Y_vali)
         self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, self.X_train)
@@ -178,7 +178,7 @@ class TrainerModule:
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
             print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
-        return self.best_params, self.best_chi_loss
+        return self.best_params, self.vali_loss #self.best_chi_2_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -217,7 +217,7 @@ class TrainerModule:
             group3.attrs['R2'] = self.test_R2
             group3.attrs['test_loss'] = self.test_loss
             group3.attrs['train_loss'] = self.batch_loss
-            group3.attrs['vali_loss'] = self.best_chi_loss
+            group3.attrs['vali_loss'] = self.best_chi_2_loss
             group3.attrs['residuals_results'] = f'{jnp.mean(self.RelativeError)*100}% +/- {jnp.std(self.RelativeError) * 100}%'
             group3.create_dataset('residuals', data=self.RelativeError)
             f.close()
