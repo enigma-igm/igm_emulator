@@ -452,7 +452,7 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100) #,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100) #,key_sample=42,key_hmc=66)
 
 '''
 ##forward mocks -- emulator model
@@ -464,7 +464,7 @@ hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_te
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,True,True,False) #,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(5.4,True,True,False) #,key_sample=42,key_hmc=66)
 #hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
 
 
