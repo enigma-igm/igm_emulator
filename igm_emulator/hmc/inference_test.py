@@ -405,8 +405,8 @@ class INFERENCE_TEST():
 
         alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
         coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, self.log_prob_x, self.true_log_prob_x,
-                                                                                  title='Gaussian Lhood', show=False)
-
+                                                                                   show=True, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
+        '''
         inference_fig = plt.figure(figsize=(x_size, x_size * .9), constrained_layout=True,
                                    dpi=dpi_value,
                                    )
@@ -429,6 +429,7 @@ class INFERENCE_TEST():
 
         inference_fig.suptitle(f'{self.note}')
         inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
+        '''
         print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
 
         #save HMC inference results
@@ -449,12 +450,12 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100) #,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,n_inference=100) #,key_sample=42,key_hmc=66)
 
 '''
 ##forward mocks -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
 #hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
