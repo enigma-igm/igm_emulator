@@ -94,7 +94,7 @@ if __name__ == '__main__':
                                 activation=eval(activation_tune),
                                 dropout_rate=dropout_rate_tune,
                                 optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
-                                loss_str= 'mse', #loss_str_tune,
+                                loss_str= loss_str_tune,
                                 loss_weights=[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
                                 init_rng=42,
