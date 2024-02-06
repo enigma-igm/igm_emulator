@@ -7,7 +7,7 @@ import h5py
 import jax.random as random
 from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
-from sklearn.metrics import mean_squared_error,r2_score
+from sklearn.metrics import mean_squared_error,r2_score,root_mean_squared_error
 from scipy.spatial.distance import minkowski
 from functools import partial
 from numpyro.infer import MCMC, NUTS
@@ -400,8 +400,8 @@ class NN_HMC_X:
             0.6, 0.7,
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, max_P_model), decimals=4)],
-                      ['MSE',
-                       np.format_float_scientific(mean_squared_error(model_corr, max_P_model), precision=3)],
+                      ['RMSE/Corr',
+                       np.format_float_scientific(root_mean_squared_error(model_corr, max_P_model)/model_corr, precision=3)],
                       ['Distance',
                        np.format_float_scientific(minkowski(model_corr, max_P_model), precision=3)]],
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
@@ -410,7 +410,7 @@ class NN_HMC_X:
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
-        fit_axis.legend()
+        fit_axis.legend()/
         if save_bool:
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
