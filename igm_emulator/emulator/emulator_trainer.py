@@ -153,7 +153,7 @@ class TrainerModule:
                         params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['Y'],
                                                                            optimizer)
                 else:
-                    params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train,
+                    params, opt_state, batch_loss, grads = self.train_step(params, opt_state, self.X_train, self.Y_train,
                                                                        optimizer)
 
                 # compute training & validation loss at the end of the epoch
