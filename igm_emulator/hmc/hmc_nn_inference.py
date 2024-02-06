@@ -7,7 +7,7 @@ import h5py
 import jax.random as random
 from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
-from sklearn.metrics import mean_squared_error,r2_score,root_mean_squared_error
+from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 from functools import partial
 from numpyro.infer import MCMC, NUTS
@@ -401,7 +401,7 @@ class NN_HMC_X:
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, max_P_model), decimals=4)],
                       ['RMSE/Corr',
-                       np.format_float_scientific(root_mean_squared_error(model_corr, max_P_model)/model_corr, precision=3)],
+                       np.format_float_scientific(np.sqrt(mean_squared_error(model_corr, max_P_model))/model_corr, precision=3)],
                       ['Distance',
                        np.format_float_scientific(minkowski(model_corr, max_P_model), precision=3)]],
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
