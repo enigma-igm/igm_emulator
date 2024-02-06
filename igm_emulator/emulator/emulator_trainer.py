@@ -17,7 +17,8 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, MyModuleCustom
 from utils_plot import *
-sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
+sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators/flax_lite/trainers')
+from base import TrainerModule as LAFTrainerModule
 import h5py
 import IPython
 config.update("jax_enable_x64", True)
@@ -86,10 +87,12 @@ class TrainerModule:
         return _loss_fn(params, X, Y)
 
     @partial(jit, static_argnums=(0,5))
-    def update(self, params, opt_state, X_train, Y_train, optimizer):
+    def train_step(self, params, opt_state, X, Y, optimizer):
         _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
-        return _update(params, opt_state, X_train, Y_train, optimizer)
+        return _update(params, opt_state, X, Y, optimizer)
 
+    def create_batches(self, X, Y, rstate, batch_size):
+        return LAFTrainerModule.create_batches(X, Y, rstate, batch_size)
 
     def train_loop(self, plot=True):
         '''
@@ -106,13 +109,16 @@ class TrainerModule:
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
 
         n_samples = self.X_train.shape[0]
-        total_steps = self.n_epochs*n_samples + self.n_epochs
+        batch_size = 32
+        total_steps = self.n_epochs * (n_samples // batch_size)
+
         max_grad_norm, lr, decay = self.optimizer_hparams
         optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
                                 optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
                                 )
 
         opt_state = optimizer.init(params)
+
         early_stopping_counter = 0
         best_loss = np.inf
         validation_loss = []
@@ -122,7 +128,12 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train, optimizer)
+                all_batches = self.create_batches(self.X_train, self.Y_train, rstate=e, batch_size=batch_size)
+
+                # go through each batch
+                for batch in all_batches:
+
+                    params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['y'], optimizer)
 
                 # compute training & validation loss at the end of the epoch
                 l = self.loss_fn(params, self.X_vali, self.Y_vali)
