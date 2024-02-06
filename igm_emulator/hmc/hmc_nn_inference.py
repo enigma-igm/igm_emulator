@@ -401,7 +401,7 @@ class NN_HMC_X:
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, max_P_model), decimals=4)],
                       ['RMSE/Corr',
-                       np.format_float_scientific(np.sqrt(mean_squared_error(model_corr, max_P_model))/model_corr, precision=3)],
+                       np.format_float_scientific(mean_squared_error(model_corr, max_P_model), precision=3)],
                       ['Distance',
                        np.format_float_scientific(minkowski(model_corr, max_P_model), precision=3)]],
                      headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
