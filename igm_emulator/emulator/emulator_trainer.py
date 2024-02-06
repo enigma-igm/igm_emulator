@@ -12,13 +12,14 @@ from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
 from functools import partial
 from sklearn.metrics import r2_score
+from sklearn.utils import shuffle
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, MyModuleCustom
 from utils_plot import *
-sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators/flax_lite/trainers')
-from base import TrainerModule as LAFTrainerModule
+#sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators/flax_lite/trainers')
+#from base import TrainerModule as LAFTrainerModule
 import h5py
 import IPython
 config.update("jax_enable_x64", True)
@@ -91,8 +92,20 @@ class TrainerModule:
         _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
         return _update(params, opt_state, X, Y, optimizer)
 
-    def create_batches(self, X, Y, rstate, batch_size):
-        return LAFTrainerModule.create_batches(X, Y, rstate, batch_size)
+    def create_batches(self, rstate, batch_size):
+
+        # first we shuffle the data
+        X, Y = shuffle(self.X_train, self.Y_train, random_state=rstate)
+        n_batches = X.shape[0] // batch_size
+        batches = []
+
+        for i in np.arange(n_batches):
+            single_batch = {
+                'X': X[i * batch_size:(i + 1) * batch_size, :].reshape((batch_size, X.shape[1])),
+                'Y': Y[i * batch_size:(i + 1) * batch_size, :].reshape((batch_size, Y.shape[1]))}
+            batches.append(single_batch)
+
+        return batches
 
     def train_loop(self, plot=True):
         '''
@@ -128,12 +141,12 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                all_batches = self.create_batches(self.X_train, self.Y_train, rstate=e, batch_size=batch_size)
+                all_batches = self.create_batches(rstate=e, batch_size=batch_size)
 
                 # go through each batch
                 for batch in all_batches:
 
-                    params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['y'], optimizer)
+                    params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['Y'], optimizer)
 
                 # compute training & validation loss at the end of the epoch
                 l = self.loss_fn(params, self.X_vali, self.Y_vali)
