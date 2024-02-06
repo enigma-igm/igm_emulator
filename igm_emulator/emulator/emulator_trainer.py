@@ -73,7 +73,7 @@ class TrainerModule:
         self.l2_weight, self.c_loss, self.percent_loss = loss_weights
         self.like_dict = like_dict
         self.out_tag = out_tag
-        self.var_tag =f'{loss_str}_l2_{self.l2_weight}_perc_{self.percent_loss}_activation_{activation.__name__}'
+        self.var_tag =f'{self.loss_str}_l2_{self.l2_weight}_perc_{self.percent_loss}_activation_{activation.__name__}'
         self.init_rng = init_rng
         self.n_epochs = n_epochs
         self.pv = pv
@@ -263,15 +263,17 @@ class TrainerModule:
             dill.dump(self.best_params, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
             print("trained parameters saved")
 
-'''
-#Initiate training module
-'''
-max_grad_norm = 0.1
-lr = 1e-3
-#beta = 1e-3 #BNN
-decay = 5e-3
-l2 =0.0001
+
 if __name__ == '__main__':
+    '''
+    #Initiate training module
+    '''
+    max_grad_norm = 0.1
+    lr = 1e-3
+    # beta = 1e-3 #BNN
+    decay = 5e-3
+    l2 = 0.0001
+
     trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
                             layer_sizes=[100,100,100,59],
                             activation= jax.nn.leaky_relu,

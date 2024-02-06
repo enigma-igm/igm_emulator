@@ -88,7 +88,7 @@ if __name__ == '__main__':
         c_loss_tune = trial.suggest_float('c_loss', 1e-3, 1, log=True)
         percent_loss_tune = trial.suggest_categorical('percent', [True, False])
         n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
-        loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
+        #loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
         bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50, 100])
         trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
                                 layer_sizes= layer_sizes_tune,
