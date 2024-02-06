@@ -122,7 +122,7 @@ class TrainerModule:
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
 
         n_samples = self.X_train.shape[0]
-        batch_size = 32
+        batch_size = 50
         total_steps = self.n_epochs * (n_samples // batch_size)
 
         max_grad_norm, lr, decay = self.optimizer_hparams
