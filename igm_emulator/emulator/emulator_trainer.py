@@ -49,6 +49,7 @@ class TrainerModule:
                 loss_weights: Sequence[Any],
                 like_dict: dict,
                 out_tag: str,
+                bach_size = None,
                 init_rng=42,
                 n_epochs=1000,
                 pv=100):
@@ -76,6 +77,7 @@ class TrainerModule:
         self.init_rng = init_rng
         self.n_epochs = n_epochs
         self.pv = pv
+        self.batch_size = bach_size
         def _custom_forward_fn(x):
             module = MyModuleCustom(output_size=self.layer_sizes, activation=self.activation,
                                     dropout_rate=self.dropout_rate)
@@ -122,8 +124,10 @@ class TrainerModule:
         params = custom_forward.init(rng=next(hk.PRNGSequence(jax.random.PRNGKey(self.init_rng))), x=self.X_train)
 
         n_samples = self.X_train.shape[0]
-        batch_size = 50
-        total_steps = self.n_epochs * (n_samples // batch_size)
+        if self.batch_size is not None:
+            total_steps = self.n_epochs * (n_samples // self.batch_size)
+        else:
+            total_steps = self.n_epochs * n_samples + self.n_epochs
 
         max_grad_norm, lr, decay = self.optimizer_hparams
         optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
@@ -141,12 +145,16 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                all_batches = self.create_batches(rstate=step, batch_size=batch_size)
 
                 # go through each batch
-                for batch in all_batches:
-
-                    params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['Y'], optimizer)
+                if self.batch_size is not None:
+                    all_batches = self.create_batches(rstate=step, batch_size=self.batch_size)
+                    for batch in all_batches:
+                        params, opt_state, batch_loss, grads = self.train_step(params, opt_state, batch['X'], batch['Y'],
+                                                                           optimizer)
+                else:
+                    params, opt_state, batch_loss, grads = self.update(params, opt_state, self.X_train, self.Y_train,
+                                                                       optimizer)
 
                 # compute training & validation loss at the end of the epoch
                 l = self.loss_fn(params, self.X_vali, self.Y_vali)
