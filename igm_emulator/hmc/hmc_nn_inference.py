@@ -410,7 +410,7 @@ class NN_HMC_X:
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel("Correlation Function")
-        fit_axis.legend()/
+        fit_axis.legend()
         if save_bool:
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
