@@ -141,7 +141,7 @@ class TrainerModule:
         with trange(self.n_epochs) as t:
             for step in t:
                 # optimizing loss by update function
-                all_batches = self.create_batches(rstate=e, batch_size=batch_size)
+                all_batches = self.create_batches(rstate=step, batch_size=batch_size)
 
                 # go through each batch
                 for batch in all_batches:
