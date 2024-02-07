@@ -88,14 +88,14 @@ if __name__ == '__main__':
         c_loss_tune = trial.suggest_float('c_loss', 1e-3, 1, log=True)
         percent_loss_tune = trial.suggest_categorical('percent', [True, False])
         n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
-        #loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
-        bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50, 100])
+        loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
+        bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50])
         trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
                                 layer_sizes= layer_sizes_tune,
                                 activation=eval(activation_tune),
                                 dropout_rate=dropout_rate_tune,
                                 optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
-                                loss_str= 'mse', #loss_str_tune,
+                                loss_str= loss_str_tune,
                                 loss_weights=[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
                                 init_rng=42,
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                                 activation=eval(hparams['activation']),
                                 dropout_rate=hparams['dropout_rate'],
                                 optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
-                                loss_str= 'mse', #hparams['loss_str'],
+                                loss_str= hparams['loss_str'],
                                 loss_weights=[hparams['l2'], hparams['c_loss'], hparams['percent']],
                                 like_dict=like_dict,
                                 init_rng=42,
