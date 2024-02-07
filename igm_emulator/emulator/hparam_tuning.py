@@ -115,7 +115,7 @@ if __name__ == '__main__':
                                 activation=eval(hparams['activation']),
                                 dropout_rate=hparams['dropout_rate'],
                                 optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
-                                loss_str=hparams['loss_str'],
+                                loss_str= 'mse', #hparams['loss_str'],
                                 loss_weights=[hparams['l2'], hparams['c_loss'], hparams['percent']],
                                 like_dict=like_dict,
                                 init_rng=42,
