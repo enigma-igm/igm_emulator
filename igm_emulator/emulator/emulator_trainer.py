@@ -174,18 +174,21 @@ class TrainerModule:
                     break
 
         self.best_params = params
+
+        #Validation Metrics
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
         self.best_chi_loss = jnp.mean(
             jnp.abs((vali_preds - self.Y_vali) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
+        self.best_mse_loss = jnp.mean(jnp.square((vali_preds - self.Y_vali) * self.stdY))
         self.best_chi_2_loss = -logpdf(x=vali_preds * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
         print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
 
-        #Metrics
+        #Test Metrics
         self.batch_loss = batch_loss
         test_preds = custom_forward.apply(self.best_params, self.X_test)
-        test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY)
+        test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY) #relative error of test dataset
         self.RelativeError = test_accuracy
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
@@ -212,7 +215,7 @@ class TrainerModule:
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
             print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
-        return self.best_params, self.best_chi_loss
+        return self.best_params, self.best_mse_loss #self.best_chi_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
