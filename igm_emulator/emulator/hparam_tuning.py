@@ -126,6 +126,7 @@ if __name__ == '__main__':
 
         trainer.train_loop(True)
         trainer.save_training_info(redshift)
+        return trainer.var_tag
         del trainer
 
     print('*** Running the hyperparameter tuning ***')
@@ -142,7 +143,7 @@ if __name__ == '__main__':
     
     for key, value in trial.params.items():
         print(f'-> {key}: {value}')
-    dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'wb'))
+    var_tag = save_best_param_objective(trial)
+    dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p', 'wb'))
     print('Best hyperparameters saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
-    save_best_param_objective(trial)
     print('Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
