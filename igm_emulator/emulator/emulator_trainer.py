@@ -179,7 +179,6 @@ class TrainerModule:
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
         self.best_chi_loss = jnp.mean(
             jnp.abs((vali_preds - self.Y_vali) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
-        self.best_mse_loss = jnp.mean(jnp.square((vali_preds - self.Y_vali) * self.stdY))
         self.best_chi_2_loss = -logpdf(x=vali_preds * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
@@ -215,7 +214,7 @@ class TrainerModule:
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
             print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
-        return self.best_params, self.best_mse_loss #self.best_chi_loss
+        return self.best_params, self.best_chi_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -254,7 +253,7 @@ class TrainerModule:
             group3.attrs['R2'] = self.test_R2
             group3.attrs['test_loss'] = self.test_loss
             group3.attrs['train_loss'] = self.batch_loss
-            group3.attrs['vali_loss'] = self.best_chi_2_loss
+            group3.attrs['vali_loss'] = self.vali_loss
             group3.attrs['residuals_results'] = f'{jnp.mean(self.RelativeError)*100}% +/- {jnp.std(self.RelativeError) * 100}%'
             group3.create_dataset('residuals', data=self.RelativeError)
             f.close()
