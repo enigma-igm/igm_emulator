@@ -128,12 +128,12 @@ def elbo(aprx_posterior, x, y, rng,
     new_covariance = like_dict['covariance']
     log_determinant = like_dict['log_determinant']
     nbins = len(vbins)
-    log_likelihood = -jnp.mean(diff/jnp.sqrt(jnp.diagonal(new_covariance))) - regularization
+    log_likelihood = - jnp.sum(diff/jnp.sqrt(jnp.diagonal(new_covariance)))
     #log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 - regularization
     
     ## Compute the kl penalty on the approximate posterior.
     kl_divergence = jax.tree_util.tree_reduce(lambda a, b: a + b, jax.tree_map(gaussian_kl,aprx_posterior['mu'],aprx_posterior['logvar']))
-    elbo_ = log_likelihood - 1e-3 * kl_divergence
+    elbo_ = log_likelihood - kl_divergence
     return elbo_, log_likelihood, kl_divergence
 
 def loss_fn(params, x, y, rng, 
