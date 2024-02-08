@@ -14,8 +14,6 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from utils_plot import *
 from bayes import _bnn_custom_forward_fn, schedule_lr, elbo, loss_fn, accuracy, update, output_size, activation, l2, predict, small_bin_bool
-sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
-from pytree_h5py import save, load
 import h5py
 import IPython
 
