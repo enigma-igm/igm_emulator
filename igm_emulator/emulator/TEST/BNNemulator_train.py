@@ -169,9 +169,9 @@ if __name__ == "__main__":
     test_preds = predict(best_params,X_test,my_rng)
     test_loss = loss_fn(best_params, X_test, Y_test, my_rng, like_dict,vbins)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
-    test_accuracy = (self.Y_test * self.stdY - test_preds * self.stdY) / (
-                self.Y_test * self.stdY + self.meanY)  # relative error of test dataset
-    self.RelativeError = test_accuracy
+    test_accuracy = (Y_test * stdY - test_preds * stdY) / (
+                Y_test * stdY + meanY)  # relative error of test dataset
+    RelativeError = test_accuracy
 
     plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
     plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
@@ -184,8 +184,8 @@ if __name__ == "__main__":
                   var_tag)
 
     # Accuracy + Results Plots
-    plot_residue(self.RelativeError, out_tag, var_tag)
-    plot_error_distribution(self.RelativeError, out_tag, var_tag)
+    plot_residue(RelativeError, out_tag, var_tag)
+    plot_error_distribution(RelativeError, out_tag, var_tag)
     print(f'***Result Plots saved {dir_exp}***')  # imported from utils_plot
     '''
     Accuracy + Results

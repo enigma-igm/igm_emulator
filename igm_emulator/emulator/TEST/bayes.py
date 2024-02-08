@@ -133,7 +133,7 @@ def elbo(aprx_posterior, x, y, rng,
     
     ## Compute the kl penalty on the approximate posterior.
     kl_divergence = jax.tree_util.tree_reduce(lambda a, b: a + b, jax.tree_map(gaussian_kl,aprx_posterior['mu'],aprx_posterior['logvar']))
-    elbo_ = log_likelihood #- 1e-3 * kl_divergence
+    elbo_ = log_likelihood - 1e-3 * kl_divergence
     return elbo_, log_likelihood, kl_divergence
 
 def loss_fn(params, x, y, rng, 
