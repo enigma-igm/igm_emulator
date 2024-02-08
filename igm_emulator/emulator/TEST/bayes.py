@@ -4,6 +4,7 @@ import jax
 from jax.config import config
 config.update("jax_enable_x64", True)
 from typing import Callable, Iterable, Optional
+from jax.scipy.stats.multivariate_normal import logpdf
 import optax
 import itertools
 import struct
@@ -123,12 +124,11 @@ def elbo(aprx_posterior, x, y, rng,
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
     ## Compute log likelihood
-    diff = custom_forward.apply(params, x) - y
     
     new_covariance = like_dict['covariance']
     log_determinant = like_dict['log_determinant']
     nbins = len(vbins)
-    log_likelihood = - jnp.sum(diff/jnp.sqrt(jnp.diagonal(new_covariance)))
+    log_likelihood = jnp.sum(logpdf(x=custom_forward.apply(params, x), mean=y, cov=new_covariance))
     #log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 - regularization
     
     ## Compute the kl penalty on the approximate posterior.
