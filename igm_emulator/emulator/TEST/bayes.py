@@ -128,7 +128,7 @@ def elbo(aprx_posterior, x, y, rng,
     new_covariance = like_dict['covariance']
     log_determinant = like_dict['log_determinant']
     nbins = len(vbins)
-    log_likelihood = jnp.mean(logpdf(x=custom_forward.apply(params, x), mean=y, cov=new_covariance))
+    log_likelihood = logpdf(x=custom_forward.apply(params, x), mean=y, cov=new_covariance)
     #log_likelihood = -jnp.sum((jnp.dot(diff, diff.T))) / 2.0 - regularization
     
     ## Compute the kl penalty on the approximate posterior.

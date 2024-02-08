@@ -19,9 +19,9 @@ import IPython
 
 max_grad_norm = 0.1
 n_epochs = 1000
-lr = 1e-3
+lr = 1e-2
 beta = 1e-3
-decay = 5e-3
+decay = 1e-3
 my_rng = jax.random.PRNGKey(42)
 print(f'Training for small bin: {small_bin_bool}')
 print(f'Layers: {output_size}')
@@ -104,9 +104,8 @@ init_params = custom_forward.init(rng=next(hk.PRNGSequence(my_rng)), x=X_train)
 n_samples = X_train.shape[0]
 total_steps = n_epochs*n_samples + n_epochs
 
-optimizer = optax.chain(optax.clip_by_global_norm(max_grad_norm),
-                        optax.adamw(learning_rate=schedule_lr(lr,total_steps),weight_decay=decay)
-                        )
+optimizer =  optax.adamw(learning_rate=lr,weight_decay=decay)
+
 
 
 '''
