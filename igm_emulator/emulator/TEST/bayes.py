@@ -55,6 +55,7 @@ class MyModuleCustom(hk.Module):
         l.append(z)
     self.layer = l
 
+
   def __call__(self, x, rng = 42):
     num_layers = len(self.layer)
     out = x

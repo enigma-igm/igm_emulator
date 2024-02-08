@@ -12,9 +12,8 @@ from sklearn.metrics import r2_score
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-#from haiku_custom_forward import _custom_forward_fn, schedule_lr, loss_fn, accuracy, update, output_size, activation, l2, small_bin_bool
+from utils_plot import *
 from bayes import _bnn_custom_forward_fn, schedule_lr, elbo, loss_fn, accuracy, update, output_size, activation, l2, predict, small_bin_bool
-from plotVis import *
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from pytree_h5py import save, load
 import h5py
@@ -62,6 +61,8 @@ else:
     n_covar = 500000
     bin_label = '_set_bins_4'
     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+out_tag = f'{z_string}{train_num}'
+var_tag = 'BNN_elbo_activation_relu'
 
 T0_idx = 8 #0-14
 g_idx = 4 #0-8
@@ -137,9 +138,6 @@ if __name__ == "__main__":
             # optimizing loss by update function
             params, opt_state, batch_loss, grads = update(params, opt_state, X_train, Y_train, optimizer, my_rng, like_dict,vbins)
 
-            #if step % 100 == 0:
-                #plot_params(params)
-
             # compute training & validation loss at the end of the epoch
             l = loss_fn(params, X_vali, Y_vali, my_rng, like_dict,vbins)
             training_loss.append(batch_loss)
@@ -163,32 +161,43 @@ if __name__ == "__main__":
     print(f'early_stopping_counter: {early_stopping_counter}')
     print(f'accuracy: {jnp.sqrt(jnp.mean(accuracy(params, X_test, Y_test, meanY, stdY, my_rng)**2))}')
     print(f'Test Loss: {loss_fn(params, X_test, Y_test, my_rng, like_dict,vbins)}')
-    plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
-    plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
-    plt.legend()
+
     
     '''
-    Prediction overplots: Training And Test
+    Plots
     '''
     preds = predict(best_params,X_train,my_rng)
-    train_overplot(preds,X,Y,meanY,stdY)
 
     test_preds = predict(best_params,X_test,my_rng)
     test_loss = loss_fn(best_params, X_test, Y_test, my_rng, like_dict,vbins)
     test_R2 = r2_score(test_preds.squeeze(), Y_test)
+    test_accuracy = (self.Y_test * self.stdY - test_preds * self.stdY) / (
+                self.Y_test * self.stdY + self.meanY)  # relative error of test dataset
+    self.RelativeError = test_accuracy
 
-    test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY)
+    plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
+    plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
+    plt.legend()
+    plt.savefig(os.path.join(dir_exp, f'epoch_loss_{out_tag}_{var_tag}.png'))
+
+    # Fitting plots
+    train_overplot(preds, X,Y,meanY,stdY, out_tag, var_tag)
+    test_overplot(test_preds, Y_test, X_test, meanX, stdX, meanY, stdY, out_tag,
+                  var_tag)
+
+    # Accuracy + Results Plots
+    plot_residue(self.RelativeError, out_tag, var_tag)
+    plot_error_distribution(self.RelativeError, out_tag, var_tag)
+    print(f'***Result Plots saved {dir_exp}***')  # imported from utils_plot
     '''
     Accuracy + Results
     '''
     delta = np.asarray(accuracy(best_params, X_test, Y_test, meanY, stdY, my_rng))
     print('Test R^2 Score: {}\n'.format(test_R2))  # R^2 score: ranging 0~1, 1 is good model
-    plot_residue(delta)
-    bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY)
-    plot_error_distribution(delta)
 
     '''
     Save best emulated parameter
+    '''
     '''
     #small bin size
     if small_bin_bool==True:
@@ -231,3 +240,4 @@ if __name__ == "__main__":
     dill.dump(best_params, open(os.path.join(dir, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
     dill.dump(best_params, open(os.path.join(dir2, f'{z_string}_chi_best_param{train_num}.p'), 'wb'))
     print("trained parameter for smaller bins saved")
+    '''
