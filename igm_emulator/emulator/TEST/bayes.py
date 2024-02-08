@@ -139,7 +139,7 @@ def elbo(aprx_posterior, x, y, rng,
 def loss_fn(params, x, y, rng, 
             like_dict,vbins
            ):
-    """Computes the Evidence Lower Bound loss."""
+    """Computes the Evidence Lower Bound loss. TO BE MINIMIZED ON"""
     return -elbo(params, x, y, rng, like_dict,vbins)[0]
 
 

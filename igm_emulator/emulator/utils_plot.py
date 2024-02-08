@@ -127,6 +127,22 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.show()
 
 def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
+    '''
+
+    Parameters
+    ----------
+    preds: standardized prediction
+    X
+    Y
+    meanY
+    stdY
+    out_tag
+    var_tag
+
+    Returns
+    -------
+
+    '''
     ax = v_bins # velocity bins
     sample = 8  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
@@ -150,6 +166,25 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     plt.show()
 
 def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var_tag):
+    '''
+
+
+    Parameters
+    ----------
+    test_preds: standardized prediction
+    Y_test
+    X_test
+    meanX
+    stdX
+    meanY
+    stdY
+    out_tag
+    var_tag
+
+    Returns
+    -------
+
+    '''
     ax = v_bins
     sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)

@@ -125,7 +125,7 @@ params = dict(
         # Where ``fan_in`` is the number of incoming connection to the layer.
         mu=init_params,
         # Init to ~0.001 variance around default Haiku initialization.
-        logvar=jax.tree_map(lambda x: -7 * jnp.ones_like(x), init_params),
+        logvar=jax.tree_map(lambda x: 0.001 * jnp.ones_like(x), init_params),
     )
 opt_state = optimizer.init(params)
 IPython.embed()
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dir_exp, f'epoch_loss_{out_tag}_{var_tag}.png'))
 
     # Fitting plots
-    train_overplot(preds, X,Y,meanY,stdY, out_tag, var_tag)
+    train_overplot(preds, X_train,Y_train,meanY,stdY, out_tag, var_tag)
     test_overplot(test_preds, Y_test, X_test, meanX, stdX, meanY, stdY, out_tag,
                   var_tag)
 
