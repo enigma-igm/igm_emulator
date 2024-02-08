@@ -128,7 +128,6 @@ params = dict(
         logvar=jax.tree_map(lambda x: 0.001 * jnp.ones_like(x), init_params),
     )
 opt_state = optimizer.init(params)
-IPython.embed()
 
 if __name__ == "__main__":
     with trange(n_epochs) as t:
