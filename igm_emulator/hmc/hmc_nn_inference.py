@@ -77,6 +77,8 @@ class NN_HMC_X:
         self.gammas = gammas
         self.fobs = fobs
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
+        self.theta_mins = jnp.array([astro_par_range[0] for astro_par_range in self.theta_ranges])
+        self.theta_maxs = jnp.array([astro_par_range[1] for astro_par_range in self.theta_ranges])
 
     @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
@@ -176,13 +178,42 @@ class NN_HMC_X:
         return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
 
+#### functions to do the MCMC initialization
+    def x_minmax(self):
+        x_min, x_max = self.theta_to_x(self.theta_mins, self.theta_ranges), \
+            self.theta_to_x(self.thetao_maxs, self.theta_ranges)
+
+        return x_min, x_max
+    def mcmc_init_x(self,key, perturb, x_opt):
+        """
+
+        Args:
+            perturb:
+            x_opt:
+
+        Returns:
+
+        """
+
+        x_min, x_max = self.x_minmax()
+        delta_x = x_max - x_min
+
+        key, subkey = random.split(key)
+        deviates = perturb * random.normal(subkey, (self.num_chains, 3))
+
+        x_init = jnp.array([[jnp.clip(x_opt[i] + delta_x[i] * deviates[j, i],
+                                          x_min[i], x_max[i]) for i in range(3)]
+                                for j in range(self.num_chains)])
+
+        return x_init.squeeze()
+####
     def mcmc_one(self, key, x, flux, covar, report = True): #input dimensionless paramter x
         '''
 
         Parameters
         ----------
         self
-        key: random key
+        key: random key, need to random.split(key) everytime before mcmc_one
         x: dimensionless parameters
         flux: observed flux
         covar: model-dependent covariance matrix
@@ -222,7 +253,8 @@ class NN_HMC_X:
                         progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
         theta = self.x_to_theta(x)
         theta_init = theta + 1e-4 * np.random.randn(self.num_chains, 3)
-        x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
+        #x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
+        x_init = self.mcmc_init_x(key, .05, x)
         
         # Run the MCMC
         start_time = time.time()
