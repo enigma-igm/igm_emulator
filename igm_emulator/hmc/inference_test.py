@@ -152,7 +152,7 @@ class INFERENCE_TEST():
                 self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
                 raise ValueError('Invalid combination of ngp_bool and emu_test_bool; if emu_test_bool is True, ngp_bool must be False')
-        self.note += f'_mcmc_init_x'
+        self.note += f'_mcmc_init_x_prior_func'
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
