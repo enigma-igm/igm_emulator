@@ -79,6 +79,7 @@ class NN_HMC_X:
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
         self.theta_mins = jnp.array([astro_par_range[0] for astro_par_range in self.theta_ranges])
         self.theta_maxs = jnp.array([astro_par_range[1] for astro_par_range in self.theta_ranges])
+        self.x_astro_priors = [bounded_variable_lnP, bounded_variable_lnP, bounded_variable_lnP]
 
     @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
@@ -135,23 +136,24 @@ class NN_HMC_X:
 
         return theta_astro.squeeze()
 
-    def log_prior(self,x):
-        '''
+    @partial(jit, static_argnums=(0,))
+    def eval_prior(self, x_astro):
+        """
+        Compute the prior on astro_params
+
         Args:
-            x: dimensionless parameters
+            x_astro (ndarray): shape = (nastro,)
+                dimensionless astrophysical parameter vector
 
         Returns:
-            log_prior: log prior
-        '''
-        return bounded_variable_lnP(x)
+            prior (float):
+                Prior on these model parameters
+        """
 
-    @partial(jit, static_argnums=(0,))
-    def eval_prior(self,x):
         prior = 0.0
-        for i in x:
-            prior += self.log_prior(i)
-            #print(f'i={i}')
-        #print(f'Prior={prior}')
+        for x_ast, x_astro_pri in zip(x_astro, self.x_astro_priors):
+            prior += x_astro_pri(x_ast)
+
         return prior
 
     @partial(jit, static_argnums=(0,))
