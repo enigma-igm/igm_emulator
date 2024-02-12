@@ -180,7 +180,7 @@ class NN_HMC_X:
 
 #### functions to do the MCMC initialization
     def x_minmax(self):
-        x_min, x_max = self.theta_to_x(self.theta_mins, self.theta_ranges), \
+        x_min, x_max = bounded_theta_to_x(self.theta_mins, self.theta_ranges), \
             bounded_theta_to_x(self.thetao_maxs, self.theta_ranges)
 
         return x_min, x_max
