@@ -104,7 +104,7 @@ class NN_HMC_X:
         model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
 
 
-        log_like = logpdf(x=model, mean=corr, cov=covar)
+        log_like = logpdf(x=corr, mean=model, cov=covar)
         #print(f'Log_likelihood={log_like}')
         return log_like
 
