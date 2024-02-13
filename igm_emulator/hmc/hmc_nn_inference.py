@@ -254,7 +254,7 @@ class NN_HMC_X:
                         chain_method='vectorized',
                         progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
         theta = self.x_to_theta(x)
-        theta_init = theta + 1e-4 * np.random.randn(self.num_chains, 3)
+        theta_init = theta + 0.5 * np.random.randn(self.num_chains, 3)
         #x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
         x_init = self.mcmc_init_x(key,  1e-4, x)
         
