@@ -15,6 +15,7 @@ import jax.numpy as jnp
 import jax.random as random
 
 # redshift to get models for -- can make this an input to this script if desired
+# X = [fobs, T0, gamma]
 redshift = 5.4
 small_bin_bool = True  # True: small bins n=59; False: large bins n=276
 

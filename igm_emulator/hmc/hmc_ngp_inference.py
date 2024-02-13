@@ -155,9 +155,9 @@ if __name__ == '__main__':
     new_covariances = jnp.array(new_covariances_np)
     new_log_dets = jnp.array(new_log_dets_np)
 
-    T0_idx = 11  # 0-14
-    g_idx = 4  # 0-8
-    f_idx = 7  # 0-8
+    T0_idx = 0  # 0-14
+    g_idx = 5  # 0-8
+    f_idx = 4  # 0-8
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
     model_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'

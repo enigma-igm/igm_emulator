@@ -216,7 +216,7 @@ class NN_HMC_X:
         ----------
         self
         key: random key, need to random.split(key) everytime before mcmc_one
-        x: dimensionless parameters
+        x: dimensionless best-fit parameters
         flux: observed flux
         covar: model-dependent covariance matrix
         report: whether to report the progress
