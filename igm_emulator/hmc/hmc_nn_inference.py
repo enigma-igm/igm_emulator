@@ -45,7 +45,7 @@ plt.rcParams.update(plt_params)
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, dense_mass=True,
-                 max_tree_depth= 10, #(8,10),
+                 max_tree_depth= (8,10), #10
                  num_warmup=1000,
                  num_samples=1000,
                  num_chains=4):
@@ -246,15 +246,18 @@ class NN_HMC_X:
             mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
                         num_chains=self.num_chains,
                         jit_model_args=True,
-                        chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized'
+                        chain_method='vectorized',
+                        find_heuristic_step_size=True
+                        )  # chain_method='sequential' chain_method='vectorized' regularize_mass_matrix=False
         else:
             mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
                         num_chains=self.num_chains,
                         jit_model_args=True,
                         chain_method='vectorized',
-                        progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
+                        progress_bar=False,
+                        find_heuristic_step_size=True)  # chain_method='sequential' chain_method='vectorized'
         theta = self.x_to_theta(x)
-        theta_init = theta + 0.5 * np.random.randn(self.num_chains, 3)
+        theta_init = theta + 0.05 * np.random.randn(self.num_chains, 3)
         #x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
         x_init = self.mcmc_init_x(key,  1e-4, x)
         
