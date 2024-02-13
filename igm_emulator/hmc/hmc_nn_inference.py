@@ -238,7 +238,8 @@ class NN_HMC_X:
         '''
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux,covar),
-                       adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth)
+                       adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth,
+                        find_heuristic_step_size=True)
         # Initial position
         if report:
             print(f'true theta:{self.x_to_theta(x)}')
@@ -246,16 +247,13 @@ class NN_HMC_X:
             mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
                         num_chains=self.num_chains,
                         jit_model_args=True,
-                        chain_method='vectorized',
-                        find_heuristic_step_size=True
-                        )  # chain_method='sequential' chain_method='vectorized' regularize_mass_matrix=False
+                        chain_method='vectorized')  # chain_method='sequential' chain_method='vectorized' regularize_mass_matrix=False
         else:
             mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
                         num_chains=self.num_chains,
                         jit_model_args=True,
                         chain_method='vectorized',
-                        progress_bar=False,
-                        find_heuristic_step_size=True)  # chain_method='sequential' chain_method='vectorized'
+                        progress_bar=False)  # chain_method='sequential' chain_method='vectorized'
         theta = self.x_to_theta(x)
         theta_init = theta + 0.05 * np.random.randn(self.num_chains, 3)
         #x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
