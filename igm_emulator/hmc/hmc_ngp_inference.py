@@ -159,6 +159,7 @@ if __name__ == '__main__':
     g_idx = 5  # 0-8
     f_idx = 4  # 0-8
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
+    print(theta_true)
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
     model_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
     model_dict = dill.load(open(in_path_molly + model_name, 'rb'))
@@ -170,24 +171,28 @@ if __name__ == '__main__':
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
 
 
-    hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
-
     hmc_nn = NN_HMC_X(v_bins, best_params, t_0s, gammas, fobs, dense_mass=True,
                         max_tree_depth= 10,
                         num_warmup=1000,
                         num_samples=1000,
                         num_chains=4)
+    x_true = hmc_nn.theta_to_x(theta_true)
     print(f'NN [fobs, T0, gamma] ranges: {hmc_nn.theta_ranges}')
     print(np.argmin(np.abs(hmc_nn.T0s - theta_true[1])),
         np.argmin(np.abs(hmc_nn.gammas - theta_true[2])),
        np.argmin(np.abs(hmc_nn.fobs - theta_true[0])))
+    print(x_true)
+
+    hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
+    x_true = hmc_ngp.theta_to_x(theta_true)
     print(f'NGP [fobs, T0, gamma] ranges: {hmc_ngp.theta_ranges}')
     print(np.argmin(np.abs(hmc_ngp.T0s - theta_true[1])),
         np.argmin(np.abs(hmc_ngp.gammas - theta_true[2])),
         np.argmin(np.abs(hmc_ngp.fobs - theta_true[0])))
+    print(x_true)
 
     flux = mocks[0,:]
-    x_true = hmc_ngp.theta_to_x(theta_true)
+
     cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
 
     '''
