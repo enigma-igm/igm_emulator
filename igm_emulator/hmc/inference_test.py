@@ -152,7 +152,7 @@ class INFERENCE_TEST():
                 self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
                 raise ValueError('Invalid combination of ngp_bool and emu_test_bool; if emu_test_bool is True, ngp_bool must be False')
-        self.note += f'_mcmc_init_x_prior_func'
+        self.note += f'_NN_HMC_fine_grid'
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
@@ -305,11 +305,12 @@ class INFERENCE_TEST():
 
         ### Emulator model inference class load in###
         else:
-            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs, dense_mass=True,
-                        max_tree_depth= 10,
-                        num_warmup=1000,
-                        num_samples=1000,
-                        num_chains=4)
+            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, new_temps, new_gammas, new_fobs, #self.T0s, self.gammas, self.fobs,
+                                dense_mass=True,
+                                max_tree_depth= 10,
+                                num_warmup=1000,
+                                num_samples=1000,
+                                num_chains=4)
 
         '''
         File names for saving
@@ -383,6 +384,7 @@ class INFERENCE_TEST():
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]}')
                 fit_fig =  hmc_inf.fit_plot(z_string='z54',theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
