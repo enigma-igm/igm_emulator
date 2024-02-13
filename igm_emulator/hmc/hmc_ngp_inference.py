@@ -159,7 +159,6 @@ if __name__ == '__main__':
     g_idx = 5  # 0-8
     f_idx = 4  # 0-8
     theta_true = [fobs[f_idx], t_0s[T0_idx], gammas[g_idx]]
-    print(f'fobs: {fobs}, T0: {t_0s}, gamma: {gammas}
     mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
     model_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
     model_dict = dill.load(open(in_path_molly + model_name, 'rb'))
