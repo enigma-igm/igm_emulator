@@ -243,64 +243,66 @@ class INFERENCE_TEST():
         '''
 
         ### NGP model inference class load in###
+        #if self.ngp_bool == True:
+        in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{self.n_covar}_' \
+                             f'P{self.n_path}{self.bin_label}_params.p'
+        new_param_dict = dill.load(open(self.in_path + in_name_new_params, 'rb'))
+        new_temps = new_param_dict['new_temps']
+        new_gammas = new_param_dict['new_gammas']
+        new_fobs = new_param_dict['new_fobs']
+
+        n_new_t = (len(new_temps) - 1) / (len(self.T0s) - 1) - 1
+        n_new_g = (len(new_gammas) - 1) / (len(self.gammas) - 1) - 1
+        n_new_f = (len(new_fobs) - 1) / (len(self.fobs) - 1) - 1
+        new_models_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(self.v_bins)])
+        new_covariances_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(self.v_bins), len(self.v_bins)])
+        new_log_dets_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs)])
+
+        for old_t_below_idx in range(self.n_temps - 1):
+            print(f'{old_t_below_idx / (self.n_temps - 1) * 100}%')
+            for old_g_below_idx in range(self.n_gammas - 1):
+                for old_f_below_idx in range(self.n_f - 1):
+                    fine_dict_in_name = f'new_covariances_dict_R_{int(self.R_value)}_nf_{self.n_f}_T{old_t_below_idx}_' \
+                                        f'G{old_g_below_idx}_SNR0_F{old_f_below_idx}_ncovar_{self.n_covar}_' \
+                                        f'P{self.n_path}{self.bin_label}.p'
+                    fine_dict = dill.load(open(self.in_path + fine_dict_in_name, 'rb'))
+                    new_temps_small = fine_dict['new_temps']
+                    new_gammas_small = fine_dict['new_gammas']
+                    new_fobs_small = fine_dict['new_fobs']
+                    new_models_small = fine_dict['new_models']
+                    new_covariances_small = fine_dict['new_covariances']
+                    new_log_dets_small = fine_dict['new_log_dets']
+                    if old_t_below_idx == self.n_temps - 2:
+                        added_t_range = n_new_t + 2
+                    else:
+                        added_t_range = n_new_t + 1
+                    if old_g_below_idx == self.n_gammas - 2:
+                        added_g_range = n_new_g + 2
+                    else:
+                        added_g_range = n_new_g + 1
+                    if old_f_below_idx == self.n_f - 2:
+                        added_f_range = n_new_f + 2
+                    else:
+                        added_f_range = n_new_f + 1
+                    for added_t_idx in range(int(added_t_range)):
+                        for added_g_idx in range(int(added_g_range)):
+                            for added_f_idx in range(int(added_f_range)):
+                                final_t_idx = int((old_t_below_idx * (n_new_t + 1)) + added_t_idx)
+                                final_g_idx = int((old_g_below_idx * (n_new_g + 1)) + added_g_idx)
+                                final_f_idx = int((old_f_below_idx * (n_new_f + 1)) + added_f_idx)
+                                new_models_np[final_t_idx, final_g_idx, final_f_idx, :] = new_models_small[
+                                                                                          added_t_idx, added_g_idx,
+                                                                                          added_f_idx, :]
+                                new_covariances_np[final_t_idx, final_g_idx, final_f_idx, :,
+                                :] = new_covariances_small[added_t_idx, added_g_idx, added_f_idx, :, :]
+                                new_log_dets_np[final_t_idx, final_g_idx, final_f_idx] = new_log_dets_small[
+                                    added_t_idx, added_g_idx, added_f_idx]
+        new_models = jnp.array(new_models_np)
+        new_covariances = jnp.array(new_covariances_np)
+        new_log_dets = jnp.array(new_log_dets_np)
+        #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
+
         if self.ngp_bool == True:
-            in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{self.n_covar}_' \
-                                 f'P{self.n_path}{self.bin_label}_params.p'
-            new_param_dict = dill.load(open(self.in_path + in_name_new_params, 'rb'))
-            new_temps = new_param_dict['new_temps']
-            new_gammas = new_param_dict['new_gammas']
-            new_fobs = new_param_dict['new_fobs']
-
-            n_new_t = (len(new_temps) - 1) / (len(self.T0s) - 1) - 1
-            n_new_g = (len(new_gammas) - 1) / (len(self.gammas) - 1) - 1
-            n_new_f = (len(new_fobs) - 1) / (len(self.fobs) - 1) - 1
-            new_models_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(self.v_bins)])
-            new_covariances_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs), len(self.v_bins), len(self.v_bins)])
-            new_log_dets_np = np.empty([len(new_temps), len(new_gammas), len(new_fobs)])
-
-            for old_t_below_idx in range(self.n_temps - 1):
-                print(f'{old_t_below_idx / (self.n_temps - 1) * 100}%')
-                for old_g_below_idx in range(self.n_gammas - 1):
-                    for old_f_below_idx in range(self.n_f - 1):
-                        fine_dict_in_name = f'new_covariances_dict_R_{int(self.R_value)}_nf_{self.n_f}_T{old_t_below_idx}_' \
-                                            f'G{old_g_below_idx}_SNR0_F{old_f_below_idx}_ncovar_{self.n_covar}_' \
-                                            f'P{self.n_path}{self.bin_label}.p'
-                        fine_dict = dill.load(open(self.in_path + fine_dict_in_name, 'rb'))
-                        new_temps_small = fine_dict['new_temps']
-                        new_gammas_small = fine_dict['new_gammas']
-                        new_fobs_small = fine_dict['new_fobs']
-                        new_models_small = fine_dict['new_models']
-                        new_covariances_small = fine_dict['new_covariances']
-                        new_log_dets_small = fine_dict['new_log_dets']
-                        if old_t_below_idx == self.n_temps - 2:
-                            added_t_range = n_new_t + 2
-                        else:
-                            added_t_range = n_new_t + 1
-                        if old_g_below_idx == self.n_gammas - 2:
-                            added_g_range = n_new_g + 2
-                        else:
-                            added_g_range = n_new_g + 1
-                        if old_f_below_idx == self.n_f - 2:
-                            added_f_range = n_new_f + 2
-                        else:
-                            added_f_range = n_new_f + 1
-                        for added_t_idx in range(int(added_t_range)):
-                            for added_g_idx in range(int(added_g_range)):
-                                for added_f_idx in range(int(added_f_range)):
-                                    final_t_idx = int((old_t_below_idx * (n_new_t + 1)) + added_t_idx)
-                                    final_g_idx = int((old_g_below_idx * (n_new_g + 1)) + added_g_idx)
-                                    final_f_idx = int((old_f_below_idx * (n_new_f + 1)) + added_f_idx)
-                                    new_models_np[final_t_idx, final_g_idx, final_f_idx, :] = new_models_small[
-                                                                                              added_t_idx, added_g_idx,
-                                                                                              added_f_idx, :]
-                                    new_covariances_np[final_t_idx, final_g_idx, final_f_idx, :,
-                                    :] = new_covariances_small[added_t_idx, added_g_idx, added_f_idx, :, :]
-                                    new_log_dets_np[final_t_idx, final_g_idx, final_f_idx] = new_log_dets_small[
-                                        added_t_idx, added_g_idx, added_f_idx]
-            new_models = jnp.array(new_models_np)
-            new_covariances = jnp.array(new_covariances_np)
-            new_log_dets = jnp.array(new_log_dets_np)
-            #hmc_inf = HMC_NGP(self.v_bins, new_temps_small, new_gammas_small, new_fobs_small, new_models, new_covariances, new_log_dets)
             hmc_inf = HMC_NGP(self.v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
 
         ### Emulator model inference class load in###
@@ -312,7 +314,9 @@ class INFERENCE_TEST():
                                 num_samples=1000,
                                 num_chains=4)
 
-        '''
+        print(f'fobs: {self.fobs}, T0: {self.T0s}, gamma: {self.gammas}
+        print(f'new_fobs: {new_fobs}, new_T0s: {new_temps}, new_gamma: {new_gammas}')
+              '''
         File names for saving
         '''
         ### change this to the correct path ###
