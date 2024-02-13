@@ -178,7 +178,13 @@ if __name__ == '__main__':
                         num_samples=1000,
                         num_chains=4)
     print(f'NN [fobs, T0, gamma] ranges: {hmc_nn.theta_ranges}')
+    print(closest_temp_idx = np.argmin(np.abs(hmc_nn.T0s - theta_true[1])),
+        closest_gamma_idx = np.argmin(np.abs(hmc_nn.gammas - theta_true[2])),
+        closest_fobs_idx = np.argmin(np.abs(hmc_nn.fobs - theta_true[0])))
     print(f'NGP [fobs, T0, gamma] ranges: {hmc_ngp.theta_ranges}')
+    print(closest_temp_idx = np.argmin(np.abs(hmc_ngp.T0s - theta_true[1])),
+        closest_gamma_idx = np.argmin(np.abs(hmc_ngp.gammas - theta_true[2])),
+        closest_fobs_idx = np.argmin(np.abs(hmc_ngp.fobs - theta_true[0])))
 
     flux = mocks[0,:]
     x_true = hmc_ngp.theta_to_x(theta_true)
