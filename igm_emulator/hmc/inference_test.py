@@ -316,7 +316,8 @@ class INFERENCE_TEST():
 
         print(f'fobs: {self.fobs}, T0: {self.T0s}, gamma: {self.gammas}')
         print(f'new_fobs: {new_fobs}, new_T0s: {new_temps}, new_gamma: {new_gammas}')
-              '''
+
+        '''
         File names for saving
         '''
         ### change this to the correct path ###
