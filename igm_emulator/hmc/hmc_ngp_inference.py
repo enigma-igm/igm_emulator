@@ -197,8 +197,8 @@ if __name__ == '__main__':
     key, subkey = random.split(key)
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_true, flux, cov, report=True)
-    hmc_ngp.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
-    hmc_ngp.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
+    hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
+    hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
                      save_bool=True, save_str=None)
     '''
     NGP HMC 
