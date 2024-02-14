@@ -239,7 +239,7 @@ class NN_HMC_X:
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux,covar),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth,
-                        find_heuristic_step_size=True, target_accept_prob=0.7)
+                        find_heuristic_step_size=True, target_accept_prob=0.99)
         # Initial position
         if report:
             print(f'true theta:{self.x_to_theta(x)}')
