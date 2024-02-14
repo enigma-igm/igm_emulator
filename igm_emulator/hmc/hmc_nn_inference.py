@@ -258,7 +258,7 @@ class NN_HMC_X:
         theta = self.x_to_theta(x)
         theta_init = theta + 0.05 * np.random.randn(self.num_chains, 3)
         #x_init = x + 1e-4 * np.random.randn(self.num_chains, 3)
-        x_init = self.mcmc_init_x(key,  0.05, x)
+        x_init = self.mcmc_init_x(key,  100, x)
         
         # Run the MCMC
         start_time = time.time()
