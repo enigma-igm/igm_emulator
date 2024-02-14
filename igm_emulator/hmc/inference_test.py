@@ -152,7 +152,7 @@ class INFERENCE_TEST():
                 self.note = 'gaussian_mocks_emulator_prior_diff_covar'
             else:
                 raise ValueError('Invalid combination of ngp_bool and emu_test_bool; if emu_test_bool is True, ngp_bool must be False')
-        self.note += f'_NN_HMC_fine_grid'
+        self.note += f'_target_0.9'
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
@@ -312,8 +312,8 @@ class INFERENCE_TEST():
                                 num_samples=1000,
                                 num_chains=4)
 
-        print(f'fobs: {self.fobs}, T0: {self.T0s}, gamma: {self.gammas}')
-        print(f'new_fobs: {new_fobs}, new_T0s: {new_temps}, new_gamma: {new_gammas}')
+
+
 
         '''
         File names for saving
