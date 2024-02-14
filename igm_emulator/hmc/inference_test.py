@@ -313,8 +313,6 @@ class INFERENCE_TEST():
                                 num_chains=4)
 
 
-
-
         '''
         File names for saving
         '''
