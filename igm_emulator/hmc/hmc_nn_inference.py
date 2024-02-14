@@ -45,10 +45,10 @@ plt.rcParams.update(plt_params)
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, dense_mass=True,
-                 max_tree_depth= 12, #(8,10), #10
-                 num_warmup=1000,
-                 num_samples= 2000, #1000,
-                 num_chains= 8 #4
+                 max_tree_depth= 10, #(8,10),
+                 num_warmup= 1000,
+                 num_samples= 1000,
+                 num_chains= 4
                  ):
         '''
         Args:
@@ -240,7 +240,7 @@ class NN_HMC_X:
         # Instantiate the NUTS kernel and the mcmc object
         nuts_kernel = NUTS(potential_fn=self.numpyro_potential_fun(flux,covar),
                        adapt_step_size=True, dense_mass=True, max_tree_depth=self.max_tree_depth,
-                        find_heuristic_step_size=True, target_accept_prob=0.99)
+                        find_heuristic_step_size=True, target_accept_prob=0.9)
         # Initial position
         if report:
             print(f'true theta:{self.x_to_theta(x)}')
