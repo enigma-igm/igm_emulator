@@ -202,7 +202,7 @@ if __name__ == '__main__':
     hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
     hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
                      save_bool=True, save_str=None)
-    hmc_nn.explore_logP_plot(zstr, theta_plot=theta_true, flux=flux, covar= cov, fix='t')
+    hmc_nn.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t')
     '''
     NGP HMC 
     '''

@@ -180,7 +180,7 @@ class NN_HMC_X:
     def numpyro_potential_fun(self, flux, covar): #potential function for numpyro
         return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
-    def explore_logP_plot(self, z_string, theta_plot, flux, covar, fix='t'):
+    def explore_logP_plot(self, z_string, theta_true, flux, covar, fix='t'):
         """
         Explore the negative of the Potential function (prop to logL + logPrior by plotting it as a
         function of the parameters.
@@ -194,9 +194,9 @@ class NN_HMC_X:
         f_grid = np.linspace(self.theta_ranges[0][0], self.theta_ranges[0][1], 100)
         t_grid = np.linspace(self.theta_ranges[1][0], self.theta_ranges[1][1], 100)
         g_grid = np.linspace(self.theta_ranges[2][0], self.theta_ranges[2][1], 100)
-        closest_temp_idx = np.argmin(np.abs(self.T0s - theta_plot[1]))
-        closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_plot[2]))
-        closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_plot[0]))
+        closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
+        closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
+        closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
 
         if fix == 't':
             x_grid=f_grid
