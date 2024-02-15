@@ -205,6 +205,8 @@ class NN_HMC_X:
             y_label = 'g_grid'
             # create the empty array with the likelihood values
             logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnPrior_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnlike_grid = np.zeros((len(x_grid), len(y_grid)))
             # loop over the grid and compute the likelihood
             t = theta_true[1]
             for i, f in enumerate(x_grid):
@@ -212,6 +214,9 @@ class NN_HMC_X:
                     logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
                                                           # change the order of f,t,g
                                                           flux, covar)
+                    lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
+                    lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
+
         elif fix == 'f':
             x_grid=t_grid
             x_label = 't_grid'
@@ -219,6 +224,8 @@ class NN_HMC_X:
             y_label = 'g_grid'
             # create the empty array with the likelihood values
             logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnPrior_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnlike_grid = np.zeros((len(x_grid), len(y_grid)))
             # loop over the grid and compute the likelihood
             f = theta_true[0]
             for i, t in enumerate(x_grid):
@@ -226,6 +233,9 @@ class NN_HMC_X:
                     logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
                                                           # change the order of f,t,g
                                                           flux, covar)
+                    lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
+                    lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
+
         elif fix == 'g':
             x_grid=f_grid
             x_label = 'f_grid'
@@ -233,6 +243,8 @@ class NN_HMC_X:
             y_label = 't_grid'
             # create the empty array with the likelihood values
             logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnPrior_grid = np.zeros((len(x_grid), len(y_grid)))
+            lnlike_grid = np.zeros((len(x_grid), len(y_grid)))
             # loop over the grid and compute the likelihood
             g = theta_true[2]
             for i, f in enumerate(x_grid):
@@ -240,8 +252,10 @@ class NN_HMC_X:
                     logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
                                                           # change the order of f,t,g
                                                           flux, covar)
+                    lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
+                    lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
 
-        # plot the likelihood
+        # plot the log_posterior
         plt.figure(figsize=(10, 8))
         plt.imshow(logP_grid, origin='lower')
         plt.colorbar(label='logP')
@@ -249,8 +263,25 @@ class NN_HMC_X:
         plt.ylabel(y_label)
         plt.title('Color plot of logP_grid')
         plt.axis('equal')
-        plt.show()
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        #plot the log_prior
+        plt.figure(figsize=(10, 8))
+        plt.imshow(lnPrior_grid, origin='lower')
+        plt.colorbar(label='lnPrior')
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.title('Color plot of lnPrior_grid')
+        plt.axis('equal')
+        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnPrior_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        #plot the log_likelihood
+        plt.figure(figsize=(10, 8))
+        plt.imshow(lnlike_grid, origin='lower')
+        plt.colorbar(label='lnlike')
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.title('Color plot of lnlike_grid')
+        plt.axis('equal')
+        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         return f_grid, t_grid, g_grid, logP_grid
 
 #### functions to do the MCMC initialization
