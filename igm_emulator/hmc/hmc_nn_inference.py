@@ -248,6 +248,7 @@ class NN_HMC_X:
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title('Color plot of logP_grid')
+        plt.axis('equal')
         plt.show()
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         return f_grid, t_grid, g_grid, logP_grid
