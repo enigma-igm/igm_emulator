@@ -241,7 +241,7 @@ class NN_HMC_X:
                                                           # change the order of f,t,g
                                                           flux, covar)
 
-        plt.figure(figsize=(10, 8))
+        # plot the likelihood
         plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower')
         plt.colorbar(label='logP')
         plt.xlabel(x_label)
