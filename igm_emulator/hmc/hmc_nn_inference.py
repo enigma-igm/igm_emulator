@@ -180,6 +180,76 @@ class NN_HMC_X:
     def numpyro_potential_fun(self, flux, covar): #potential function for numpyro
         return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
+    def explore_logP_plot(self, z_string, theta_plot, flux, covar, fix='t'):
+        """
+        Explore the negative of the Potential function (prop to logL + logPrior by plotting it as a
+        function of the parameters.
+        Args:
+            theta_plot (ndarray):
+                true theta; shape (3, ) where we plot the logP around
+            flux (ndarray):
+                autocorrelation function data; shape (n_data, )
+        """
+        # create a grid of for the theta parameters
+        f_grid = np.linspace(self.theta_ranges[0][0], self.theta_ranges[0][1], 100)
+        t_grid = np.linspace(self.theta_ranges[1][0], self.theta_ranges[1][1], 100)
+        g_grid = np.linspace(self.theta_ranges[2][0], self.theta_ranges[2][1], 100)
+        closest_temp_idx = np.argmin(np.abs(self.T0s - theta_plot[1]))
+        closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_plot[2]))
+        closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_plot[0]))
+
+        if fix == 't':
+            x_grid=f_grid
+            x_label = 'f_grid'
+            y_grid=g_grid
+            y_label = 'g_grid'
+            # create the empty array with the likelihood values
+            logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            # loop over the grid and compute the likelihood
+            t = theta_true[1]
+            for i, f in enumerate(x_grid):
+                for j, g in enumerate(y_grid):
+                    logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
+                                                          # change the order of f,t,g
+                                                          flux, covar)
+        elif fix == 'f':
+            x_grid=t_grid
+            x_label = 't_grid'
+            y_grid=g_grid
+            y_label = 'g_grid'
+            # create the empty array with the likelihood values
+            logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            # loop over the grid and compute the likelihood
+            f = theta_true[0]
+            for i, t in enumerate(x_grid):
+                for j, g in enumerate(y_grid):
+                    logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
+                                                          # change the order of f,t,g
+                                                          flux, covar)
+        elif fix == 'g':
+            x_grid=f_grid
+            x_label = 'f_grid'
+            y_grid=t_grid
+            y_label = 't_grid'
+            # create the empty array with the likelihood values
+            logP_grid = np.zeros((len(x_grid), len(y_grid)))
+            # loop over the grid and compute the likelihood
+            g = theta_true[2]
+            for i, f in enumerate(x_grid):
+                for j, t in enumerate(y_grid):
+                    logP_grid[i, j] = -self.potential_fun(self.theta_to_x(np.array([f, t, g])),
+                                                          # change the order of f,t,g
+                                                          flux, covar)
+
+        plt.figure(figsize=(10, 8))
+        plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower')
+        plt.colorbar(label='logP')
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.title('Color plot of logP_grid')
+        plt.show()
+        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        return f_grid, t_grid, g_grid, logP_grid
 
 #### functions to do the MCMC initialization
     def x_minmax(self):

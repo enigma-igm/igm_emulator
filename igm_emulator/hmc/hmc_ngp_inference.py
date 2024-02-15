@@ -202,6 +202,7 @@ if __name__ == '__main__':
     hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
     hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
                      save_bool=True, save_str=None)
+    hmc_nn.explore_logP_plot(zstr, theta_plot=theta_true, flux=flux, covar= cov, fix='t')
     '''
     NGP HMC 
     '''
@@ -210,3 +211,4 @@ if __name__ == '__main__':
         hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_true, flux, cov, report=True)
     hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
     hmc_ngp.fit_plot(zstr,theta_samples_ngp,lnP_ngp,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')
+    hmc_ngp.explore_logP_plot(zstr, theta_plot=theta_true, flux=flux, covar= cov, fix='t')
