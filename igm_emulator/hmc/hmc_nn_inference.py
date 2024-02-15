@@ -242,6 +242,7 @@ class NN_HMC_X:
                                                           flux, covar)
 
         # plot the likelihood
+        plt.figure(figsize=(10, 8))
         plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower')
         plt.colorbar(label='logP')
         plt.xlabel(x_label)
