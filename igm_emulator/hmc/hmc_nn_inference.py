@@ -180,7 +180,7 @@ class NN_HMC_X:
     def numpyro_potential_fun(self, flux, covar): #potential function for numpyro
         return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
-    def explore_logP_plot(self, z_string, theta_true, flux, covar, fix='t'):
+    def explore_logP_plot(self, z_string, theta_true, flux, covar, fix='t', save_str=None):
         """
         Explore the negative of the Potential function (prop to logL + logPrior by plotting it as a
         function of the parameters.
