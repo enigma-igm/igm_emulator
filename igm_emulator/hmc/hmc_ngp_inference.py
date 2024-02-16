@@ -177,9 +177,9 @@ if __name__ == '__main__':
                         num_chains=4)
     x_true = hmc_nn.theta_to_x(theta_true)
     print(f'NN [fobs, T0, gamma] ranges: {hmc_nn.theta_ranges}')
-    print(np.argmin(np.abs(hmc_nn.T0s - theta_true[1])),
-        np.argmin(np.abs(hmc_nn.gammas - theta_true[2])),
-       np.argmin(np.abs(hmc_nn.fobs - theta_true[0])))
+    closest_temp_idx = np.argmin(np.abs(hmc_nn.T0s - theta_true[1]))
+    closest_gamma_idx = np.argmin(np.abs(hmc_nn.gammas - theta_true[2]))
+    closest_fobs_idx = np.argmin(np.abs(hmc_nn.fobs - theta_true[0]))
 
     hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
     x_true = hmc_ngp.theta_to_x(theta_true)
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
     hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
                      save_bool=True, save_str=None)
-    hmc_nn.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t')
+    fix, f_grid, t_grid, g_grid, logP_grid_nn, chi_grid_nn = hmc_nn.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t')
     '''
     NGP HMC 
     '''
@@ -211,4 +211,29 @@ if __name__ == '__main__':
         hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_true, flux, cov, report=True)
     hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
     hmc_ngp.fit_plot(zstr,theta_samples_ngp,lnP_ngp,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')
-    hmc_ngp.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t',save_str='ngp_hmc_test')
+    _, _, _, _, logP_grid_ngp, chi_grid_ngp = hmc_ngp.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t',save_str='ngp_hmc_test')
+
+    '''
+    Plot NGP and NN lnP and chi difference
+    '''
+    plt.figure(figsize=(10, 8))
+    plt.imshow(logP_grid_nn-logP_grid_ngp, extent=[f_grid.min(), f_grid.max(), g_grid.min(), g_grid.max()], origin='lower',
+               aspect='auto')
+    plt.colorbar(label='lnP NN-NGP')
+    plt.xlabel('f_grid')
+    plt.ylabel('g_grid')
+    plt.title('Color plot of lnP NN-NGP')
+    plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{zstr}/hmc/lnP_subtract_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
+    plt.close()
+
+    plt.figure(figsize=(10, 8))
+    plt.imshow(chi_grid_ngp - chi_grid_nn, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()],
+               origin='lower',
+               aspect='auto')
+    plt.colorbar(label='Chi NGP-NN')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title('Color plot of Chi NGP-NN')
+    plt.savefig(
+        f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_subtract_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
+    plt.close()
