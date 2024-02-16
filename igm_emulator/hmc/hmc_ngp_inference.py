@@ -227,12 +227,12 @@ if __name__ == '__main__':
     plt.close()
 
     plt.figure(figsize=(10, 8))
-    plt.imshow(chi_grid_ngp - chi_grid_nn, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()],
+    plt.imshow(chi_grid_ngp - chi_grid_nn, extent=[f_grid.min(), f_grid.max(), g_grid.min(), g_grid.max()],
                origin='lower',
                aspect='auto')
     plt.colorbar(label='Chi NGP-NN')
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.xlabel('f_grid')
+    plt.ylabel('g_grid')
     plt.title('Color plot of Chi NGP-NN')
     plt.savefig(
         f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_subtract_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
