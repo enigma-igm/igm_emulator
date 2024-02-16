@@ -235,5 +235,5 @@ if __name__ == '__main__':
     plt.ylabel('g_grid')
     plt.title('Color plot of Chi NGP-NN')
     plt.savefig(
-        f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_subtract_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
+        f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{zstr}/hmc/chi_subtract_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}.pdf')
     plt.close()
