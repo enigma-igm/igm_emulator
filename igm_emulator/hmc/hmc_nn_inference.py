@@ -291,7 +291,7 @@ class NN_HMC_X:
         plt.colorbar(label='diff^2',spacing='proportional',format = '%.4e')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
-        plt.title('Color plot of diff^2_grid')
+        plt.title(f'Color plot of diff^2_grid; min diff^2:{diff_grid.max()}')
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/diff^2_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         return f_grid, t_grid, g_grid, logP_grid
 
