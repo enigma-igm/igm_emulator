@@ -288,7 +288,7 @@ class NN_HMC_X:
         #plot the difference squared
         plt.figure(figsize=(10, 8))
         plt.imshow(diff_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
-        plt.colorbar(label='diff^2')
+        plt.colorbar(label='diff^2',spacing='proportional',format = '%.4e')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title('Color plot of diff^2_grid')
