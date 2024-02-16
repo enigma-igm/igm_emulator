@@ -257,30 +257,27 @@ class NN_HMC_X:
 
         # plot the log_posterior
         plt.figure(figsize=(10, 8))
-        plt.imshow(logP_grid, origin='lower')
+        plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='equal')
         plt.colorbar(label='logP')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title('Color plot of logP_grid')
-        plt.axis('equal')
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the log_prior
         plt.figure(figsize=(10, 8))
-        plt.imshow(lnPrior_grid, origin='lower')
+        plt.imshow(lnPrior_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='equal')
         plt.colorbar(label='lnPrior')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title('Color plot of lnPrior_grid')
-        plt.axis('equal')
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnPrior_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the log_likelihood
         plt.figure(figsize=(10, 8))
-        plt.imshow(lnlike_grid, origin='lower')
+        plt.imshow(lnlike_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='equal')
         plt.colorbar(label='lnlike')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title('Color plot of lnlike_grid')
-        plt.axis('equal')
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         return f_grid, t_grid, g_grid, logP_grid
 
