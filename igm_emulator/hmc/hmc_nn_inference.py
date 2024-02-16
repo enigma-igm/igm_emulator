@@ -287,7 +287,7 @@ class NN_HMC_X:
         plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the difference squared
         plt.figure(figsize=(10, 8))
-        plt.imshow(chi_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
+        plt.imshow(chi_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto', cmap='viridis_r')
         plt.colorbar(label='chi',spacing='proportional',format = '%.4e')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
