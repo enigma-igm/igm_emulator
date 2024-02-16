@@ -217,7 +217,7 @@ class NN_HMC_X:
                                                           flux, covar)
                     lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
                     lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
-                    diff_grid[i, j] = np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
+                    diff_grid[i, j] = -np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
 
         elif fix == 'f':
             x_grid=t_grid
@@ -238,7 +238,7 @@ class NN_HMC_X:
                                                           flux, covar)
                     lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
                     lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
-                    diff_grid[i, j] = np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
+                    diff_grid[i, j] = -np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
 
         elif fix == 'g':
             x_grid=f_grid
@@ -259,7 +259,7 @@ class NN_HMC_X:
                                                           flux, covar)
                     lnPrior_grid[i, j] = self.eval_prior(self.theta_to_x(np.array([f, t, g])))
                     lnlike_grid[i, j] = self.log_likelihood(self.theta_to_x(np.array([f, t, g])), flux, covar)
-                    diff_grid[i, j] = np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
+                    diff_grid[i, j] = -np.sum((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)
 
         # plot the log_posterior
         plt.figure(figsize=(10, 8))
