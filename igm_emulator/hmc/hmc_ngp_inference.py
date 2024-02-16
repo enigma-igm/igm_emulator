@@ -229,8 +229,8 @@ if __name__ == '__main__':
     plt.figure(figsize=(10, 8))
     plt.imshow(chi_grid_ngp - chi_grid_nn, extent=[f_grid.min(), f_grid.max(), g_grid.min(), g_grid.max()],
                origin='lower',
-               aspect='auto')
-    plt.colorbar(label='Chi NGP-NN', cmap='coolwarm', vmin=0, vmax=0.3)
+               aspect='auto', cmap='coolwarm',vmin=0, vmax=0.3)
+    plt.colorbar(label='Chi NGP-NN')
     plt.xlabel('f_grid')
     plt.ylabel('g_grid')
     plt.title('Color plot of Chi NGP-NN')
