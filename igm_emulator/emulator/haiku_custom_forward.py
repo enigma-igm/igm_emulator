@@ -99,7 +99,7 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str='mse',
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
-
+    # calculate in physical space
     pred = custom_forward.apply(params, x)
     diff = y - pred
     if percent:
@@ -117,6 +117,8 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str='mse',
         loss = jnp.sum(jaxopt.loss.huber_loss(y, pred, delta=c_loss*jnp.sqrt(jnp.diagonal(new_covariance))))
     elif loss_str=='mae':
         loss = jnp.mean(jnp.abs(diff)) + regularization
+    elif loss_str=='mape':
+        loss = jnp.mean(jnp.abs(diff)) #percent = True
     return loss
 
 @jax.jit
@@ -132,3 +134,80 @@ def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2, c_
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state, batch_loss, grads
+
+
+'''
+Stabdardization and Inverse Standardization
+'''
+class DiffStandardScaler:
+    """
+    A differentiable minmax scaler for use in JAX.
+
+    ...
+
+    Attributes
+    ----------
+    mean : float
+        the mean value of the dataset
+    std : float
+        the standard deviation value of the dataset
+
+    Methods
+    -------
+    fit(dataset):
+        Obtains the parameters used in the min max scaling.
+    transform(dataset):
+        Returns the dataset but transformed such that each feature is min max scaled.
+    inverse_transform(dataset):
+        Performs the inverse transformation such that you can recover the unscaled dataset from a scaled version of it.
+    """
+
+    def __init__(self):
+        """
+        Initializes the min and max values to None.
+        """
+        # initialize the mean and std values
+        self.mean = None
+        self.std = None
+
+    def fit(self, dataset):
+        """
+        Obtains the parameters used in the min max scaling.
+
+        Args:
+          dataset: dataset that is going to be transformed.
+        """
+        # obtain the min and max per feature
+        self.mean = dataset.mean(axis=0).reshape(1, -1)
+        self.std = dataset.std(axis=0).reshape(1, -1)
+
+    @partial(jax.jit, static_argnums=(0,))
+    def transform(self, dataset):
+        """
+        Returns the dataset but transformed such that each
+        feature is min max scaled.
+
+        Args:
+          dataset: dataset that is going to be transformed.
+        """
+        return (dataset - self.mean) / self.std
+
+    @partial(jax.jit, static_argnums=(0,))
+    def inverse_transform(self, dataset):
+        """
+        Performs the inverse transformation such that you
+        can recover the unscaled dataset from a scaled
+        version of it.
+
+        Args:
+          dataset: dataset that is going to be transformed.
+        """
+        return (dataset * self.std) + self.mean
+
+
+
+
+
+
+
+

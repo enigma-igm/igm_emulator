@@ -169,49 +169,53 @@ if __name__ == '__main__':
     best_params = dill.load(
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
 
+    flux = mocks[0, :]
 
+    '''
+    NGP HMC 
+    '''
+    # Define the NGP inference
+    hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
+    cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
+    x_out, theta_out, losses = hmc_ngp.fit_one(flux, cov)
+    print(f'NGP [fobs, T0, gamma] ranges: {hmc_ngp.theta_ranges}')
+    print(np.argmin(np.abs(hmc_ngp.T0s - theta_true[1])),
+          np.argmin(np.abs(hmc_ngp.gammas - theta_true[2])),
+          np.argmin(np.abs(hmc_ngp.fobs - theta_true[0])))
+
+    key, subkey = random.split(key)
+    x_samples_ngp, theta_samples_ngp, lnP_ngp, neff_ngp, neff_mean_ngp, sec_per_neff_ngp, ms_per_step_ngp, r_hat_ngp, r_hat_mean_ngp, \
+        hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_out, flux, cov, report=True)
+    hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
+    hmc_ngp.fit_plot(zstr, theta_samples_ngp, lnP_ngp, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
+                     save_bool=True, save_str='ngp_hmc_test')
+    _, _, _, _, logP_grid_ngp, chi_grid_ngp = hmc_ngp.explore_logP_plot(zstr, theta_true=theta_true, flux=flux,
+                                                                        covar=cov, fix='t', save_str='ngp_hmc_test')
+
+    '''
+    Emulator HMC
+    '''
+    #Define the NN inference
     hmc_nn = NN_HMC_X(v_bins, best_params, t_0s, gammas, fobs, dense_mass=True,
                         max_tree_depth= 10,
                         num_warmup=1000,
                         num_samples=1000,
                         num_chains=4)
-    x_true = hmc_nn.theta_to_x(theta_true)
+    x_out, theta_out, losses = hmc_nn.fit_one(flux, cov)
     print(f'NN [fobs, T0, gamma] ranges: {hmc_nn.theta_ranges}')
     closest_temp_idx = np.argmin(np.abs(hmc_nn.T0s - theta_true[1]))
     closest_gamma_idx = np.argmin(np.abs(hmc_nn.gammas - theta_true[2]))
     closest_fobs_idx = np.argmin(np.abs(hmc_nn.fobs - theta_true[0]))
 
-    hmc_ngp = HMC_NGP(v_bins, new_temps, new_gammas, new_fobs, new_models, new_covariances, new_log_dets)
-    x_true = hmc_ngp.theta_to_x(theta_true)
-    print(f'NGP [fobs, T0, gamma] ranges: {hmc_ngp.theta_ranges}')
-    print(np.argmin(np.abs(hmc_ngp.T0s - theta_true[1])),
-        np.argmin(np.abs(hmc_ngp.gammas - theta_true[2])),
-        np.argmin(np.abs(hmc_ngp.fobs - theta_true[0])))
-
-    flux = mocks[0,:]
-
-    cov, log_det = hmc_ngp.get_covariance_log_determinant_nearest_fine(theta_true)
-
-    '''
-    Emulator HMC
-    '''
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-        hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_true, flux, cov, report=True)
+        hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_out, flux, cov, report=True)
     hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
     hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
-                     save_bool=True, save_str=None)
-    fix, f_grid, t_grid, g_grid, logP_grid_nn, chi_grid_nn = hmc_nn.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t')
-    '''
-    NGP HMC 
-    '''
-    key, subkey = random.split(key)
-    x_samples_ngp, theta_samples_ngp, lnP_ngp, neff_ngp, neff_mean_ngp, sec_per_neff_ngp, ms_per_step_ngp, r_hat_ngp, r_hat_mean_ngp, \
-        hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_true, flux, cov, report=True)
-    hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
-    hmc_ngp.fit_plot(zstr,theta_samples_ngp,lnP_ngp,theta_true,model_corr=model,mock_corr=flux,covariance=cov,save_bool=True,save_str='ngp_hmc_test')
-    _, _, _, _, logP_grid_ngp, chi_grid_ngp = hmc_ngp.explore_logP_plot(zstr, theta_true=theta_true, flux=flux, covar= cov, fix='t',save_str='ngp_hmc_test')
+                    save_bool=True, save_str=None)
+    fix, f_grid, t_grid, g_grid, logP_grid_nn, chi_grid_nn = hmc_nn.explore_logP_plot(zstr, theta_true=theta_true,
+                                                                                      flux=flux, covar=cov, fix='t')
 
     '''
     Plot NGP and NN lnP and chi difference

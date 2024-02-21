@@ -7,6 +7,7 @@ import h5py
 import jax.random as random
 from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
+import optax
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 from functools import partial
@@ -48,7 +49,9 @@ class NN_HMC_X:
                  max_tree_depth= 10, #(8,10),
                  num_warmup= 1000,
                  num_samples= 1000,
-                 num_chains= 4
+                 num_chains= 4,
+                 opt_nsteps=150,
+                 opt_lr=0.01
                  ):
         '''
         Args:
@@ -66,21 +69,31 @@ class NN_HMC_X:
         Returns:
             samples: samples from the posterior
         '''
+        #Set the neural network parameters
         self.vbins = vbins
         self.best_params = best_params
+
+        #Set the HMC parameters
         self.max_tree_depth = max_tree_depth
         self.num_chains = num_chains
         self.num_warmup = num_warmup
         self.dense_mass = dense_mass
         self.mcmc_nsteps_tot = num_samples * num_chains
         self.num_samples = num_samples
+
+        #Set the prior ranges
         self.T0s = T0s
         self.gammas = gammas
         self.fobs = fobs
         self.theta_ranges = [[self.fobs[0],self.fobs[-1]],[self.T0s[0],self.T0s[-1]],[self.gammas[0],self.gammas[-1]]]
+        self.theta_astro_inits = tuple([np.mean([tup[0], tup[1]]) for tup in self.theta_ranges])
         self.theta_mins = jnp.array([astro_par_range[0] for astro_par_range in self.theta_ranges])
         self.theta_maxs = jnp.array([astro_par_range[1] for astro_par_range in self.theta_ranges])
         self.x_astro_priors = [bounded_variable_lnP, bounded_variable_lnP, bounded_variable_lnP]
+
+        # Set the optimizer parameters
+        self.opt_nsteps = opt_nsteps
+        self.opt_lr = opt_lr
 
     @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
@@ -323,7 +336,26 @@ class NN_HMC_X:
                                 for j in range(self.num_chains)])
 
         return x_init.squeeze()
-####
+
+    def fit_one(self, flux, ivar):
+        x = self.theta_to_x(self.theta_astro_inits)
+        optimizer = optax.adam(self.opt_lr)
+        opt_state = optimizer.init(x)
+        losses = np.zeros(self.opt_nsteps)
+        # Optimization loop for fitting input flux
+        iterator = trange(self.opt_nsteps, leave=False)
+        best_loss = np.inf  # Models are only saved if they reduce the validation loss
+        for i in iterator:
+            losses[i], grads = jax.value_and_grad(self.potential_fn, argnums=0)(x, flux, ivar)
+            if losses[i] < best_loss:
+                x_out = x.copy()
+                theta_out = self.x_to_theta(x_out)
+                best_loss = losses[i]
+            updates, opt_state = optimizer.update(grads, opt_state)
+            x = optax.apply_updates(x, updates)
+
+        return x_out, theta_out, losses
+    ####
     def mcmc_one(self, key, x, flux, covar, report = True): #input dimensionless paramter x
         '''
 
