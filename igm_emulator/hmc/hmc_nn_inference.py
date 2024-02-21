@@ -347,7 +347,7 @@ class NN_HMC_X:
         iterator = trange(self.opt_nsteps, leave=False)
         best_loss = np.inf  # Models are only saved if they reduce the validation loss
         for i in iterator:
-            losses[i], grads = jax.value_and_grad(self.potential_fn, argnums=0)(x, flux, ivar)
+            losses[i], grads = jax.value_and_grad(self.potential_fun, argnums=0)(x, flux, ivar)
             if losses[i] < best_loss:
                 x_out = x.copy()
                 theta_out = self.x_to_theta(x_out)
