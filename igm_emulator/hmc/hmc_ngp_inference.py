@@ -170,6 +170,7 @@ if __name__ == '__main__':
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
 
     flux = mocks[0, :]
+    key = random.PRNGKey(642)
 
     '''
     NGP HMC 
@@ -207,7 +208,6 @@ if __name__ == '__main__':
     closest_gamma_idx = np.argmin(np.abs(hmc_nn.gammas - theta_true[2]))
     closest_fobs_idx = np.argmin(np.abs(hmc_nn.fobs - theta_true[0]))
 
-    key = random.PRNGKey(642)
     key, subkey = random.split(key)
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_out, flux, cov, report=True)
