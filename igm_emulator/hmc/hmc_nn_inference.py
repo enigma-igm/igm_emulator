@@ -8,6 +8,7 @@ import jax.random as random
 from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
 import optax
+from tqdm.auto import trange
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 from functools import partial
