@@ -37,11 +37,9 @@ class TrainerModule:
                 Y_test: Any,
                 X_vali: Any,
                 Y_vali: Any,
-                meanX: Any,
-                stdX: Any,
-                meanY: Any,
-                stdY: Any,
                 layer_sizes: Sequence[int],
+                x_scaler: Callable,
+                y_scaler: Callable,
                 activation: Callable[[jnp.ndarray], jnp.ndarray],
                 dropout_rate: float,
                 optimizer_hparams: Sequence[Any],
@@ -55,16 +53,22 @@ class TrainerModule:
                 pv=100):
 
         super().__init__()
+
+        #Set dataset and scaler functions
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_test = X_test
         self.Y_test = Y_test
         self.X_vali = X_vali
         self.Y_vali = Y_vali
-        self.meanX = meanX
-        self.stdX = stdX
-        self.meanY = meanY
-        self.stdY = stdY
+        self.x_scaler = x_scaler #DiffStandardScaler class: scaler.transform(theta) and scaler.inverse_transform(x)
+        self.y_scaler = y_scaler #DiffStandardScaler class: scaler.transform(theta) and scaler.inverse_transform(x)
+        self.meanX = x_scaler.mean
+        self.stdX = x_scaler.std
+        self.meanY = y_scaler.mean
+        self.stdY = y_scaler.std
+
+        #Set MLP parameters
         self.layer_sizes = layer_sizes
         self.activation = activation
         self.dropout_rate = dropout_rate
@@ -86,12 +90,12 @@ class TrainerModule:
 
     @partial(jit, static_argnums=(0,))
     def loss_fn(self, params, X, Y):
-        _loss_fn = jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
+        _loss_fn = jax.tree_util.Partial(loss_fn, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss, scaler=self.y_scaler)
         return _loss_fn(params, X, Y)
 
     @partial(jit, static_argnums=(0,5))
     def train_step(self, params, opt_state, X, Y, optimizer):
-        _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss)
+        _update = jax.tree_util.Partial(update, like_dict=self.like_dict, custom_forward=self.custom_forward, l2=self.l2_weight, c_loss=self.c_loss, loss_str=self.loss_str, percent=self.percent_loss, scaler=self.y_scaler)
         return _update(params, opt_state, X, Y, optimizer)
 
     def create_batches(self, rstate, batch_size):

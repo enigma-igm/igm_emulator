@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from emulator_trainer import TrainerModule
+from haiku_custom_forward import DiffStandardScaler
 import h5py
 import numpy as np
 from jax.config import config
@@ -61,20 +62,22 @@ X_og = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
                    'rb'))  # load normalized cosmological parameters from grab_models.py
 X_test_og = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
 X_vali_og = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
-meanX = X_og.mean(axis=0)
-stdX = X_og.std(axis=0)
-X_train = (X_og - meanX) / stdX
-X_test = (X_test_og - meanX) / stdX
-X_vali = (X_vali_og - meanX) / stdX
+x_scaler = DiffStandardScaler(X_og)
+meanX = x_scaler.mean
+stdX = x_scaler.std
+X_train = x_scaler.transform(X_og )
+X_test =  x_scaler.transform(X_test_og )
+X_vali =  x_scaler.transform(X_vali_og )
 
 Y_og = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
 Y_test_og = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
 Y_vali_og = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
-meanY = Y_og.mean(axis=0)
-stdY = Y_og.std(axis=0)
-Y_train = (Y_og - meanY) / stdY
-Y_test = (Y_test_og - meanY) / stdY
-Y_vali = (Y_vali_og - meanY) / stdY
+y_scaler = DiffStandardScaler(Y_og)
+meanY = y_scaler.mean
+stdY = y_scaler.std
+Y_train = y_scaler.transform(Y_og)
+Y_test = y_scaler.transform(Y_test_og)
+Y_vali = y_scaler.transform(Y_vali_og)
 
 if __name__ == '__main__':
     def objective(trial):
@@ -90,7 +93,9 @@ if __name__ == '__main__':
         n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
         loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
         bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50])
-        trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
+        trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
+                                x_scaler= x_scaler,
+                                y_scaler= y_scaler,
                                 layer_sizes= layer_sizes_tune,
                                 activation=eval(activation_tune),
                                 dropout_rate=dropout_rate_tune,
@@ -110,7 +115,9 @@ if __name__ == '__main__':
 
     def save_best_param_objective(trial):
         hparams = trial.params
-        trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali, meanX, stdX, meanY, stdY,
+        trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
+                                x_scaler=x_scaler,
+                                y_scaler=y_scaler,
                                 layer_sizes=hparams['layer_sizes'],
                                 activation=eval(hparams['activation']),
                                 dropout_rate=hparams['dropout_rate'],

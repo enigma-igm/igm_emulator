@@ -77,14 +77,14 @@ def schedule_lr(lr,total_steps):
                                                                        int(total_steps*0.8):0.1})
     return lrate
 
-def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str='mse', percent=False):
+def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, scaler, loss_str='mse', percent=False):
     '''
 
     Parameters
     ----------
     params: trained weights and biases
-    x: standardized input [fob, T0, gamma]
-    y: standardized output [auto-correlation function]
+    x: standardized input [fob, T0, gamma] ###---> change to real space
+    y: standardized output [auto-correlation function]  ###---> change to real space
     like_dict: dictionary of mean and covariance of the data
     custom_forward: custom haiku implementation
     l2: l2 regularization weight
@@ -100,8 +100,10 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str='mse',
     for module in sorted(params):
         leaves.append(jnp.asarray(jax.tree_util.tree_leaves(params[module]['w'])))
     regularization =  l2 * sum(jnp.sum(jnp.square(p)) for p in leaves)
+
     # calculate in physical space
-    pred = custom_forward.apply(params, x)
+    y = scaler.inverse_transform(y)
+    pred = scaler.inverse_transform(custom_forward.apply(params, x))
     diff = y - pred
     if percent:
         diff = jnp.divide(diff,y)
@@ -130,8 +132,8 @@ def accuracy(params, x, y, meanY, stdY, custom_forward):
     return delta
 
 
-def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2, c_loss, loss_str, percent):
-    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict, custom_forward, l2, c_loss, loss_str, percent)
+def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2, c_loss, scaler, loss_str, percent):
+    batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict, custom_forward, l2, c_loss, scaler, loss_str, percent)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, opt_state, batch_loss, grads
@@ -163,27 +165,15 @@ class DiffStandardScaler:
         Performs the inverse transformation such that you can recover the unscaled dataset from a scaled version of it.
     """
 
-    def __init__(self):
+    def __init__(self,dataset):
         """
-        Initializes the min and max values to None.
+         initialize the mean and std values with physical dataset
         """
-        # initialize the mean and std values
-        self.mean = None
-        self.std = None
-
-    def fit(self, dataset):
-        """
-        Obtains the parameters used in the min max scaling.
-
-        Args:
-          dataset: dataset that is going to be transformed.
-        """
-        # obtain the min and max per feature
         self.mean = dataset.mean(axis=0).reshape(1, -1)
         self.std = dataset.std(axis=0).reshape(1, -1)
 
     @partial(jax.jit, static_argnums=(0,))
-    def transform(self, dataset):
+    def transform(self, data):
         """
         Returns the dataset but transformed such that each
         feature is min max scaled.
@@ -191,10 +181,10 @@ class DiffStandardScaler:
         Args:
           dataset: dataset that is going to be transformed.
         """
-        return (dataset - self.mean) / self.std
+        return (data - self.mean) / self.std
 
     @partial(jax.jit, static_argnums=(0,))
-    def inverse_transform(self, dataset):
+    def inverse_transform(self, data):
         """
         Performs the inverse transformation such that you
         can recover the unscaled dataset from a scaled
@@ -203,7 +193,7 @@ class DiffStandardScaler:
         Args:
           dataset: dataset that is going to be transformed.
         """
-        return (dataset * self.std) + self.mean
+        return (data * self.std) + self.mean
 
 
 
