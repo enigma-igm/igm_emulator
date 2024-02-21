@@ -187,10 +187,10 @@ if __name__ == '__main__':
     key, subkey = random.split(key)
     x_samples_ngp, theta_samples_ngp, lnP_ngp, neff_ngp, neff_mean_ngp, sec_per_neff_ngp, ms_per_step_ngp, r_hat_ngp, r_hat_mean_ngp, \
         hmc_num_steps_ngp, hmc_tree_depth_ngp, total_time_ngp = hmc_ngp.mcmc_one(subkey, x_out, flux, cov, report=True)
-    hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_true, save_str='ngp_hmc_test')
-    hmc_ngp.fit_plot(zstr, theta_samples_ngp, lnP_ngp, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
+    hmc_ngp.corner_plot(zstr, theta_samples_ngp, x_samples_ngp, theta_out, save_str='ngp_hmc_test')
+    hmc_ngp.fit_plot(zstr, theta_samples_ngp, lnP_ngp, theta_out, model_corr=model, mock_corr=flux, covariance=cov,
                      save_bool=True, save_str='ngp_hmc_test')
-    _, _, _, _, logP_grid_ngp, chi_grid_ngp = hmc_ngp.explore_logP_plot(zstr, theta_true=theta_true, flux=flux,
+    _, _, _, _, logP_grid_ngp, chi_grid_ngp = hmc_ngp.explore_logP_plot(zstr, theta_true=theta_out, flux=flux,
                                                                         covar=cov, fix='t', save_str='ngp_hmc_test')
 
     '''
@@ -211,10 +211,10 @@ if __name__ == '__main__':
     key, subkey = random.split(key)
     x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
         hmc_num_steps, hmc_tree_depth, total_time = hmc_nn.mcmc_one(subkey, x_out, flux, cov, report=True)
-    hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_true, save_str=None)
-    hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_true, model_corr=model, mock_corr=flux, covariance=cov,
+    hmc_nn.corner_plot(zstr, theta_samples, x_samples, theta_out, save_str=None)
+    hmc_nn.fit_plot(zstr, theta_samples, lnP, theta_out, model_corr=model, mock_corr=flux, covariance=cov,
                     save_bool=True, save_str=None)
-    fix, f_grid, t_grid, g_grid, logP_grid_nn, chi_grid_nn = hmc_nn.explore_logP_plot(zstr, theta_true=theta_true,
+    fix, f_grid, t_grid, g_grid, logP_grid_nn, chi_grid_nn = hmc_nn.explore_logP_plot(zstr, theta_true=theta_out,
                                                                                       flux=flux, covar=cov, fix='t')
 
     '''
