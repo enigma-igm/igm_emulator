@@ -171,6 +171,7 @@ if __name__ == '__main__':
 
     flux = mocks[0, :]
     key = random.PRNGKey(642)
+    print(theta_true)
 
     '''
     NGP HMC 
