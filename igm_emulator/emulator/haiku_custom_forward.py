@@ -5,6 +5,7 @@ from jax.config import config
 import jaxopt
 config.update("jax_enable_x64", True)
 from typing import Callable, Iterable, Optional
+from functools import partial
 import optax
 import itertools
 import struct
