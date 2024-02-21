@@ -16,7 +16,7 @@ from sklearn.utils import shuffle
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
-from haiku_custom_forward import schedule_lr, loss_fn, accuracy, update, MyModuleCustom
+from utils_mlp import schedule_lr, loss_fn, accuracy, update, MyModuleCustom
 from utils_plot import *
 #sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators/flax_lite/trainers')
 #from base import TrainerModule as LAFTrainerModule

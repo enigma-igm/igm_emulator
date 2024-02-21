@@ -6,7 +6,7 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from emulator_trainer import TrainerModule
-from haiku_custom_forward import DiffStandardScaler
+from utils_mlp import DiffStandardScaler
 import h5py
 import numpy as np
 from jax.config import config

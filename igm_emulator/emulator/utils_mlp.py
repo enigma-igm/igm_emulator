@@ -64,7 +64,6 @@ class MyModuleCustom(hk.Module):
 
     return out
 
-
 '''
 Infrastructure for network training
 '''
