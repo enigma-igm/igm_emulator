@@ -223,7 +223,7 @@ if __name__ == '__main__':
     '''
     plt.figure(figsize=(10, 8))
     plt.imshow(logP_grid_nn-logP_grid_ngp, extent=[f_grid.min(), f_grid.max(), g_grid.min(), g_grid.max()], origin='lower',
-               aspect='auto')
+               aspect='auto', cmap='viridis',vmin=0, vmax=25)
     plt.colorbar(label='lnP NN-NGP')
     plt.xlabel('f_grid')
     plt.ylabel('g_grid')
