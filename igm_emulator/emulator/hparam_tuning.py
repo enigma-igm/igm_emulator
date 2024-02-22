@@ -145,12 +145,15 @@ if __name__ == '__main__':
     study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
 
     trial = study.best_trial
+    trial.params['loss_str'] = 'mape'
+    trial.params['loss_weights'] = [0,0,True] # added fixed strings and weights
     print(f'\nBest Validation Loss: {trial.value}')
     print(f'Best Params:')
-    
     for key, value in trial.params.items():
         print(f'-> {key}: {value}')
     var_tag = save_best_param_objective(trial)
+    trial.params['var_tag'] = var_tag
+
     dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p', 'wb'))
     print('Best hyperparameters saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
     print('Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
