@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag,like_dict,X_test_og,Y_test_og, x_scaler, y_scaler
+from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag,var_tag, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler
 from utils_plot import v_bins
 import dill
 import IPython
@@ -15,9 +15,9 @@ import IPython
 
 ### Load best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
-out_tag = 'z54_training_768_bin59_mape_l2_0_perc_True_activation_tanh'
+#var_tag = 'mape_l2_0_perc_True_activation_tanh'
 
-hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb'))
+hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
 #hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z54_training_768_bin59_hparams_tuned.p', 'rb'))
 print(out_tag)
 
@@ -28,8 +28,8 @@ trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,
                         activation=eval(hparams['activation']),
                         dropout_rate=hparams['dropout_rate'],
                         optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
-                        loss_str= hparams['loss_str'],
-                        loss_weights=[hparams['l2'],hparams['c_loss'],hparams['percent']],
+                        loss_str=  'mape', #hparams['loss_str'],
+                        loss_weights= [0,0,True], #[hparams['l2'],hparams['c_loss'],hparams['percent']],
                         like_dict=like_dict,
                         init_rng=42,
                         n_epochs=hparams['n_epochs'],
