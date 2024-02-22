@@ -18,7 +18,7 @@ import IPython
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_hparams_tuned.p', 'rb'))
 #hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z54_training_768_bin59_hparams_tuned.p', 'rb'))
-
+print(out_tag)
 
 trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,
                         x_scaler=x_scaler,
