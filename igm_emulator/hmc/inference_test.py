@@ -362,14 +362,17 @@ class INFERENCE_TEST():
 
             x_true = hmc_inf.theta_to_x(true_theta[mock_idx, :])
 
+
             flux = mocks[mock_idx, :]
 
             #Use one coarse grid NGP covariance matrix for both NGP & Emulator models
             covars_mock = covars[mock_idx, :, :]
 
+            x_opt, theta_opt, losses = hmc_inf.fit_one(flux, covars_mock)
+
 
             x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
-            hmc_num_steps, hmc_tree_depth, total_time = hmc_inf.mcmc_one(subkey, x_true, flux, covars_mock, report=False)
+            hmc_num_steps, hmc_tree_depth, total_time = hmc_inf.mcmc_one(subkey, x_opt, flux, covars_mock, report=False) #use x_opt instead of x_true
             f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                          zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
@@ -379,13 +382,15 @@ class INFERENCE_TEST():
             samples[mock_idx, :, :] = theta_samples
             log_prob[mock_idx, :] = lnP
             true_log_prob[mock_idx] = -1 * hmc_inf.potential_fun(x_true, flux, covars_mock)
+
             #corner plot for each inference
             if mock_idx < 10:
                 corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]}')
+                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]} // opt theta:{theta_opt}')
+                corner.overplot_lines(corner_fig, theta_opt, color="g")
                 fit_fig =  hmc_inf.fit_plot(z_string='z54',theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
