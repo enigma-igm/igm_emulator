@@ -357,7 +357,7 @@ class NN_HMC_X:
 
         return x_out, theta_out, losses
     ####
-    def mcmc_one(self, key, x, flux, covar, report = True): #input dimensionless paramter x
+    def mcmc_one(self, key, x, flux, covar, report): #input dimensionless paramter x
         '''
 
         Parameters
