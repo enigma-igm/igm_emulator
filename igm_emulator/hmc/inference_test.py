@@ -389,7 +389,7 @@ class INFERENCE_TEST():
                                            truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
                                            quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]} // opt theta:{theta_opt}')
+                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]} \n opt theta:{theta_opt}')
                 corner.overplot_lines(corner_fig, theta_opt, color="g")
                 fit_fig =  hmc_inf.fit_plot(z_string='z54',theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
