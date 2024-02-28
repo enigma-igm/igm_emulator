@@ -556,7 +556,7 @@ class NN_HMC_X:
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.plot(self.vbins, model_corr, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
-        fit_axis.plot(self.vbins, mock_corr, c="green", ls='-.', label='Inference Mock', zorder=3, lw=1.75,
+        fit_axis.plot(self.vbins, mock_corr, c="green", ls='..', label='Inference Mock', zorder=3, lw=2,
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
         fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
