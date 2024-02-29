@@ -132,7 +132,7 @@ if __name__ == '__main__':
                                 out_tag=out_tag)
 
         trainer.train_loop(True)
-        trainer.save_training_info(redshift)
+        #trainer.save_training_info(redshift)
         return trainer.var_tag
         del trainer
 
@@ -155,5 +155,4 @@ if __name__ == '__main__':
     trial.params['var_tag'] = var_tag
 
     dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p', 'wb'))
-    print('Best hyperparameters saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
-    print('Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params')
+    print(f'Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p')

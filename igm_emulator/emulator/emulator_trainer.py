@@ -55,8 +55,8 @@ class TrainerModule:
         super().__init__()
 
         #Set dataset and scaler functions
-        self.X_train = X_train
-        self.Y_train = Y_train
+        self.X_train = X_train #transformed x
+        self.Y_train = Y_train #transformed y
         self.X_test = X_test
         self.Y_test = Y_test
         self.X_vali = X_vali
