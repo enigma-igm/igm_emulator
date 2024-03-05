@@ -86,6 +86,7 @@ if __name__ == '__main__':
     test_preds = nn_emulator(best_params, X_test_og)
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
+    rel_diff = np.divide(difference, Y_test_og)
     ax1 = plt.subplot2grid((1, 2), (0, 0))
     ax2 = plt.subplot2grid((1, 2), (0, 1))
     for i in range(10):
@@ -95,4 +96,5 @@ if __name__ == '__main__':
         ax1.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
         ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
     plt.savefig('emulator_apply_test.png')
+    plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
     print('emulator_apply_test.png saved')
