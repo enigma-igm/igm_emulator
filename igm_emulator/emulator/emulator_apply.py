@@ -78,7 +78,7 @@ if __name__ == '__main__':
     zstr = 'z54'
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
     best_params, _ = trainer.train_loop(True)
-    dill.dump(best_param, open(
+    dill.dump(best_params, open(
         f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p',
         'wb'))
     print(f'Best Trainer:')
