@@ -76,9 +76,9 @@ Check if jvmap works
 '''
 if __name__ == '__main__':
     redshift = 5.4
-    trainer.train_loop(True)
+    best_params, _ = trainer.train_loop(True)
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-    best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
+    #best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
     test_preds = nn_emulator(best_params, X_test_og)
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
