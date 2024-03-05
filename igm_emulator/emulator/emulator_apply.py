@@ -88,6 +88,7 @@ if __name__ == '__main__':
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
     rel_diff = np.divide(difference, Y_test_og)
+    plt.figure(figsize=(12, 6))
     ax1 = plt.subplot2grid((1, 2), (0, 0))
     ax2 = plt.subplot2grid((1, 2), (0, 1))
     for i in range(10):
@@ -98,4 +99,5 @@ if __name__ == '__main__':
         ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
     plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
+    plt.legend()
     print('emulator_apply_test.png saved')
