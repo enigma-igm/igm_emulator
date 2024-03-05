@@ -21,20 +21,21 @@ hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_par
 #hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z54_training_768_bin59_hparams_tuned.p', 'rb'))
 print(out_tag)
 
-trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,
-                        x_scaler=x_scaler,
-                        y_scaler=y_scaler,
-                        layer_sizes=hparams['layer_sizes'],
-                        activation=eval(hparams['activation']),
-                        dropout_rate=hparams['dropout_rate'],
-                        optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
-                        loss_str=  'mape', #hparams['loss_str'],
-                        loss_weights= [0,0,True], #[hparams['l2'],hparams['c_loss'],hparams['percent']],
-                        like_dict=like_dict,
-                        init_rng=42,
-                        n_epochs=hparams['n_epochs'],
-                        pv=100,
-                        out_tag=out_tag)
+trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
+                                x_scaler=x_scaler,
+                                y_scaler=y_scaler,
+                                layer_sizes=hparams['layer_sizes'],
+                                activation=eval(hparams['activation']),
+                                dropout_rate=hparams['dropout_rate'],
+                                optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
+                                loss_str= 'mape',#hparams['loss_str'],
+                                loss_weights=[0,0,True],#[hparams['l2'], hparams['c_loss'], hparams['percent']],
+                                like_dict=like_dict,
+                                init_rng=42,
+                                n_epochs=hparams['n_epochs'],
+                                pv=100,
+                                bach_size=hparams['bach_size'],
+                                out_tag=out_tag)
 
 ###Standard pre-optuna MSE training
 '''
