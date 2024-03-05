@@ -77,6 +77,9 @@ Check if jvmap works
 if __name__ == '__main__':
     redshift = 5.4
     best_params, _ = trainer.train_loop(True)
+    print(f'Best Trainer:')
+    for key, value in trainer.items():
+        print(f'-> {key}: {value}')
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     #best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
     test_preds = nn_emulator(best_params, X_test_og)
