@@ -76,7 +76,8 @@ def nn_emulator(best_params_function, theta_linda):
 Check if jvmap works
 '''
 if __name__ == '__main__':
-    redshift = 5.4
+    zstr = 'z54'
+    dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
     best_params, _ = trainer.train_loop(True)
     print(f'Best Trainer:')
     for key, value in hparams.items():
@@ -95,6 +96,6 @@ if __name__ == '__main__':
                                                      r'$\gamma$='f'{X_test_og[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
         ax1.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
         ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
-    plt.savefig('emulator_apply_test.png')
+    plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
     print('emulator_apply_test.png saved')
