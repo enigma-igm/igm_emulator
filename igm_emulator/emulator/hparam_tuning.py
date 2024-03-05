@@ -131,8 +131,10 @@ if __name__ == '__main__':
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
 
-        trainer.train_loop(True)
-        #trainer.save_training_info(redshift)
+        best_param, _ = trainer.train_loop(True)
+        dill.dump(best_param, open(
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p',
+            'wb'))
         return trainer.var_tag
         del trainer
 

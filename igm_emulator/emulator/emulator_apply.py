@@ -18,7 +18,6 @@ import IPython
 var_tag = 'mape_l2_0_perc_True_activation_tanh'
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
-#hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/z54_training_768_bin59_hparams_tuned.p', 'rb'))
 print(out_tag)
 
 trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
@@ -79,6 +78,9 @@ if __name__ == '__main__':
     zstr = 'z54'
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
     best_params, _ = trainer.train_loop(True)
+    dill.dump(best_param, open(
+        f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p',
+        'wb'))
     print(f'Best Trainer:')
     for key, value in hparams.items():
         print(f'-> {key}: {value}')
