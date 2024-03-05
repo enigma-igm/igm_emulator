@@ -211,14 +211,14 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
 def plot_residue(new_delta, out_tag, var_tag):
     plt.figure(figsize=(15, 15))
     for i in range(new_delta.shape[0]):
-        plt.plot(v_bins, new_delta[i, :] * 100, linewidth=0.5,color = 'b', alpha=0.2)
+        plt.plot(v_bins, new_delta[i, :], linewidth=0.5,color = 'b', alpha=0.2)
     plt.plot(v_bins, jnp.ones_like(v_bins), c='r')
     plt.plot(v_bins, -jnp.ones_like(v_bins), c='r')
     plt.xlabel(r'Velocity [$km s^{-1}$]')
-    plt.ylabel('[Residual] [%]')
-    plt.title(f'%Residual plot:mean: {np.mean(new_delta) * 100:.3f}%; std: {np.std(new_delta) * 100:.3f}%')
-    plt.savefig(os.path.join(dir_exp, f'test%error_{out_tag}_{var_tag}.png'))
-    print('Residual saved')
+    plt.ylabel('[Residual/Chi]')
+    plt.title(f'%Residual plot:mean: {np.mean(new_delta):.3f}; std: {np.std(new_delta):.3f}')
+    plt.savefig(os.path.join(dir_exp, f'test_chi_error_{out_tag}_{var_tag}.png'))
+    print('Chi saved')
     plt.show()
 
 

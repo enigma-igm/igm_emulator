@@ -181,8 +181,6 @@ class TrainerModule:
 
         #Validation Metrics
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
-        self.best_chi_loss = jnp.mean(
-            jnp.abs((vali_preds - self.Y_vali) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
         self.best_chi_2_loss = -logpdf(x=vali_preds * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
@@ -193,6 +191,8 @@ class TrainerModule:
         test_preds = custom_forward.apply(self.best_params, self.X_test)
         test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY) #relative error of test dataset
         self.RelativeError = test_accuracy
+        self.test_chi_loss = jnp.mean(
+            jnp.abs((test_preds - self.Y_test) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])))
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
         self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
@@ -213,12 +213,12 @@ class TrainerModule:
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
             #Accuracy + Results Plots
-            plot_residue(self.RelativeError,self.out_tag, self.var_tag)
+            plot_residue(self.test_chi_loss,self.out_tag, self.var_tag)
             #bad_learned_plots(self.RelativeError,self.X_test,self.Y_test,test_preds,self.meanY,self.stdY, self.out_tag, self.var_tag)
             plot_error_distribution(self.RelativeError,self.out_tag,self.var_tag)
             print(f'***Result Plots saved {dir_exp}***') # imported from utils_plot
 
-        return self.best_params, self.best_chi_loss
+        return self.best_params, self.vali_loss
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
