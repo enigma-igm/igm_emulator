@@ -165,7 +165,7 @@ if __name__ == '__main__':
     model = model_dict['mean_data']
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
     #embed()
-    in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
+    in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
     best_params = dill.load(
         open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
 
