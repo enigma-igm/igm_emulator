@@ -98,7 +98,7 @@ class INFERENCE_TEST():
 
 
         # load model from emulator_apply.py
-        in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results'
+        in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
