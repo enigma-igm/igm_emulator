@@ -154,5 +154,5 @@ if __name__ == '__main__':
     var_tag = save_best_param_objective(trial)
     trial.params['var_tag'] = var_tag
 
-    dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p', 'wb'))
-    print(f'Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_{var_tag}_hparams_tuned.p')
+    dill.dump(trial.params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'wb'))
+    print(f'Best params for optuna tuned emulator saved to /mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p')
