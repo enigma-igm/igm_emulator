@@ -284,6 +284,7 @@ class NN_HMC_X:
             plt.ylabel(y_label)
             plt.title('Color plot of logP_grid')
             plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            plt.close()
         #plot the log_prior
         if 'logPrior' in plot:
             plt.figure(figsize=(10, 8))
@@ -293,6 +294,7 @@ class NN_HMC_X:
             plt.ylabel(y_label)
             plt.title('Color plot of lnPrior_grid')
             plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnPrior_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            plt.close()
         #plot the log_likelihood
         if 'lnlike' in plot:
             plt.figure(figsize=(10, 8))
@@ -302,6 +304,7 @@ class NN_HMC_X:
             plt.ylabel(y_label)
             plt.title('Color plot of lnlike_grid')
             plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            plt.close()
         #plot the difference squared
         if 'chi' in plot:
             plt.figure(figsize=(10, 8))
@@ -311,6 +314,7 @@ class NN_HMC_X:
             plt.ylabel(y_label)
             plt.title(f'Color plot of mean chi; min chi:{chi_grid.min()}')
             plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            plt.close()
         return fix, f_grid, t_grid, g_grid, logP_grid, chi_grid
 
 #### functions to do the MCMC initialization
