@@ -338,6 +338,7 @@ class INFERENCE_TEST():
         log_prob = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains])
         true_log_prob = np.empty([self.n_inference])
         samples = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains, self.n_params])
+        logP_grid =
 
         #read in true mocks
         true_theta = self.true_theta
@@ -397,10 +398,18 @@ class INFERENCE_TEST():
 
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
                 fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
+                fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(zstr,
+                                                                                                  theta_true=theta_opt,
+                                                                                                  flux=flux, covar=covars_mock,
+                                                                                                  fix='t')
+                if mock_idx == 0:
+                    logP_grid_mean = logP_grid
+                else:
+                    logP_grid_mean =+ logP_grid
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
-
+        dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.var_tag}_{self.note}_true_theta_sampled.p', 'wb'))
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
         self.true_log_prob_x = true_log_prob
