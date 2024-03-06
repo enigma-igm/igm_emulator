@@ -338,7 +338,6 @@ class INFERENCE_TEST():
         log_prob = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains])
         true_log_prob = np.empty([self.n_inference])
         samples = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains, self.n_params])
-        logP_grid =
 
         #read in true mocks
         true_theta = self.true_theta
@@ -426,30 +425,6 @@ class INFERENCE_TEST():
         alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
         coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, self.log_prob_x, self.true_log_prob_x,
                                                                                    show=True, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
-        '''
-        inference_fig = plt.figure(figsize=(x_size, x_size * .9), constrained_layout=True,
-                                   dpi=dpi_value,
-                                   )
-        grid = inference_fig.add_gridspec(
-            nrows=1, ncols=1,
-        )
-
-        skew_ax = inference_fig.add_subplot(grid[0])
-
-        skew_ax.plot(alpha_vec, coverage_gauss, color='black', linestyle='solid', label='inference test points',
-                     zorder=10)
-        skew_ax.fill_between(alpha_vec, coverage_gauss_lo, coverage_gauss_hi, facecolor='grey', alpha=0.8, zorder=3)
-        x_vec = np.linspace(0.0, 1.0, 11)
-        skew_ax.plot(x_vec, x_vec, linewidth=1.5, color='red', linestyle=(0, (5, 10)), zorder=20, label='inferred model')
-
-        skew_ax.set_xlim((-0.01, 1.01))
-        skew_ax.set_ylim((-0.01, 1.01))
-        skew_ax.set_xlabel(r'$P_{{\rm true}}$', fontsize=16)
-        skew_ax.set_ylabel(r'$P_{{\rm inf}}$', fontsize=16)
-
-        inference_fig.suptitle(f'{self.note}')
-        inference_fig.savefig(self.out_path_plot + f'{self.save_name}.png')
-        '''
         print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
 
         #save HMC inference results
