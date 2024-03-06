@@ -400,7 +400,7 @@ class INFERENCE_TEST():
                 fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
                                                                                                   theta_true=theta_opt,
                                                                                                   flux=flux, covar=covars_mock,
-                                                                                                  fix='t', save_str=self.note, plot = ['lnP'])
+                                                                                                  fix='t', save_str=self.note, plot = ['logP'])
                 if mock_idx == 0:
                     logP_grid_mean = logP_grid
                 else:
