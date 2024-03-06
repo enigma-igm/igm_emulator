@@ -194,7 +194,7 @@ class NN_HMC_X:
     def numpyro_potential_fun(self, flux, covar): #potential function for numpyro
         return jax.tree_util.Partial(self.potential_fun, flux=flux, covar=covar)
 
-    def explore_logP_plot(self, z_string, theta_true, flux, covar, fix='t', save_str=None):
+    def explore_logP_plot(self, z_string, theta_true, flux, covar, fix='t', save_str=None, plot=['logP', 'logPrior', 'lnlike', 'chi']):
         """
         Explore the negative of the Potential function (prop to logL + logPrior by plotting it as a
         function of the parameters.
@@ -276,37 +276,41 @@ class NN_HMC_X:
                     chi_grid[i, j] = jnp.mean(jnp.sqrt((self.get_model_nearest_fine(np.array([f, t, g]))-flux)**2)/ jnp.sqrt(jnp.diagonal(covar)))
 
         # plot the log_posterior
-        plt.figure(figsize=(10, 8))
-        plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
-        plt.colorbar(label='logP')
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.title('Color plot of logP_grid')
-        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        if 'logP' in plot:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(logP_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
+            plt.colorbar(label='logP')
+            plt.xlabel(x_label)
+            plt.ylabel(y_label)
+            plt.title('Color plot of logP_grid')
+            plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/logP_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the log_prior
-        plt.figure(figsize=(10, 8))
-        plt.imshow(lnPrior_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
-        plt.colorbar(label='lnPrior')
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.title('Color plot of lnPrior_grid')
-        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnPrior_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        if 'logPrior' in plot:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(lnPrior_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
+            plt.colorbar(label='lnPrior')
+            plt.xlabel(x_label)
+            plt.ylabel(y_label)
+            plt.title('Color plot of lnPrior_grid')
+            plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnPrior_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the log_likelihood
-        plt.figure(figsize=(10, 8))
-        plt.imshow(lnlike_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
-        plt.colorbar(label='lnlike')
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.title('Color plot of lnlike_grid')
-        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        if 'lnlike' in plot:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(lnlike_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto')
+            plt.colorbar(label='lnlike')
+            plt.xlabel(x_label)
+            plt.ylabel(y_label)
+            plt.title('Color plot of lnlike_grid')
+            plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/lnlike_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         #plot the difference squared
-        plt.figure(figsize=(10, 8))
-        plt.imshow(chi_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto', cmap='viridis_r')
-        plt.colorbar(label='chi',spacing='proportional',format = '%.4e')
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.title(f'Color plot of mean chi; min chi:{chi_grid.min()}')
-        plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+        if 'chi' in plot:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(chi_grid, extent=[x_grid.min(), x_grid.max(), y_grid.min(), y_grid.max()], origin='lower', aspect='auto', cmap='viridis_r')
+            plt.colorbar(label='chi',spacing='proportional',format = '%.4e')
+            plt.xlabel(x_label)
+            plt.ylabel(y_label)
+            plt.title(f'Color plot of mean chi; min chi:{chi_grid.min()}')
+            plt.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/chi_grid_fix_{fix}_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
         return fix, f_grid, t_grid, g_grid, logP_grid, chi_grid
 
 #### functions to do the MCMC initialization
