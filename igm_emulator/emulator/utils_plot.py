@@ -268,7 +268,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
     for i in range(n):
         ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
-    ax.set_title(f"Percentile plot with mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
+    ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
     ax.tick_params(labelsize=11.5)
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
     ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
