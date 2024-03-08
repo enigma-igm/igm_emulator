@@ -83,14 +83,14 @@ if __name__ == '__main__':
     def objective(trial):
         layer_sizes_tune = trial.suggest_categorical('layer_sizes', [(100, 100, 100, 59), (100, 100, 59), (100, 59)])
         activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
-        dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
-        max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 1, step=0.1)
+        #dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
+        #max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 1, step=0.1)
         lr_tune = trial.suggest_float('lr', 1e-4,1e-1, log=False)
-        decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=False)
+        #decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=False)
         #l2_tune = trial.suggest_categorical('l2', [0, 1e-5, 1e-4, 1e-3])
         #c_loss_tune = trial.suggest_float('c_loss', 1e-3, 1, log=True)
         #percent_loss_tune = trial.suggest_categorical('percent', [True, False])
-        n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
+        #n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
         #loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
         bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50])
         trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
@@ -98,13 +98,13 @@ if __name__ == '__main__':
                                 y_scaler= y_scaler,
                                 layer_sizes= layer_sizes_tune,
                                 activation=eval(activation_tune),
-                                dropout_rate=dropout_rate_tune,
-                                optimizer_hparams=[max_grad_norm_tune, lr_tune, decay_tune],
+                                dropout_rate= None,
+                                optimizer_hparams=[0.4, lr_tune, 0.003],
                                 loss_str= 'mape', #loss_str_tune,
                                 loss_weights= [0,0,True],#[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
                                 init_rng=42,
-                                n_epochs=n_epochs_tune,
+                                n_epochs=1500,
                                 pv=100,
                                 bach_size=bach_size_tune,
                                 out_tag=out_tag)
@@ -122,8 +122,8 @@ if __name__ == '__main__':
                                 activation=eval(hparams['activation']),
                                 dropout_rate=hparams['dropout_rate'],
                                 optimizer_hparams=[hparams['max_grad_norm'], hparams['lr'], hparams['decay']],
-                                loss_str= 'mape',#hparams['loss_str'],
-                                loss_weights=[0,0,True],#[hparams['l2'], hparams['c_loss'], hparams['percent']],
+                                loss_str= hparams['loss_str'],
+                                loss_weights=hparams['loss_weights'],
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs=hparams['n_epochs'],
@@ -147,6 +147,10 @@ if __name__ == '__main__':
     study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
 
     trial = study.best_trial
+    trial.params['n_epochs'] = 1500
+    trial.params['max_grad_norm'] = 0.4
+    trial.params['decay'] = 0.003
+    trial.params['dropout_rate'] = None
     trial.params['loss_str'] = 'mape'
     trial.params['loss_weights'] = [0,0,True] # added fixed strings and weights
     print(f'\nBest Validation Loss: {trial.value}')
