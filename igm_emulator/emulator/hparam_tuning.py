@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
         best_param, _ = trainer.train_loop(True)
         dill.dump(best_param, open(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p',
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
         return trainer.var_tag
         del trainer
