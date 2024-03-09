@@ -82,7 +82,7 @@ Y_vali = y_scaler.transform(Y_vali_og)
 if __name__ == '__main__':
     def objective(trial):
         layer_sizes_tune = trial.suggest_categorical('layer_sizes', [(100, 100, 100, 59), (100, 100, 59), (100, 59)])
-        activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
+        activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
         #dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
         #max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 1, step=0.1)
         lr_tune = trial.suggest_float('lr', 1e-4,1e-1, log=False)
