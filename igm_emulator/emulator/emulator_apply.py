@@ -15,7 +15,7 @@ import IPython
 
 ### Load best parameters after Optuna training
 # var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
- var_tag = 'mape_l2_0_perc_True_activation_tanh'
+var_tag = 'mape_l2_0_perc_True_activation_tanh'
 #var_tag = 'mape_l2_0_perc_True_activation_sigmoid'
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
