@@ -147,7 +147,7 @@ if __name__ == '__main__':
     study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
 
     trial = study.best_trial
-    trial.params['bach_size] = 32
+    trial.params['bach_size'] = 32
     trial.params['n_epochs'] = 1500
     trial.params['max_grad_norm'] = 0.4
     trial.params['decay'] = 0.003
