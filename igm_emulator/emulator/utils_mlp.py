@@ -69,11 +69,19 @@ Infrastructure for network training
 '''
  ###Learning Rate schedule + Gradient Clipping###
 def schedule_lr(lr,total_steps):
-    lrate =  optax.piecewise_constant_schedule(init_value=lr,
-                                            boundaries_and_scales={int(total_steps*0.2):0.1,
-                                                                    int(total_steps*0.4):0.1,
-                                                                       int(total_steps*0.6):0.1,
-                                                                       int(total_steps*0.8):0.1})
+    # lrate =  optax.piecewise_constant_schedule(init_value=lr,
+    #                                         boundaries_and_scales={int(total_steps*0.2):0.1,
+    #                                                                 int(total_steps*0.4):0.1,
+    #                                                                    int(total_steps*0.6):0.1,
+    #                                                                    int(total_steps*0.8):0.1})
+
+    lrate = optax.warmup_cosine_decay_schedule(
+        init_value=0.0,
+        peak_value=lr,
+        warmup_steps=int(total_steps*0.1),
+        decay_steps=int(total_steps),
+        end_value=0.01 * lr
+    )
     return lrate
 
 def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, scaler, loss_str='mse', percent=False):
