@@ -52,7 +52,10 @@ class NN_HMC_X:
                  num_samples= 1000,
                  num_chains= 4,
                  opt_nsteps=150,
-                 opt_lr=0.01
+                 opt_lr=0.01,
+                 covar_nn = None
+                 err_nn = None,
+                 nn_err_prop = False
                  ):
         '''
         Args:
@@ -96,6 +99,11 @@ class NN_HMC_X:
         self.opt_nsteps = opt_nsteps
         self.opt_lr = opt_lr
 
+        #Set the covariance matrix from NN-error propoganation
+        self.covar_nn = covar_nn
+        self.err_nn = err_nn
+        self.nn_err_prop = nn_err_prop
+
     @partial(jit, static_argnums=(0,))
     def get_model_nearest_fine(
             self, theta
@@ -121,6 +129,24 @@ class NN_HMC_X:
 
         log_like = logpdf(x=corr, mean=model, cov=covar)
         #print(f'Log_likelihood={log_like}')
+        return log_like
+
+    @partial(jit, static_argnums=(0,))
+    def log_likelihood_nn_error(self, x, corr, covar):
+        '''
+        Args:
+            x: dimensionless parameters
+            corr: observed flux
+            covar: model-dependent covariance matrix
+
+        Returns:
+            log_likelihood: log likelihood to maximize on
+        '''
+        theta = self.x_to_theta(x)
+        model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
+        covar += self.covar_nn
+
+        log_like = logpdf(x=corr-self.err_nn, mean=model, cov=covar)
         return log_like
 
     @partial(jit, static_argnums=(0,))
@@ -187,6 +213,8 @@ class NN_HMC_X:
         #in physical space
         lnPrior = self.eval_prior(x)
         lnlike = self.log_likelihood(x, flux, covar)
+        if self.nn_err_prop:
+            lnlike = self.log_likelihood_nn_error(x, flux, covar)
         lnP = lnlike + lnPrior
         return -lnP
 
