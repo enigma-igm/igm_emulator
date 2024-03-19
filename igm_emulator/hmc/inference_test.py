@@ -402,8 +402,8 @@ class INFERENCE_TEST():
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
 
-                corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
-                fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}{self.bin_label}_mock_{mock_idx}_{self.var_tag}_{self.note}_true_theta_sampled.png')
+                corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
+                fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
                 fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
                                                                                                   theta_true=theta_opt,
                                                                                                   flux=flux, covar=covars_mock,
@@ -415,7 +415,7 @@ class INFERENCE_TEST():
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
-        dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.var_tag}_{self.note}_true_theta_sampled.p', 'wb'))
+        dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.save_name}_true_theta_sampled.p', 'wb'))
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
         self.true_log_prob_x = true_log_prob
