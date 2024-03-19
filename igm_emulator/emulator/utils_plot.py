@@ -213,6 +213,7 @@ def plot_residue(new_delta, out_tag, var_tag):
     for i in range(new_delta.shape[0]):
         plt.plot(v_bins, new_delta[i, :], linewidth=0.5,color = 'b', alpha=0.2)
     plt.plot(v_bins, jnp.ones_like(v_bins), c='r')
+    plt.plot(v_bins, -1*jnp.ones_like(v_bins), c='r')
     plt.xlabel(r'Velocity [$km s^{-1}$]')
     plt.ylabel('[Residual/Chi]')
     plt.title(f'Residual/Chi plot:mean: {np.mean(new_delta):.3f}; std: {np.std(new_delta):.3f}')
