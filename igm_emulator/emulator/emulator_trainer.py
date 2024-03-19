@@ -67,6 +67,8 @@ class TrainerModule:
         self.stdX = x_scaler.std
         self.meanY = y_scaler.mean
         self.stdY = y_scaler.std
+        self.covar_nn = None
+        self.err_nn = None
 
         #Set MLP parameters
         self.layer_sizes = layer_sizes
@@ -219,6 +221,26 @@ class TrainerModule:
 
         return self.best_params, self.vali_loss
 
+    def nn_error_propagation(self, theta_v, corr_v):
+        '''
+        To propogate emulation error to the covariance matrix
+
+        Parameters
+        ----------
+        theta_v: in physical dimension
+        corr_v
+
+        Returns
+        -------
+
+        '''
+        pred_v = self.y_scaler.inverse_transform(custom_forward.apply(self.best_params, self.x_scaler.transform(theta_v)))
+        delta_v = corr_v - pred_v
+        self.err_nn = delta_v.mean(axis=0)
+        self.covar_nn = jnp.cov((delta_v-err_nn).T)
+
+        return self.covar_nn, self.err_nn
+
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
             z_idx = np.argmin(np.abs(zs - redshift))
@@ -262,10 +284,10 @@ class TrainerModule:
             f.close()
             print("training directories and hyperparameters saved")
 
-            dir = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params'
             dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-            dill.dump(self.best_params, open(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
             dill.dump(self.best_params, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
+            dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
+            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb')
             print("trained parameters saved")
 
 

@@ -35,6 +35,7 @@ if small_bin_bool == True:
     train_num = '_train_108_bin59_seed_44' #'_train_68_bin59_seed_33' #'_training_768_bin59' #'_train_100_bin59_seed_42' #'_train_30_bin59_seed_22'   #'_train_300_bin59_seed_66'
     test_num = '_test_15_bin59_seed_44' #'_test_10_bin59_seed_33' #'_test_89_bin59' #'_test_80_bin59_seed_42' #'_test_80_bin59_seed_22'  #_test_80_bin59_seed_66'
     vali_num = '_vali_27_bin59_seed_44' #'_vali_18_bin59_seed_33' #'_vali_358_bin59' #'_vali_320_bin59_seed_42' #'_vali_320_bin59_seed_22' #'_vali_320_bin59_seed_66'
+    err_vali_num = ''
     n_path = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
@@ -78,6 +79,10 @@ stdY = y_scaler.std
 Y_train = y_scaler.transform(Y_og)
 Y_test = y_scaler.transform(Y_test_og)
 Y_vali = y_scaler.transform(Y_vali_og)
+
+# load the NN error covariance and mean
+theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
+corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
 if __name__ == '__main__':
     def objective(trial):
@@ -135,6 +140,7 @@ if __name__ == '__main__':
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
+        trainer.nn_error_propagation(theta_v, corr_v)
         return trainer.var_tag
         del trainer
 
