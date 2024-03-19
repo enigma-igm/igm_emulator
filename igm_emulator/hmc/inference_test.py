@@ -52,6 +52,7 @@ class INFERENCE_TEST():
                  gaussian_bool,  #True: Gaussian sampling around mean; False: Forward mocks sampling
                  ngp_bool, #True: NGP model; False: emulator model
                  emu_test_bool=False, #True: perfect inference test with emulator mocks; False: inference test with mocks
+                 nn_err_prop_bool = True,
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
                  key_sample=36,
@@ -81,6 +82,7 @@ class INFERENCE_TEST():
         self.n_inference = n_inference
         self.n_params = n_params
         self.emu_test_bool = emu_test_bool
+        self.nn_err_prop_bool = nn_err_prop_bool
         self.out_path = out_path
         self.key_sample = key_sample
         self.key_hmc = key_hmc
@@ -315,7 +317,7 @@ class INFERENCE_TEST():
                                 num_chains=4,
                                 covar_nn=self.covar_nn,
                                 err_nn=self.err_nn,
-                                nn_err_prop = True)
+                                nn_err_prop = self.nn_err_prop_bool)
 
 
         '''
