@@ -102,6 +102,8 @@ class INFERENCE_TEST():
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
+        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
+        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
         '''
@@ -310,7 +312,10 @@ class INFERENCE_TEST():
                                 max_tree_depth= 10,
                                 num_warmup=1000,
                                 num_samples=1000,
-                                num_chains=4)
+                                num_chains=4,
+                                covar_nn=self.covar_nn,
+                                err_nn=self.err_nn,
+                                nn_err_prop = True)
 
 
         '''
@@ -326,7 +331,7 @@ class INFERENCE_TEST():
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
 
         out_path = self.out_path
-        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}"
+        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}_nn_err_prop_{hmc_inf.nn_err_prop}"
 
 
         '''

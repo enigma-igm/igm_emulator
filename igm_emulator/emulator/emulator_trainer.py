@@ -234,7 +234,7 @@ class TrainerModule:
         -------
 
         '''
-        pred_v = self.y_scaler.inverse_transform(custom_forward.apply(self.best_params, self.x_scaler.transform(theta_v)))
+        pred_v = self.y_scaler.inverse_transform(self.custom_forward.apply(self.best_params, self.x_scaler.transform(theta_v)))
         delta_v = corr_v - pred_v
         self.err_nn = delta_v.mean(axis=0)
         self.covar_nn = jnp.cov((delta_v-err_nn).T)
