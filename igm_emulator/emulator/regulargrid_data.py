@@ -293,4 +293,4 @@ print(f'Datasets saved at {dir}')
 print(f'Train: {z_string}_param{train_num}_{num}.p; {z_string}_model{train_num}_{num}.p')
 print(f'Test: {z_string}_param{test_num}_{num}.p; {z_string}_model{test_num}_{num}.p')
 print(f'Validation: {z_string}_param{vali_num}_{num}.p; {z_string}_model{vali_num}_{num}.p')
-print(f'Error Validation: {z_string}_param{err_vali_num}_{num}.p; {z_string}_model{err_vali_num}_{num}.p
+print(f'Error Validation: {z_string}_param{err_vali_num}_{num}.p; {z_string}_model{err_vali_num}_{num}.p')
