@@ -58,20 +58,20 @@ all_data = np.array([xv.flatten(),yv.flatten(), zv.flatten()])
 all_data = all_data.T
 # all_data.shape = (1215, 3)
 
-def regular_grid(seed = None, plot_bool = False):
+def regular_grid(n_f=8, n_t=12, n_g=8, seed = None, plot_bool = False):
 
     # Construct regular grid for training
-    x = np.linspace(0,1,8)
-    y = np.linspace(0,1,12)
-    z = np.linspace(0,1,8)
+    x = np.linspace(0,1,n_f)
+    y = np.linspace(0,1,n_t)
+    z = np.linspace(0,1,n_g)
     n_samples = x.shape[0]*y.shape[0]*z.shape[0] #n_sample = 768
     final_samples = np.empty([n_samples, 3])
     xg, yg, zg = np.meshgrid(x, y, z)
 
     # convert the output of grid (between 0 and 1 for each parameter) to our model grid
-    xg_trans = param_transform(xg, fobs[0], fobs[-1])
-    yg_trans = param_transform(yg, T0s[0], T0s[-1])
-    zg_trans = param_transform(zg, gammas[0], gammas[-1])
+    xg_trans = param_transform(xg, fobs[0], fobs[-1]) #9
+    yg_trans = param_transform(yg, T0s[0], T0s[-1]) #15
+    zg_trans = param_transform(zg, gammas[0], gammas[-1]) #9
     sample_params = np.array([xg_trans.flatten(),yg_trans.flatten(),zg_trans.flatten()])
     sample_params = sample_params.T
 
@@ -179,7 +179,7 @@ def regular_grid(seed = None, plot_bool = False):
 
     return final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed
 
-def random_split(seed, plot_bool = False):
+def random_split(seed, all_data_, plot_bool = False):
     '''
 
     Parameters
@@ -190,8 +190,8 @@ def random_split(seed, plot_bool = False):
     -------
 
     '''
-    X_train, X_test_vali = train_test_split(all_data, train_size=30, test_size=400, random_state=seed)
-    X_test, X_vali = train_test_split(X_test_vali, train_size=0.2, random_state=seed)
+    X_train_vali, X_test = train_test_split(all_data_, train_size=0.9, random_state=seed)
+    X_train, X_vali = train_test_split(X_train_vali, train_size=0.8, random_state=seed)
     train_corr = []
     test_corr = []
     vali_corr = []
@@ -264,7 +264,8 @@ def random_split(seed, plot_bool = False):
 
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(22,plot_bool=True)
+sparce_samples, _, _, _, _, _, _ = regular_grid(n_f=4,n_t=6,n_g=4, seed=42,plot_bool=False)
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(seed=33,all_data_=sparce_samples,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 if small_bin_bool:
