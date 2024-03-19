@@ -53,7 +53,7 @@ class NN_HMC_X:
                  num_chains= 4,
                  opt_nsteps=150,
                  opt_lr=0.01,
-                 covar_nn = None
+                 covar_nn = None,
                  err_nn = None,
                  nn_err_prop = False
                  ):
