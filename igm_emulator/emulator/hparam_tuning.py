@@ -32,10 +32,10 @@ z_string = z_strings[z_idx]
 dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
 
 if small_bin_bool == True:
-    train_num = '_train_108_bin59_seed_44' #'_train_68_bin59_seed_33' #'_training_768_bin59' #'_train_100_bin59_seed_42' #'_train_30_bin59_seed_22'   #'_train_300_bin59_seed_66'
-    test_num = '_test_15_bin59_seed_44' #'_test_10_bin59_seed_33' #'_test_89_bin59' #'_test_80_bin59_seed_42' #'_test_80_bin59_seed_22'  #_test_80_bin59_seed_66'
-    vali_num = '_vali_27_bin59_seed_44' #'_vali_18_bin59_seed_33' #'_vali_358_bin59' #'_vali_320_bin59_seed_42' #'_vali_320_bin59_seed_22' #'_vali_320_bin59_seed_66'
-    err_vali_num = '_err_v_852_bin59_seed_44'
+    train_num = '_train_80_bin59_seed_55' #'_train_108_bin59_seed_44' #'_train_68_bin59_seed_33' #'_training_768_bin59' #'_train_100_bin59_seed_42' #'_train_30_bin59_seed_22'   #'_train_300_bin59_seed_66'
+    test_num =  '_test_12_bin59_seed_55' #'_test_15_bin59_seed_44' #'_test_10_bin59_seed_33' #'_test_89_bin59' #'_test_80_bin59_seed_42' #'_test_80_bin59_seed_22'  #_test_80_bin59_seed_66'
+    vali_num = '_vali_20_bin59_seed_55' #'_vali_27_bin59_seed_44' #'_vali_18_bin59_seed_33' #'_vali_358_bin59' #'_vali_320_bin59_seed_42' #'_vali_320_bin59_seed_22' #'_vali_320_bin59_seed_66'
+    err_vali_num = '_err_v_882_bin59_seed_55' #'_err_v_852_bin59_seed_44'
     n_path = 20  # 17->20
     n_covar = 500000
     bin_label = '_set_bins_3'
