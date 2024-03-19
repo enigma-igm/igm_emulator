@@ -242,7 +242,7 @@ class TrainerModule:
         if save:
             dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
             dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
-            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb')
+            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb'))
 
         return self.covar_nn, self.err_nn
 
