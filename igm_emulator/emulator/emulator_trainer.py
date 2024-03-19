@@ -221,7 +221,7 @@ class TrainerModule:
 
         return self.best_params, self.vali_loss
 
-    def nn_error_propagation(self, theta_v, corr_v):
+    def nn_error_propagation(self, theta_v, corr_v, save=False):
         '''
         To propogate emulation error to the covariance matrix
 
@@ -238,6 +238,11 @@ class TrainerModule:
         delta_v = corr_v - pred_v
         self.err_nn = delta_v.mean(axis=0)
         self.covar_nn = jnp.cov((delta_v-err_nn).T)
+
+        if save:
+            dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
+            dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
+            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb')
 
         return self.covar_nn, self.err_nn
 
