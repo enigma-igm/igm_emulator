@@ -193,7 +193,7 @@ class TrainerModule:
         test_preds = custom_forward.apply(self.best_params, self.X_test)
         test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY) #relative error of test dataset
         self.RelativeError = test_accuracy
-        self.test_chi_loss = (test_preds - self.Y_test) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance'])
+        self.test_chi_loss = ((test_preds - self.Y_test) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
         self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
