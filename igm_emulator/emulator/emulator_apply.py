@@ -93,7 +93,7 @@ if __name__ == '__main__':
     '''
     # load the NN error covariance and mean
     dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-    err_vali_num = '_err_v_882_seed_22_bin59_seed_55' #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
+    err_vali_num = '_err_v_882_seed_46_bin59_seed_55' '_err_v_882_seed_22_bin59_seed_55' #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
     theta_v = dill.load(open(dir_lhs + f'{zstr}_param{err_vali_num}.p', 'rb'))
     corr_v = dill.load(open(dir_lhs + f'{zstr}_model{err_vali_num}.p', 'rb'))
 
