@@ -93,11 +93,12 @@ if __name__ == '__main__':
     '''
     # load the NN error covariance and mean
     dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-    err_vali_num = '_err_v_882_seed_46_bin59_seed_55' '_err_v_882_seed_22_bin59_seed_55' #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
-    theta_v = dill.load(open(dir_lhs + f'{zstr}_param{err_vali_num}.p', 'rb'))
-    corr_v = dill.load(open(dir_lhs + f'{zstr}_model{err_vali_num}.p', 'rb'))
+    err_vali_num = ['_err_v_882_seed_58_bin59_seed_55','_err_v_882_seed_46_bin59_seed_55','_err_v_882_seed_22_bin59_seed_55'] #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
+    for i,err_name in enumerate(err_vali_num):
+        theta_v = dill.load(open(dir_lhs + f'{zstr}_param{err_name}.p', 'rb'))
+        corr_v = dill.load(open(dir_lhs + f'{zstr}_model{err_name}.p', 'rb'))
 
-    covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  err_vali_num)
+        covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  err_name)
 
     '''
     Plot test overplot for sanity check if apply correcly
