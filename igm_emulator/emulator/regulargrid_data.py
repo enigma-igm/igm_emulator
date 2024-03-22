@@ -264,7 +264,7 @@ def random_split(seed, all_data_, plot_bool = False):
 
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
-sparce_samples, _, _, _, err_vali_param, err_vali_corr, seed_err = regular_grid(n_f=4,n_t=7,n_g=4, seed=33,plot_bool=False)
+sparce_samples, _, _, _, err_vali_param, err_vali_corr, seed_err = regular_grid(n_f=4,n_t=7,n_g=4, seed=42,plot_bool=False)
 final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(seed=55,all_data_=sparce_samples,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
@@ -286,11 +286,11 @@ dill.dump(vali_param,open(os.path.join(dir, f'{z_string}_param{vali_num}_{num}.p
 dill.dump(vali_corr,open(os.path.join(dir, f'{z_string}_model{vali_num}_{num}.p'),'wb'))
 
 err_vali_num=f'_err_v_{err_vali_param.shape[0]}'
-dill.dump(err_vali_param,open(os.path.join(dir, f'{z_string}_param{err_vali_num}_{num}.p'),'wb'))
-dill.dump(err_vali_corr,open(os.path.join(dir, f'{z_string}_model{err_vali_num}_{num}.p'),'wb'))
+dill.dump(err_vali_param,open(os.path.join(dir, f'{z_string}_param{err_vali_num}_seed_{seed_err}_{num}.p'),'wb'))
+dill.dump(err_vali_corr,open(os.path.join(dir, f'{z_string}_model{err_vali_num}_seed_{seed_err}_{num}.p'),'wb'))
 
 print(f'Datasets saved at {dir}')
 print(f'Train: {z_string}_param{train_num}_{num}.p; {z_string}_model{train_num}_{num}.p')
 print(f'Test: {z_string}_param{test_num}_{num}.p; {z_string}_model{test_num}_{num}.p')
-print(f'Validation: {z_string}_param{vali_num}_{num}.p; {z_string}_model{vali_num}_seed_{seed_err}_{num}.p')
-print(f'Error Validation: {z_string}_param{err_vali_num}_{num}.p; {z_string}_model{err_vali_num}_seed_{seed_err}_{num}.p')
+print(f'Validation: {z_string}_param{vali_num}_{num}.p; {z_string}_model{vali_num}_{num}.p')
+print(f'Error Validation: {z_string}_param{err_vali_num}_seed_{seed_err}_{num}.p; {z_string}_model{err_vali_num}_seed_{seed_err}_{num}.p')
