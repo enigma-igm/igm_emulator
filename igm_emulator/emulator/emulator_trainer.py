@@ -221,7 +221,7 @@ class TrainerModule:
 
         return self.best_params, self.vali_loss
 
-    def nn_error_propagation(self, theta_v, corr_v, save=False):
+    def nn_error_propagation(self, theta_v, corr_v, save=False, err_vali_num =  '_err_v_882_seed_33_bin59_seed_55'):
         '''
         To propogate emulation error to the covariance matrix in inference
 
@@ -241,12 +241,12 @@ class TrainerModule:
 
         if save:
             dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-            dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
-            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb'))
-            dill.dump(delta_v, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_delta_vali_nn.p'), 'wb'))
+            dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{err_vali_num}_{self.var_tag}_covar_nn.p'), 'wb'))
+            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{err_vali_num}_{self.var_tag}_err_nn.p'), 'wb'))
+            dill.dump(delta_v, open(os.path.join(dir2, f'{self.out_tag}_{err_vali_num}_{self.var_tag}_delta_vali_nn.p'), 'wb'))
             dill.dump(self.like_dict['covariance'], open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_data.p'), 'wb'))
 
-        return self.covar_nn, self.err_nn
+        return self.covar_nn, self.err_nn, delta_v
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
