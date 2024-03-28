@@ -104,8 +104,8 @@ class INFERENCE_TEST():
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
-        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn_vali_test.p', 'rb'))
-        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn_vali_test.p', 'rb'))
+        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
+        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
         '''
