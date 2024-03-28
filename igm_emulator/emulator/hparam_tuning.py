@@ -84,6 +84,9 @@ Y_vali = y_scaler.transform(Y_vali_og)
 theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
 corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
+thets_vali_test = np.concatenate([X_test, X_vali], axis=0)
+corr_vali_test = np.concatenate([Y_test, Y_vali], axis=0)
+
 if __name__ == '__main__':
     def objective(trial):
         layer_sizes_tune = trial.suggest_categorical('layer_sizes', [ [100, 100, 100, 59], [100, 100, 59], [100, 59]]) # at least three hidden layers
@@ -140,12 +143,12 @@ if __name__ == '__main__':
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
-        covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True)
+        covar_nn, err_nn = trainer.nn_error_propagation(thets_vali_test, corr_vali_test, save=True)
         dill.dump(covar_nn, open(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn_vali_test.p',
             'wb'))
         dill.dump(err_nn, open(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn.p',
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn_vali_test.p',
             'wb'))
         return trainer.var_tag
         del trainer
