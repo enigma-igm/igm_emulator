@@ -114,7 +114,7 @@ if __name__ == '__main__':
                                 init_rng=42,
                                 n_epochs= 2000, #n_epochs_tune,
                                 pv=100,
-                                bach_size= 32,
+                                bach_size= 50,
                                 out_tag=out_tag)
 
         best_vali_loss = trainer.train_loop(False)[1]
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
 
     trial = study.best_trial
-    trial.params['bach_size'] = 32
+    trial.params['bach_size'] = 50
     trial.params['n_epochs'] = 2000
     trial.params['max_grad_norm'] = 0.4
     trial.params['decay'] = 0.003
