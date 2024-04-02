@@ -143,7 +143,7 @@ if __name__ == '__main__':
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
-        covar_nn, err_nn = trainer.nn_error_propagation(thets_v, corr_v, save=True)
+        covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True)
         dill.dump(covar_nn, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
             'wb'))
