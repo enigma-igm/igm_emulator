@@ -179,7 +179,7 @@ def regular_grid(n_f=8, n_t=12, n_g=8, seed = None, plot_bool = False):
 
     return final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed
 
-def random_split(seed, all_data_, plot_bool = False):
+def random_split(seed, all_data_, test_size=0.1, train_size=0.5, plot_bool = False):
     '''
 
     Parameters
@@ -190,8 +190,8 @@ def random_split(seed, all_data_, plot_bool = False):
     -------
 
     '''
-    X_train_vali, X_test = train_test_split(all_data_, train_size=0.9, random_state=seed)
-    X_train, X_vali = train_test_split(X_train_vali, train_size=0.8, random_state=seed)
+    X_train_vali, X_test = train_test_split(all_data_, train_size=1-test_size, random_state=seed)
+    X_train, X_vali = train_test_split(X_train_vali, train_size=train_size/(1-test_size), random_state=seed)
     train_corr = []
     test_corr = []
     vali_corr = []
@@ -265,7 +265,7 @@ def random_split(seed, all_data_, plot_bool = False):
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
 sparce_samples, _, _, _, err_vali_param, err_vali_corr, seed_err = regular_grid(n_f=4,n_t=7,n_g=4, seed=58,plot_bool=False)
-final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(seed=55,all_data_=sparce_samples,plot_bool=True)
+final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(seed=11,all_data_=sparce_samples,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
 if small_bin_bool:
