@@ -112,7 +112,7 @@ if __name__ == '__main__':
                                 loss_weights= [0,0,True],#[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
                                 init_rng=42,
-                                n_epochs= 1500, #n_epochs_tune,
+                                n_epochs= 2000, #n_epochs_tune,
                                 pv=100,
                                 bach_size= None,
                                 out_tag=out_tag)
@@ -163,7 +163,7 @@ if __name__ == '__main__':
 
     trial = study.best_trial
     trial.params['bach_size'] = None
-    trial.params['n_epochs'] = 1500
+    trial.params['n_epochs'] = 2000
     trial.params['max_grad_norm'] = 0.4
     trial.params['decay'] = 0.003
     trial.params['dropout_rate'] = None
