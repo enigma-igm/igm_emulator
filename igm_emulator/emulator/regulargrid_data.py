@@ -264,7 +264,7 @@ def random_split(seed, all_data_, test_size=0.1, train_size=0.5, plot_bool = Fal
 
 # Different sampling methods
 #final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = regular_grid(plot_bool=True)
-sparce_samples, _, _, _, err_vali_param, err_vali_corr, seed_err = regular_grid(n_f=4,n_t=7,n_g=4, seed=58,plot_bool=False)
+sparce_samples, _, err_vali_param, err_vali_corr, _, _, seed_err = regular_grid(n_f=4,n_t=7,n_g=4, seed=58,plot_bool=False)
 final_samples, models, testing_param, testing_corr, vali_param, vali_corr, seed = random_split(seed=11,all_data_=sparce_samples,plot_bool=True)
 
 dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
