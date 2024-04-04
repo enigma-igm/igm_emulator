@@ -144,7 +144,7 @@ class NN_HMC_X:
         '''
         theta = self.x_to_theta(x)
         model = self.get_model_nearest_fine(theta) #theta is in physical dimension for this function
-        covar += self.covar_nn
+        covar += jnp.diagonal(self.covar_nn)
 
         log_like = logpdf(x=corr-self.err_nn, mean=model, cov=covar)
         return log_like
