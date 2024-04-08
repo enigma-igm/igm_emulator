@@ -89,7 +89,7 @@ corr_vali_test = np.concatenate([Y_test, Y_vali], axis=0)
 
 if __name__ == '__main__':
     def objective(trial):
-        layer_sizes_tune = trial.suggest_categorical('layer_sizes', [ [100, 100, 100, 59], [100, 100, 59], [100, 59]]) # at least three hidden layers
+        #layer_sizes_tune = trial.suggest_categorical('layer_sizes', [ [100, 100, 100, 59], [100, 100, 59], [100, 59]]) # at least three hidden layers
         #activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
         #dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
         #max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 1, step=0.1)
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
                                 x_scaler= x_scaler,
                                 y_scaler= y_scaler,
-                                layer_sizes= layer_sizes_tune,
+                                layer_sizes= [100, 59], #layer_sizes_tune,
                                 activation= jax.nn.tanh,#eval(activation_tune),
                                 dropout_rate= None,
                                 optimizer_hparams=[0.4, lr_tune, 0.003],
@@ -163,6 +163,7 @@ if __name__ == '__main__':
 
     trial = study.best_trial
     #trial.params['bach_size'] = 50
+    trial.params['layer_sizes'] = [100, 59]
     trial.params['activation'] = 'jax.nn.tanh'
     trial.params['n_epochs'] = 2000
     trial.params['max_grad_norm'] = 0.4
