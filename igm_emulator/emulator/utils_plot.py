@@ -276,3 +276,4 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     fig.tight_layout()
     fig.legend()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
+    plt.show()
