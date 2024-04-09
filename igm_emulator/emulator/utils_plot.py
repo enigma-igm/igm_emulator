@@ -189,21 +189,21 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
     sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
     fig2.set_figwidth(15)
-    fig2.set_figheight(15)
+    fig2.set_figheight(8)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
     for i in range(sample):
-        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
+        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Emulation {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                                                      r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
                                                      r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
+        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Data {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
     plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Auto-Correlation')
-    plt.title('Test overplot in data space')
-    plt.legend()
+    plt.title('Test data set overplot')
+    plt.legend(fontsize=10, loc='upper right', ncol=2
     plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
