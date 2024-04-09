@@ -203,7 +203,7 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
     plt.xlabel(r'Velocity/ $km s^{-1}$')
     plt.ylabel('Auto-Correlation')
     plt.title('Test data set overplot')
-    plt.legend(fontsize=10, loc='upper right', ncol=2
+    plt.legend(fontsize=10, loc='upper right', ncol=2)
     plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
