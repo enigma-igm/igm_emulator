@@ -87,10 +87,12 @@ if __name__ == '__main__':
         print(f'-> {key}: {value}')
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     #best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
+    '''
+    ### Error propagation
 
-    '''
-    Generate different vali set for error propagation -- check Gaussianity
-    '''
+
+    ##Generate different vali set for error propagation -- check Gaussianity
+
     # load the NN error covariance and mean
     dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
     err_vali_num = ['_err_v_882_seed_58_bin59_seed_55','_err_v_882_seed_46_bin59_seed_55','_err_v_882_seed_22_bin59_seed_55'] #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
@@ -100,9 +102,9 @@ if __name__ == '__main__':
 
         covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  err_name)
 
-    '''
-    Plot test overplot for sanity check if apply correcly
-    '''
+
+    ##Plot test overplot for sanity check if apply correcly
+
     test_preds = nn_emulator(best_params, X_test_og)
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
@@ -119,3 +121,4 @@ if __name__ == '__main__':
     plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
     plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     print('emulator_apply_test.png saved')
+    '''
