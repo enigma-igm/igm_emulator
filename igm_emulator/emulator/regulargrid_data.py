@@ -16,7 +16,7 @@ import jax.random as random
 
 # redshift to get models for -- can make this an input to this script if desired
 # X = [fobs, T0, gamma]
-redshift = 5.4
+redshift = 5.5
 small_bin_bool = True  # True: small bins n=59; False: large bins n=276
 
 # get the appropriate string and pathlength for chosen redshift
