@@ -86,7 +86,7 @@ config.update("jax_enable_x64", True)
 # corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
 DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=8, n_t=12, n_g=8,seed=11,plot_bool=True)
-X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og theta_v, corr_v, like_dict = DataLoader.data_sampler()
+X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, theta_v, corr_v, like_dict = DataLoader.data_sampler()
 
 # Standardize the data
 x_scaler = DiffStandardScaler(X_og)
