@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from emulator_trainer import TrainerModule
+from regulargrid_data import DataSamplerModule
 from utils_mlp import DiffStandardScaler
 import h5py
 import numpy as np
@@ -15,77 +16,93 @@ import jax
 import dill
 config.update("jax_enable_x64", True)
 
-'''
-Set redshift and data bin size
-'''
-redshift = 5.4  # choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
-small_bin_bool = True  # True: small bins n=59; False: large bins n=276
+# '''
+# Set redshift and data bin size
+# '''
+# redshift = 5.4  # choose redshift from [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
+# small_bin_bool = True  # True: small bins n=59; False: large bins n=276
+#
+# '''
+# Load datasets
+# '''
+# # get the appropriate string and pathlength for chosen redshift
+# zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
+# z_idx = np.argmin(np.abs(zs - redshift))
+# z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+# z_string = z_strings[z_idx]
+# dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
+#
+# if small_bin_bool == True:
+#     train_num = '_train_55_bin59_seed_11' #'_train_80_bin59_seed_55' #'_train_108_bin59_seed_44' #'_train_68_bin59_seed_33' #'_training_768_bin59' #'_train_100_bin59_seed_42' #'_train_30_bin59_seed_22'   #'_train_300_bin59_seed_66'
+#     test_num = '_test_12_bin59_seed_11' #'_test_12_bin59_seed_55' #'_test_15_bin59_seed_44' #'_test_10_bin59_seed_33' #'_test_89_bin59' #'_test_80_bin59_seed_42' #'_test_80_bin59_seed_22'  #_test_80_bin59_seed_66'
+#     vali_num = '_vali_45_bin59_seed_11' #'_vali_20_bin59_seed_55' #'_vali_27_bin59_seed_44' #'_vali_18_bin59_seed_33' #'_vali_358_bin59' #'_vali_320_bin59_seed_42' #'_vali_320_bin59_seed_22' #'_vali_320_bin59_seed_66'
+#     err_vali_num = '_err_v_221_seed_58_bin59_seed_11' #'_err_v_882_seed_58_bin59_seed_11' #'_err_v_882_bin59_seed_55' #'_err_v_852_bin59_seed_44'
+#     n_path = 20  # 17->20
+#     n_covar = 500000
+#     bin_label = '_set_bins_3'
+#     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
+#     out_tag = f'{z_string}{train_num}'
+# else:
+#     train_num = '_train_768'
+#     test_num = '_test_89'
+#     vali_num = '_vali_358'
+#     n_path = 17
+#     n_covar = 500000
+#     bin_label = '_set_bins_4'
+#     in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+#     out_tag = f'{z_string}{train_num}'
+#
+# #get the fixed covariance dictionary for likelihood
+# T0_idx = 8  # 0-14
+# g_idx = 4  # 0-8
+# f_idx = 4  # 0-8
+# like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
+# like_dict = dill.load(open(in_path + like_name, 'rb'))
+#
+# # load the training, test and validation data
+# X_og = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
+#                    'rb'))  # load normalized cosmological parameters from grab_models.py
+# X_test_og = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
+# X_vali_og = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
+# x_scaler = DiffStandardScaler(X_og)
+# meanX = x_scaler.mean
+# stdX = x_scaler.std
+# X_train = x_scaler.transform(X_og )
+# X_test =  x_scaler.transform(X_test_og )
+# X_vali =  x_scaler.transform(X_vali_og )
+#
+# Y_og = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
+# Y_test_og = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
+# Y_vali_og = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
+# y_scaler = DiffStandardScaler(Y_og)
+# meanY = y_scaler.mean
+# stdY = y_scaler.std
+# Y_train = y_scaler.transform(Y_og)
+# Y_test = y_scaler.transform(Y_test_og)
+# Y_vali = y_scaler.transform(Y_vali_og)
+#
+# # load the NN error covariance and mean
+# theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
+# corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
-'''
-Load datasets
-'''
-# get the appropriate string and pathlength for chosen redshift
-zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-z_idx = np.argmin(np.abs(zs - redshift))
-z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-z_string = z_strings[z_idx]
-dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
+DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=8, n_t=12, n_g=8,seed=11,plot_bool=False)
+X_og, Y_og, X_test_og, Y_test_og, theta_v, corr_v, like_dict = DataLoader.data_sampler()
 
-if small_bin_bool == True:
-    train_num = '_train_55_bin59_seed_11' #'_train_80_bin59_seed_55' #'_train_108_bin59_seed_44' #'_train_68_bin59_seed_33' #'_training_768_bin59' #'_train_100_bin59_seed_42' #'_train_30_bin59_seed_22'   #'_train_300_bin59_seed_66'
-    test_num = '_test_12_bin59_seed_11' #'_test_12_bin59_seed_55' #'_test_15_bin59_seed_44' #'_test_10_bin59_seed_33' #'_test_89_bin59' #'_test_80_bin59_seed_42' #'_test_80_bin59_seed_22'  #_test_80_bin59_seed_66'
-    vali_num = '_vali_45_bin59_seed_11' #'_vali_20_bin59_seed_55' #'_vali_27_bin59_seed_44' #'_vali_18_bin59_seed_33' #'_vali_358_bin59' #'_vali_320_bin59_seed_42' #'_vali_320_bin59_seed_22' #'_vali_320_bin59_seed_66'
-    err_vali_num = '_err_v_221_seed_58_bin59_seed_11' #'_err_v_882_seed_58_bin59_seed_11' #'_err_v_882_bin59_seed_55' #'_err_v_852_bin59_seed_44'
-    n_path = 20  # 17->20
-    n_covar = 500000
-    bin_label = '_set_bins_3'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
-    out_tag = f'{z_string}{train_num}'
-else:
-    train_num = '_train_768'
-    test_num = '_test_89'
-    vali_num = '_vali_358'
-    n_path = 17
-    n_covar = 500000
-    bin_label = '_set_bins_4'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-    out_tag = f'{z_string}{train_num}'
-
-#get the fixed covariance dictionary for likelihood
-T0_idx = 8  # 0-14
-g_idx = 4  # 0-8
-f_idx = 4  # 0-8
-like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-like_dict = dill.load(open(in_path + like_name, 'rb'))
-
-# load the training, test and validation data
-X_og = dill.load(open(dir_lhs + f'{z_string}_param{train_num}.p',
-                   'rb'))  # load normalized cosmological parameters from grab_models.py
-X_test_og = dill.load(open(dir_lhs + f'{z_string}_param{test_num}.p', 'rb'))
-X_vali_og = dill.load(open(dir_lhs + f'{z_string}_param{vali_num}.p', 'rb'))
+# Standardize the data
 x_scaler = DiffStandardScaler(X_og)
 meanX = x_scaler.mean
 stdX = x_scaler.std
 X_train = x_scaler.transform(X_og )
 X_test =  x_scaler.transform(X_test_og )
 X_vali =  x_scaler.transform(X_vali_og )
-
-Y_og = dill.load(open(dir_lhs + f'{z_string}_model{train_num}.p', 'rb'))
-Y_test_og = dill.load(open(dir_lhs + f'{z_string}_model{test_num}.p', 'rb'))
-Y_vali_og = dill.load(open(dir_lhs + f'{z_string}_model{vali_num}.p', 'rb'))
 y_scaler = DiffStandardScaler(Y_og)
+
 meanY = y_scaler.mean
 stdY = y_scaler.std
 Y_train = y_scaler.transform(Y_og)
 Y_test = y_scaler.transform(Y_test_og)
 Y_vali = y_scaler.transform(Y_vali_og)
 
-# load the NN error covariance and mean
-theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
-corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
-
-thets_vali_test = np.concatenate([X_test, X_vali], axis=0)
-corr_vali_test = np.concatenate([Y_test, Y_vali], axis=0)
 
 if __name__ == '__main__':
     def objective(trial):
