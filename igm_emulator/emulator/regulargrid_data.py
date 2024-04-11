@@ -200,9 +200,6 @@ class DataSamplerModule:
 
         vali_param, vali_corr = test_param[~test_selection], test_corr[~test_selection] #validation dataset = (358, )
         testing_param, testing_corr = test_param[test_selection], test_corr[test_selection] #testing dataset = (89, )
-        self.vali_err_param =  testing_param
-        self.vali_err_corr = testing_corr
-        self.sparce_samples = final_samples
 
         if self.plot_bool:
             H = final_samples
@@ -219,10 +216,10 @@ class DataSamplerModule:
             plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_regular_grid_train_{final_samples.shape[0]}.png"))
             plt.show()
 
-        return self.sparce_samples,self.vali_err_param,self.vali_err_corr
+        return final_samples,testing_param,testing_corr
 
 
-    def random_split(self,sparce_samples, test_size=0.1, train_size=0.5):
+    def random_split(self, sparce_samples, test_size=0.1, train_size=0.5):
         '''
 
         Parameters
@@ -306,7 +303,7 @@ class DataSamplerModule:
             plt.show()
 
     def data_sampler(self):
-        self.sparce_samples,self.vali_err_param,self.vali_err_corr = self.regular_grid
+        self.sparce_samples,self.vali_err_param,self.vali_err_corr = self.regular_grid()
         self.random_split(self.sparce_samples, test_size=0.1, train_size=0.5)
 
 
