@@ -280,5 +280,5 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     plt.show()
 
 if __name__ == '__main__':
-    dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_v_bins.p',
+    dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{zstr}{bin_label}_v_bins.p',
                    'wb'))
