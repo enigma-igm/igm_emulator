@@ -331,9 +331,9 @@ class DataSamplerModule:
         dill.dump(self.vali_err_corr,open(os.path.join(dir, f'{self.z_string}_model{err_vali_num}_{num}.p'),'wb'))
 
         print(f'Datasets saved at {dir}')
-        print(f'Train: {self.z_string}_param{train_num}_{num}.p; {z_string}_model{train_num}_{num}.p')
-        print(f'Test: {self.z_string}_param{test_num}_{num}.p; {z_string}_model{test_num}_{num}.p')
-        print(f'Validation: {self.z_string}_param{vali_num}_{num}.p; {z_string}_model{vali_num}_{num}.p')
+        print(f'Train: {self.z_string}_param{train_num}_{num}.p; {self.z_string}_model{train_num}_{num}.p')
+        print(f'Test: {self.z_string}_param{test_num}_{num}.p; {self.z_string}_model{test_num}_{num}.p')
+        print(f'Validation: {self.z_string}_param{vali_num}_{num}.p; {self.z_string}_model{vali_num}_{num}.p')
         print(f'Error Validation: {self.z_string}_param{err_vali_num}_{num}.p; {self.z_string}_model{err_vali_num}_{num}.p')
 
         # get the fixed covariance dictionary for likelihood
