@@ -19,7 +19,7 @@ class DataSamplerModule:
                 small_bin_bool=True,
                 n_f=8, n_t=12, n_g=8,
                 seed=None,
-                plot_bool=False):
+                plot_bool=True):
         '''
 
 
