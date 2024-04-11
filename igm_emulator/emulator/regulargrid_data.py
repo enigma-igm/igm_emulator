@@ -93,7 +93,7 @@ class DataSamplerModule:
         print(f'gammas:{self.gammas}')
 
         # Construct all data
-        self.xv, self.yv, self.zv = np.meshgrid(fobs, T0s, gammas) # all in physical grids
+        self.xv, self.yv, self.zv = np.meshgrid(self.fobs, self.T0s, self.gammas) # all in physical grids
         all_data = np.array([self.xv.flatten(),self.yv.flatten(), self.zv.flatten()])
         self.all_data = all_data.T
         # all_data.shape = (1215, 3)
