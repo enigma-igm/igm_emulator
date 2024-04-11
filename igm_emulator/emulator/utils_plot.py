@@ -255,7 +255,7 @@ def bad_learned_plots(delta,X_test,Y_test,test_preds,meanY,stdY, out_tag, var_ta
     plt.show()
 
 def plot_error_distribution(new_delta,out_tag, var_tag):
-    colormap = cm.Reds
+    colormap = cm.Reds_r
     n = 3
     percentiles = [68, 95, 99]
     rel_err_perc = np.zeros((59, n))
