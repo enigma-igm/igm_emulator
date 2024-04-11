@@ -88,9 +88,9 @@ class DataSamplerModule:
             self.gammas = param_dict['gammas']  # gamma from temperature - density relation -9
 
 
-        print(f'fobs:{fobs}')
-        print(f'T0s: {T0s}')
-        print(f'gammas:{gammas}')
+        print(f'fobs:{self.fobs}')
+        print(f'T0s: {self.T0s}')
+        print(f'gammas:{self.gammas}')
 
         # Construct all data
         self.xv, self.yv, self.zv = np.meshgrid(fobs, T0s, gammas) # all in physical grids
