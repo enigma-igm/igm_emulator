@@ -8,6 +8,7 @@ import dill
 import h5py
 import os
 from matplotlib import cm
+import dill
 
 '''
 Visualization of hyperparameters
@@ -277,3 +278,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     fig.legend()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
     plt.show()
+
+if __name__ == '__main__':
+    dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{out_tag}_v_bins.p',
+                   'wb'))
