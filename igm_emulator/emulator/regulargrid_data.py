@@ -286,10 +286,9 @@ class DataSamplerModule:
         self.vali_corr = np.asarray(vali_corr)
 
         if self.plot_bool:
-            self.xv, self.yv, self.zv = np.meshgrid(fobs, T0s, gammas)
             H = X_train
             ax = plt.axes(projection='3d')
-            ax.scatter(self.xv, self.yv, self.zv, c='b', alpha=0.1, linewidth=0.5, label=f'all data: {all_data.shape[0]}')
+            ax.scatter(self.xv, self.yv, self.zv, c='b', alpha=0.1, linewidth=0.5, label=f'all data: {self.all_data.shape[0]}')
             ax.scatter(H[:, 0], H[:, 1], H[:, 2], c='r', linewidth=0.2, label=f'training data: {H.shape[0]}')
             A = X_vali
             ax.scatter(A[:, 0], A[:, 1], A[:, 2], c='g', linewidth=0.2, label=f'validation data: {A.shape[0]}')
