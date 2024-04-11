@@ -17,7 +17,7 @@ import jax.random as random
 class DataSamplerModule:
     def __init__(self, redshift=5.5,
                 small_bin_bool=True,
-                n_f=8, n_t=12, n_g=8,
+                n_f=4, n_t=7, n_g=4,
                 seed=None,
                 plot_bool=True):
         '''
