@@ -343,4 +343,6 @@ class DataSamplerModule:
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
         self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
 
+        self.out_tag = f'{self.z_string}{train_num}'
+
         return self.X_train, self.train_corr, self.X_test, self.test_corr, self.X_vali, self.vali_corr, self.vali_err_param, self.vali_err_corr, self.like_dict
