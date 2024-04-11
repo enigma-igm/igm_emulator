@@ -221,7 +221,7 @@ class TrainerModule:
 
         return self.best_params, self.vali_loss
 
-    def nn_error_propagation(self, theta_v, corr_v, save=False, err_vali_num =  '_err_v_882_seed_33_bin59_seed_55'):
+    def nn_error_propagation(self, theta_v, corr_v, save=False, err_vali_num=None):
         '''
         To propogate emulation error to the covariance matrix in inference
 
