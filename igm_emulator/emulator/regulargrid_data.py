@@ -53,6 +53,7 @@ class DataSamplerModule:
         self.n_t = n_t
         self.n_g = n_g
         self.seed = seed
+        self.plot_bool = plot_bool
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
