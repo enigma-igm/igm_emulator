@@ -205,7 +205,7 @@ class DataSamplerModule:
         if self.plot_bool:
             H = final_samples
             ax = plt.axes(projection='3d')
-            ax.scatter(self.xv, self.yv, self.zv, c = 'b', alpha=0.1, linewidth=0.5, label=f'all data: {all_data.shape[0]}')
+            ax.scatter(self.xv, self.yv, self.zv, c = 'b', alpha=0.1, linewidth=0.5, label=f'all data: {self.all_data.shape[0]}')
             ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label=f'training data: {H.shape[0]}')
             T =  testing_param
             ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label=f'validation data: {T.shape[0]}')
