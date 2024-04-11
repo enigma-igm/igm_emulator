@@ -52,8 +52,7 @@ class DataSamplerModule:
         self.n_f = n_f
         self.n_t = n_t
         self.n_g = n_g
-        self.seed_err = seed_err
-        self.seed_train = seed_train
+        self.seed = seed
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -301,7 +300,7 @@ class DataSamplerModule:
             ax.set_zlabel(r'$\gamma$')
             ax.legend()
             ax.grid(True)
-            plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_random_split_train_{X_train.shape[0]}_seed_{seed}.png"))
+            plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_random_split_train_{X_train.shape[0]}_seed_{self.seed}.png"))
             plt.show()
 
     def data_sampler(self):
