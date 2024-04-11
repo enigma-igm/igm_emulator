@@ -14,6 +14,10 @@ import jax
 import jax.numpy as jnp
 import jax.random as random
 
+fig = {'font.family': 'serif'
+       }
+plt.rcParams.update(fig)
+
 class DataSamplerModule:
     def __init__(self, redshift=5.5,
                 small_bin_bool=True,
