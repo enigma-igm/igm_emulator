@@ -70,7 +70,7 @@ class DataSamplerModule:
             self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
             in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict_set_bins_3.hdf5'
             with h5py.File(self.in_path + in_name_h5py, 'r') as f:
-                self.param_dict = dict(f['params'].attrs.items())
+                param_dict = dict(f['params'].attrs.items())
             self.fobs = param_dict['average_observed_flux']
             self.T0s = 10. ** param_dict['logT_0']
             self.gammas = param_dict['gamma']
