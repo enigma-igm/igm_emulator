@@ -53,7 +53,6 @@ class DataSamplerModule:
         self.n_t = n_t
         self.n_g = n_g
         self.seed = seed
-        self.sparce_samples = None
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -220,8 +219,10 @@ class DataSamplerModule:
             plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_regular_grid_train_{final_samples.shape[0]}.png"))
             plt.show()
 
+        return self.sparce_samples,self.vali_err_param,self.vali_err_corr
 
-    def random_split(self,test_size=0.1, train_size=0.5):
+
+    def random_split(self,sparce_samples, test_size=0.1, train_size=0.5):
         '''
 
         Parameters
@@ -232,7 +233,7 @@ class DataSamplerModule:
         -------
 
         '''
-        X_train_vali, X_test = train_test_split(self.sparce_samples, train_size=1-test_size, random_state=self.seed)
+        X_train_vali, X_test = train_test_split(sparce_samples, train_size=1-test_size, random_state=self.seed)
         X_train, X_vali = train_test_split(X_train_vali, train_size=train_size/(1-test_size), random_state=self.seed)
         self.X_train = X_train
         self.X_test = X_test
@@ -305,8 +306,8 @@ class DataSamplerModule:
             plt.show()
 
     def data_sampler(self):
-        self.regular_grid
-        self.random_split(test_size=0.1, train_size=0.5)
+        self.sparce_samples,self.vali_err_param,self.vali_err_corr = self.regular_grid
+        self.random_split(self.sparce_samples, test_size=0.1, train_size=0.5)
 
 
         dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
