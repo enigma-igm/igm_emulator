@@ -18,7 +18,7 @@ from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
 from igm_emulator.emulator.emulator_apply import trainer
-from igm_emulator.emulator.hparam_tuning import small_bin_bool
+from igm_emulator.emulator.hparam_tuning import DataLoader
 from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
@@ -87,7 +87,7 @@ class INFERENCE_TEST():
         self.key_sample = key_sample
         self.key_hmc = key_hmc
 
-        if small_bin_bool == True:
+        if DataLoader.small_bin_bool == True:
             self.n_path = 20  # 17->20
             self.n_covar = 500000
             self.bin_label = '_set_bins_3'
