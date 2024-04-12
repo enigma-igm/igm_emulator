@@ -108,6 +108,7 @@ class INFERENCE_TEST():
         self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
+
         '''
         Load Parameter Grid
         '''

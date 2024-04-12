@@ -349,5 +349,8 @@ class DataSamplerModule:
 
         self.out_tag = f'{self.z_string}{train_num}'
         self.err_vali_num = err_vali_num
+        self.train_num = train_num
+        self.test_num = test_num
+        self.vali_num = vali_num
 
         return self.X_train, self.train_corr, self.X_test, self.test_corr, self.X_vali, self.vali_corr, self.vali_err_param, self.vali_err_corr, self.like_dict

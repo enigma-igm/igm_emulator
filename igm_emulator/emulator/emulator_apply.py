@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler
+from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag,  theta_v, corr_v, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
 from utils_plot import v_bins
 import dill
 import IPython
@@ -15,7 +15,7 @@ import IPython
 
 ### Load best parameters after Optuna training
 #var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
-var_tag = 'mape_l2_0_perc_True_activation_tanh'
+var_tag = 'mape_l2_0_perc_True_activation_tanh' ##shoule automatic implement
 #var_tag = 'mape_l2_0_perc_True_activation_sigmoid'
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
@@ -36,28 +36,6 @@ trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
                                 pv=100,
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
-
-###Standard pre-optuna MSE training
-'''
-max_grad_norm = 0.1
-lr = 1e-3
-#beta = 1e-3 #BNN
-decay = 5e-3
-l2 =0.0001
-
-trainer = TrainerModule(X_train,Y_train,X_test,Y_test,X_vali,Y_vali,meanX,stdX,meanY,stdY,
-                        layer_sizes=[100,100,100,59],
-                        activation= jax.nn.leaky_relu,
-                        dropout_rate=None,
-                        optimizer_hparams=[max_grad_norm, lr, decay],
-                        loss_str='mse',
-                        loss_weights=[l2,0,False],
-                        like_dict=like_dict,
-                        init_rng=42,
-                        n_epochs=1000,
-                        pv=100,
-                        out_tag=out_tag)
-'''
 
 def _nn_emulator(best_params_function, theta_linda):
     x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
@@ -87,22 +65,15 @@ if __name__ == '__main__':
         print(f'-> {key}: {value}')
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
     #best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
-    '''
+
     ### Error propagation
 
+    ## Load the NN error covariance and mean, while save all the sampels' errors
 
-    ##Generate different vali set for error propagation -- check Gaussianity
+    covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
+    covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test,Y_test, save=True, err_vali_num = DataLoader.test_num)
 
-    # load the NN error covariance and mean
-    dir_lhs = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/'
-    err_vali_num = ['_err_v_882_seed_58_bin59_seed_55','_err_v_882_seed_46_bin59_seed_55','_err_v_882_seed_22_bin59_seed_55'] #'_err_v_882_seed_33_bin59_seed_55' '_err_v_882_seed_20_bin59_seed_55' '_err_v_882_seed_42_bin59_seed_55'
-    for i,err_name in enumerate(err_vali_num):
-        theta_v = dill.load(open(dir_lhs + f'{zstr}_param{err_name}.p', 'rb'))
-        corr_v = dill.load(open(dir_lhs + f'{zstr}_model{err_name}.p', 'rb'))
-
-        covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  err_name)
-
-
+    '''
     ##Plot test overplot for sanity check if apply correcly
 
     test_preds = nn_emulator(best_params, X_test_og)
