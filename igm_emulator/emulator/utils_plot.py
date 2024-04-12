@@ -260,23 +260,25 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     n = 3
     percentiles = [68, 95, 99]
     rel_err_perc = np.zeros((59, n))
-    ''' #WHY DO WE NEED THIS ABSOLUTE VALUE?
+    bias = np.mean(new_delta, axis=0)
+     #WHY DO WE NEED THIS ABSOLUTE VALUE?
     rel_err = []
     for i in range(new_delta.shape[0]):
-        rel_err.append(jnp.abs(new_delta[i, :]) * 100)
+        rel_err.append((jnp.abs(new_delta[i, :]-bias) * 100)
     rel_err = np.array(rel_err).T
-    '''
+
     for i in range(n):
-        #rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
-        rel_err_perc[:, i] = np.percentile(new_delta, percentiles[i], axis=1)
+        rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
 
     fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
     for i in range(n):
         ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
+    ax.plot(v_bins, bias, c='k', linestyle='--', linewidth=0.5, label='bias')
     ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
     ax.tick_params(labelsize=11.5)
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
     ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
+    ax.text(0.9 ,0.5, f'{zstr}', transform=ax.transAxes, fontsize=10, verticalalignment='top')
     fig.tight_layout()
     fig.legend()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
