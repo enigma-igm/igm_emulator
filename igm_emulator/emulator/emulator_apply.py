@@ -71,7 +71,7 @@ if __name__ == '__main__':
     ## Load the NN error covariance and mean, while save all the sampels' errors
 
     covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
-    covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test,Y_test, save=True, err_vali_num = DataLoader.test_num)
+    covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
 
     '''
     ##Plot test overplot for sanity check if apply correcly

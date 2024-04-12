@@ -260,12 +260,15 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     n = 3
     percentiles = [68, 95, 99]
     rel_err_perc = np.zeros((59, n))
+    ''' #WHY DO WE NEED THIS ABSOLUTE VALUE?
     rel_err = []
     for i in range(new_delta.shape[0]):
         rel_err.append(jnp.abs(new_delta[i, :]) * 100)
     rel_err = np.array(rel_err).T
+    '''
     for i in range(n):
-        rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
+        #rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
+        rel_err_perc[:, i] = np.percentile(new_delta, percentiles[i], axis=1)
 
     fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
     for i in range(n):
