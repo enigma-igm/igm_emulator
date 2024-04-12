@@ -264,7 +264,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
      #WHY DO WE NEED THIS ABSOLUTE VALUE?
     rel_err = []
     for i in range(new_delta.shape[0]):
-        rel_err.append((jnp.abs(new_delta[i, :]-bias) * 100)
+        rel_err.append((jnp.abs(new_delta[i, :]-bias) * 100))
     rel_err = np.array(rel_err).T
 
     for i in range(n):
@@ -273,7 +273,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
     for i in range(n):
         ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
-    ax.plot(v_bins, bias, c='k', linestyle='--', linewidth=0.5, label='bias')
+    ax.plot(v_bins, bias * 100, c='k', linestyle='--', linewidth=0.5, label='bias')
     ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
     ax.tick_params(labelsize=11.5)
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
