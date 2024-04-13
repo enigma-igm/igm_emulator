@@ -44,6 +44,9 @@ plt_params = {'legend.fontsize': 7,
               'xtick.minor.visible': True,
               }
 plt.rcParams.update(plt_params)
+
+covar_nn_test, err_nn_test = trainer.nn_error_propagation( DataLoader.X_test, DataLoader.test_corr, save=True, err_vali_num = DataLoader.test_num)
+
 class INFERENCE_TEST():
     '''
     A class to run inference test in HMC for NGP and Emulator models
@@ -104,8 +107,10 @@ class INFERENCE_TEST():
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
-        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
-        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
+        #self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
+        #self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
+        self.covar_nn = covar_nn_test
+        self.err_nn = err_nn_test
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
 
