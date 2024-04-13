@@ -419,7 +419,6 @@ class INFERENCE_TEST():
                 else:
                     logP_grid_mean =+ logP_grid
 
-                plt.show()
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
