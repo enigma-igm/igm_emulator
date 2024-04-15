@@ -410,19 +410,20 @@ class INFERENCE_TEST():
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
                 fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
 
-                fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
-                                                                                                  theta_true=theta_opt,
-                                                                                                  flux=flux, covar=covars_mock,
-                                                                                                  fix='t', save_str=self.note, plot = ['logP'])
-                if mock_idx == 0:
-                    logP_grid_mean = logP_grid
-                else:
-                    logP_grid_mean =+ logP_grid
+                ## explore Log-Likelihood plot for dual shape -- Solved!
+                # fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
+                #                                                                                   theta_true=theta_opt,
+                #                                                                                   flux=flux, covar=covars_mock,
+                #                                                                                   fix='t', save_str=self.note, plot = ['logP'])
+                # if mock_idx == 0:
+                #     logP_grid_mean = logP_grid
+                # else:
+                #     logP_grid_mean =+ logP_grid
 
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
-        dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.save_name}_true_theta_sampled.p', 'wb'))
+        # dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.save_name}_true_theta_sampled.p', 'wb'))
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
         self.true_log_prob_x = true_log_prob
