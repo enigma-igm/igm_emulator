@@ -335,6 +335,8 @@ class INFERENCE_TEST():
                 out_path_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{self.z_string}/mock_infer/'
 
         out_path = self.out_path
+        if os.path.exists(out_path) is False:
+            os.mkdir(out_path)
         self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}_nn_err_prop_{hmc_inf.nn_err_prop}"
 
 
@@ -400,7 +402,7 @@ class INFERENCE_TEST():
                                            data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
                 corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]} \n opt theta:{theta_opt}')
                 corner.overplot_lines(corner_fig, theta_opt, color="g")
-                fit_fig =  hmc_inf.fit_plot(z_string='z54',theta_samples=theta_samples, lnP = lnP,
+                fit_fig =  hmc_inf.fit_plot(z_string=self.z_string,theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
 
