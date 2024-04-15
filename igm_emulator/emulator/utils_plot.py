@@ -9,12 +9,13 @@ import h5py
 import os
 from matplotlib import cm
 import dill
+from hparam_tuning import DataLoader
 
 '''
 Visualization of hyperparameters
 '''
 
-zstr = 'z54'
+zstr = DataLoader.zstr
 small_bin_bool = True
 dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
