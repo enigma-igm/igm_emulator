@@ -162,7 +162,7 @@ if __name__ == '__main__':
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
         #covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num= DataLoader.err_vali_num)
-        covar_nn, err_nn = trainer.nn_error_propagation(X_test_og, Y_test_og, save=True, err_vali_num= DataLoader.err_vali_num) #use test data to appro the error
+        covar_nn, err_nn = trainer.nn_error_propagation(X_test_og, Y_test_og, save=True, err_vali_num= DataLoader.test_num) #use test data to appro the error
         dill.dump(covar_nn, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
             'wb'))
