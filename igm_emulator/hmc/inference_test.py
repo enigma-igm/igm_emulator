@@ -336,7 +336,7 @@ class INFERENCE_TEST():
 
         out_path = self.out_path
         if os.path.exists(out_path_plot) is False:
-            os.mkdir(out_path_plot)
+            os.makedirs(out_path_plot)
         self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}_nn_err_prop_{hmc_inf.nn_err_prop}"
 
 

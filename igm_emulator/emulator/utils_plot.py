@@ -19,7 +19,7 @@ small_bin_bool = True
 dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
 if os.path.exists(dir_exp) is False:
-    os.mkdir(dir_exp)
+    os.makedirs(dir_exp)
 
 if small_bin_bool==True:
     skewers_per_data = 20  # 17->20
