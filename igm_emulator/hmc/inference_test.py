@@ -105,10 +105,8 @@ class INFERENCE_TEST():
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
         self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
-        #self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
-        #self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
-        self.covar_nn = dill.load(open('/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/' + f'z54_train_55_bin59_seed_11__test_12_mape_l2_0_perc_True_activation_tanh_covar_nn.p', 'rb'))
-        self.err_nn = dill.load(open('/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/' + f'z54_train_55_bin59_seed_11__test_12_mape_l2_0_perc_True_activation_tanh_err_nn.p', 'rb'))
+        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
+        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
 
@@ -465,7 +463,7 @@ class INFERENCE_TEST():
 ##forward mocks -- emulator model
 '''
 #hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(redshift=5.5,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
 ##gaussian mocks -- NGP model

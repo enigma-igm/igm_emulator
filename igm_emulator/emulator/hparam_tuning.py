@@ -85,7 +85,7 @@ config.update("jax_enable_x64", True)
 # theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
 # corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
-DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4,seed=11,plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.5,small_bin_bool=True,n_f=4, n_t=7, n_g=4,seed=11,plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, theta_v, corr_v, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -161,7 +161,8 @@ if __name__ == '__main__':
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
-        covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num= DataLoader.err_vali_num)
+        #covar_nn, err_nn = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num= DataLoader.err_vali_num)
+        covar_nn, err_nn = trainer.nn_error_propagation(X_test_og, Y_test_og, save=True, err_vali_num= DataLoader.err_vali_num) #use test data to appro the error
         dill.dump(covar_nn, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
             'wb'))
