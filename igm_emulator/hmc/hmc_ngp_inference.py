@@ -163,6 +163,7 @@ if __name__ == '__main__':
     model_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
     model_dict = dill.load(open(in_path_molly + model_name, 'rb'))
     model = model_dict['mean_data']
+    cov = model_dict['covariance']
     mocks = dill.load(open(in_path_molly + mock_name, 'rb'))
     #embed()
     in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
