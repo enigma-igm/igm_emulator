@@ -362,7 +362,7 @@ class INFERENCE_TEST():
         '''
         Run inference test for each mock
         '''
-        var_label = ['fobs', 'T0s', 'gammas']
+        var_label = ["<F>", "$T_0$", "$\gamma$"]
         pbar = ProgressBar()
         print(f'Start {self.n_inference} inference test for:{self.save_name}')
         for mock_idx in pbar(range(self.n_inference)):

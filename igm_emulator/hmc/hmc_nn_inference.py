@@ -29,13 +29,16 @@ import matplotlib.patheffects as pe
 from tabulate import tabulate
 import struct
 
+x_size = 3.5
+dpi_value = 200
+
 plt_params = {'legend.fontsize': 7,
               'legend.frameon': False,
               'axes.labelsize': 8,
               'axes.titlesize': 8,
               'figure.titlesize': 8,
-              'xtick.labelsize': 8,
-              'ytick.labelsize': 8,
+              'xtick.labelsize': 7,
+              'ytick.labelsize': 7,
               'lines.linewidth': 1,
               'lines.markersize': 2,
               'errorbar.capsize': 3,
@@ -505,7 +508,7 @@ class NN_HMC_X:
             f.close()
         print(f"hmc results saved for {note}")
 
-    def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None):
+    def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None, save_bool=False)
         '''
         Plot the corner plot for the HMC results
         Parameters
@@ -524,15 +527,23 @@ class NN_HMC_X:
         closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
         closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
         closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
-        var_label = ['fobs', 'T0s', 'gammas']
+        var_label = ["<F>", "$T_0$", "$\gamma$"]
 
-        corner_fig_theta = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
+        corner_fig_theta = plt.figure(figsize=(x_size * 2. * .45, x_size * .8),
+                                # constrained_layout=True,
+                                dpi=dpi_value,
+                                )
+        grid = corner_fig.add_gridspec(
+            nrows=3, ncols=3,  # width_ratios=[3, 1, 1],
+        )
+
+        corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                    truths=np.array(theta_true), truth_color='red', show_titles=True,
                                    quantiles=(0.16, 0.5, 0.84), title_kwargs={"fontsize": 15},
                                    label_kwargs={'fontsize': 15},
-                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
+                                   data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True),fig=corner_fig_theta))
         corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
-
+        '''
         x_true = self.theta_to_x(theta_true)
         corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
                                      truths=np.array(x_true), truth_color='red', show_titles=True,
@@ -540,10 +551,13 @@ class NN_HMC_X:
                                      label_kwargs={'fontsize': 15},
                                      data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
-
-        corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
-        corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
-        print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
+        '''
+        if save_bool:
+            corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            #corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
+            print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
+        else:
+            return corner_fig_theta
 
     def fit_plot(self,z_string,theta_samples,lnP,theta_true,model_corr,mock_corr,covariance,save_bool=False,save_str=None):
         '''
@@ -569,9 +583,6 @@ class NN_HMC_X:
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         y_error = np.sqrt(np.diag(covariance))
 
-
-        x_size = 5
-        dpi_value = 200
         fit_fig = plt.figure(figsize=(x_size * 2., x_size * .65), constrained_layout=True,
                              dpi=dpi_value)
         grid = fit_fig.add_gridspec(nrows=1, ncols=1)

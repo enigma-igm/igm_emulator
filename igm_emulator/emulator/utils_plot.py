@@ -150,8 +150,8 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     ax = v_bins # velocity bins
     sample = 8  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
-    fig.set_figwidth(15)
-    fig.set_figheight(15)
+    fig.set_figwidth(8)
+    fig.set_figheight(4)
     corr_idx = np.random.randint(0, Y.shape[0], sample)  # randomly select correlation functions to compare
     preds = preds * stdY + meanY
     Y = Y * stdY + meanY
@@ -192,8 +192,8 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
     ax = v_bins
     sample = 10  # number of functions plotted
     fig2, axs2 = plt.subplots(1, 1)
-    fig2.set_figwidth(15)
-    fig2.set_figheight(8)
+    fig2.set_figwidth(8)
+    fig2.set_figheight(4)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
@@ -204,7 +204,7 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
                                                      r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
         axs2.plot(ax, Y_test[corr_idx[i]], label=f'Data {i}', c=f'C{i}', linestyle='--')
     # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Velocity/ $km s^{-1}$')
+    plt.xlabel(r'Velocity [$km s^{-1}$]')
     plt.ylabel('Auto-Correlation')
     plt.title('Test data set overplot')
     plt.legend(fontsize=10, loc='upper right', ncol=2)
