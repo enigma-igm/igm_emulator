@@ -9,7 +9,7 @@ from jax import jit
 from jax.scipy.stats.multivariate_normal import logpdf
 import optax
 from tqdm.auto import trange
-from sklearn.metrics import mean_squared_error,r2_score
+from sklearn.metrics import mean_squared_error,r2_score, mean_absolute_percentage_error
 from scipy.spatial.distance import minkowski
 from functools import partial
 from numpyro.infer import MCMC, NUTS
@@ -36,17 +36,19 @@ plt_params = {'legend.fontsize': 7,
               'legend.frameon': False,
               'axes.labelsize': 8,
               'axes.titlesize': 8,
-              'figure.titlesize': 8,
+              'figure.titlesize': 7,
               'xtick.labelsize': 7,
               'ytick.labelsize': 7,
-              'lines.linewidth': 1,
-              'lines.markersize': 2,
-              'errorbar.capsize': 3,
+              'lines.linewidth': .7,
+              'lines.markersize': 2.3,
+              'lines.markeredgewidth': .9,
+              'errorbar.capsize': 2,
               'font.family': 'serif',
               # 'text.usetex': True,
               'xtick.minor.visible': True,
               }
 plt.rcParams.update(plt_params)
+
 #running everything in dimensionless parameter space (x)
 class NN_HMC_X:
     def __init__(self, vbins, best_params, T0s, gammas, fobs, dense_mass=True,
@@ -529,7 +531,7 @@ class NN_HMC_X:
         closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
         var_label = ["<F>", "$T_0$", "$\gamma$"]
 
-        corner_fig_theta = plt.figure(figsize=(x_size * 2. * .45, x_size * .8),
+        corner_fig_theta = plt.figure(figsize=(x_size, x_size),
                                 # constrained_layout=True,
                                 dpi=dpi_value,
                                 )
@@ -542,7 +544,7 @@ class NN_HMC_X:
                                    quantiles=(0.16, 0.5, 0.84), title_kwargs={"fontsize": 15},
                                    label_kwargs={'fontsize': 15},
                                    data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True),fig=corner_fig_theta)
-        corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true}')
+        corner_fig_theta.text(0.5, 0.8, f'true theta:{theta_true:.2e}')
         '''
         x_true = self.theta_to_x(theta_true)
         corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
@@ -607,7 +609,7 @@ class NN_HMC_X:
 
         fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        fit_axis.errorbar(self.vbins, model_corr,
+        fit_axis.errorbar(self.vbins, mock_corr,
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=1, capsize=2,
                           label='Covariance')
@@ -615,7 +617,7 @@ class NN_HMC_X:
         fit_axis.text(
             0.2, 0.7,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
-            {'color': 'lightgreen', 'fontsize': 8}, transform=fit_axis.transAxes
+            {'color': 'lightgreen', 'fontsize': 5}, transform=fit_axis.transAxes
         )
 
         fit_axis.text(
@@ -623,19 +625,18 @@ class NN_HMC_X:
             'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
             f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
             f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
-            {'color': 'r', 'fontsize': 8}, transform=fit_axis.transAxes
+            {'color': 'r', 'fontsize': 5}, transform=fit_axis.transAxes
         )
 
         fit_axis.text(
             0.6, 0.7,
             tabulate([[r' $R_2$',
-                       np.round(r2_score(model_corr, max_P_model), decimals=4)],
-                      ['RMSE/Corr',
-                       np.format_float_scientific(mean_squared_error(model_corr, max_P_model), precision=3)],
-                      ['Distance',
-                       np.format_float_scientific(minkowski(model_corr, max_P_model), precision=3)]],
-                     headers=['Matrices', 'Grid', 'Emulator'], tablefmt='orgtbl'),
-            {'color': 'm', 'fontsize': 8}, transform=fit_axis.transAxes
+                       np.round(r2_score(model_corr, infer_model), decimals=4)],
+                      ['MAPE',
+                       np.format_float_scientific(mean_absolute_percentage_error(model_corr, infer_model), precision=3)],
+                      ],
+                     headers=['Matrics', 'Value'], tablefmt='orgtbl'),
+            {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
         )
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
