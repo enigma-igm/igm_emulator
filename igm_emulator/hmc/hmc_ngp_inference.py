@@ -98,8 +98,8 @@ if __name__ == '__main__':
     n_temps = len(t_0s)
     n_gammas = len(gammas)
     n_f = len(fobs)
-    #
-    # noise_idx = 0
+    noise_idx = 0
+
     # in_name_new_params = f'new_covariances_dict_R_30000_nf_9_ncovar_{n_covar}_' \
     #                      f'P{skewers_per_data}{bin_label}_params.p'
     # new_param_dict = dill.load(open(in_path_molly + in_name_new_params, 'rb'))
