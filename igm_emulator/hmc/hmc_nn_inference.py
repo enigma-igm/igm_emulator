@@ -531,7 +531,7 @@ class NN_HMC_X:
         closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
         var_label = ["<F>", "$T_0$", "$\gamma$"]
 
-        corner_fig_theta = plt.figure(figsize=(x_size, x_size),
+        corner_fig_theta = plt.figure(figsize=(x_size*1.2, x_size*1.2),
                                 # constrained_layout=True,
                                 dpi=dpi_value,
                                 )
@@ -631,15 +631,15 @@ class NN_HMC_X:
             0.6, 0.7,
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, infer_model), decimals=4)],
-                      ['MAPE',
-                       np.format_float_scientific(mean_absolute_percentage_error(model_corr, infer_model), precision=3)],
+                      ['1-MAPE',
+                       np.format_float_scientific(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
                       ],
-                     headers=['Matrics', 'Value'], tablefmt='orgtbl'),
+                     headers=['Matrics', 'Values'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
         )
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
-        fit_axis.set_ylabel("Correlation Function")
+        fit_axis.set_ylabel(r"$\xi_F$")
         fit_axis.legend()
         if save_bool:
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
