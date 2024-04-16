@@ -533,7 +533,7 @@ class NN_HMC_X:
                                 # constrained_layout=True,
                                 dpi=dpi_value,
                                 )
-        grid = corner_fig.add_gridspec(
+        grid = corner_fig_theta.add_gridspec(
             nrows=3, ncols=3,  # width_ratios=[3, 1, 1],
         )
 
