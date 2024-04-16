@@ -541,10 +541,9 @@ class NN_HMC_X:
 
         corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
                                    truths=np.array(theta_true), truth_color='red', show_titles=True,
-                                   quantiles=(0.16, 0.5, 0.84), title_kwargs={"fontsize": 15},
-                                   label_kwargs={'fontsize': 15},
+                                   quantiles=(0.16, 0.5, 0.84),
                                    data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True),fig=corner_fig_theta)
-        corner_fig_theta.text(0.5, 0.8, f"true theta: {np.array2string(theta_true, precision=2, floatmode='fixed')}")
+        corner_fig_theta.text(0.5, 0.8, f"true theta: {np.array2string(theta_true, precision=2, floatmode='fixed')}",{'fontsize': 5})
         '''
         x_true = self.theta_to_x(theta_true)
         corner_fig_x = corner.corner(np.array(x_samples), levels=(0.68, 0.95), color='purple', labels=var_label,
