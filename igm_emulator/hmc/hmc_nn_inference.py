@@ -508,7 +508,7 @@ class NN_HMC_X:
             f.close()
         print(f"hmc results saved for {note}")
 
-    def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None, save_bool=False)
+    def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None, save_bool=False):
         '''
         Plot the corner plot for the HMC results
         Parameters
