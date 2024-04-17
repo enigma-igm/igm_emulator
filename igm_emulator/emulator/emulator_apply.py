@@ -17,7 +17,7 @@ import IPython
 #var_tag = 'huber_l2_1e-05_perc_True_activation_tanh'
 var_tag = 'mape_l2_0_perc_True_activation_tanh' ##shoule automatic implement
 #var_tag = 'mape_l2_0_perc_True_activation_sigmoid'
-
+small_bin_bool = DataLoader.small_bin_bool
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
 print(out_tag)
 
