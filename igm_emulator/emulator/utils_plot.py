@@ -42,21 +42,25 @@ with h5py.File(in_path_molly + in_name_h5py, 'r') as f:
 
 v_bins = params['v_bins']
 
-fig = {'legend.fontsize': 16,
-       'legend.frameon': False,
-       'axes.labelsize': 30,
-       'axes.titlesize': 30,
-       'figure.titlesize': 38,
-       'xtick.labelsize': 25,
-       'ytick.labelsize': 25,
-       'lines.linewidth': 3,
-       'lines.markersize': 2,
-       'errorbar.capsize': 3,
-       'font.family': 'serif',
-       # 'text.usetex': True,
-       'xtick.minor.visible': True,
-       }
-plt.rcParams.update(fig)
+x_size = 3.5
+dpi_value = 200
+
+plt_params = {'legend.fontsize': 7,
+              'legend.frameon': False,
+              'axes.labelsize': 8,
+              'axes.titlesize': 8,
+              'figure.titlesize': 7,
+              'xtick.labelsize': 7,
+              'ytick.labelsize': 7,
+              'lines.linewidth': .7,
+              'lines.markersize': 2.3,
+              'lines.markeredgewidth': .9,
+              'errorbar.capsize': 2,
+              'font.family': 'serif',
+              # 'text.usetex': True,
+              'xtick.minor.visible': True,
+              }
+plt.rcParams.update(plt_params)
 
 def plot_params(params):
   fig1, axs = plt.subplots(ncols=2, nrows=4)
@@ -169,7 +173,7 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     print('Train overplot saved')
     plt.show()
 
-def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var_tag):
+def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, var_tag):
     '''
 
 
@@ -191,24 +195,25 @@ def test_overplot(test_preds, Y_test, X_test,meanX,stdX,meanY,stdY, out_tag, var
     '''
     ax = v_bins
     sample = 10  # number of functions plotted
-    fig2, axs2 = plt.subplots(1, 1)
-    fig2.set_figwidth(8)
-    fig2.set_figheight(4)
+    fig2 = plt.figure(figsize=(x_size * 6., x_size * .65*3), constrained_layout=True,
+                             dpi=dpi_value)
+    grid = fig2.add_gridspec(nrows=3, ncols=3)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
-    for i in range(sample):
-        axs2.plot(ax, test_preds[corr_idx[i]], label=f'Emulation {i}:' r'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
-                                                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
-                                                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        axs2.plot(ax, Y_test[corr_idx[i]], label=f'Data {i}', c=f'C{i}', linestyle='--')
-    # axs.plot(ax, y_mean, label='Y mean', c='k', alpha=0.2)
-    plt.xlabel(r'Velocity [$km s^{-1}$]')
-    plt.ylabel('Auto-Correlation')
-    plt.title('Test data set overplot')
-    plt.legend(fontsize=10, loc='upper right', ncol=2)
-    plt.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
+    for row in grid:
+        for axs2 in row:
+            axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
+            axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c=b, linestyle='--')
+
+            axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
+            axs2.set_ylabel(r"$\xi_F$")
+            axs2.set_title('$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
+                    r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
+                    r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}')
+            axs2.legend(fontsize=10, loc='upper right')
+    fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
 
