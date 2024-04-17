@@ -27,24 +27,6 @@ import corner
 import h5py
 from progressbar import ProgressBar
 
-x_size = 3.5
-dpi_value = 200
-plt_params = {'legend.fontsize': 7,
-              'legend.frameon': False,
-              'axes.labelsize': 8,
-              'axes.titlesize': 8,
-              'figure.titlesize': 8,
-              'xtick.labelsize': 8,
-              'ytick.labelsize': 8,
-              'lines.linewidth': 1,
-              'lines.markersize': 2,
-              'errorbar.capsize': 3,
-              'font.family': 'serif',
-              # 'text.usetex': True,
-              'xtick.minor.visible': True,
-              }
-plt.rcParams.update(plt_params)
-
 class INFERENCE_TEST():
     '''
     A class to run inference test in HMC for NGP and Emulator models
@@ -398,16 +380,14 @@ class INFERENCE_TEST():
 
             #corner plot for each inference
             if mock_idx < 10:
-                corner_fig = corner.corner(np.array(theta_samples), levels=(0.68, 0.95), labels=var_label,
-                                           truths=np.array(true_theta[mock_idx, :]), truth_color='red', show_titles=True,
-                                           quantiles=(0.16, 0.5, 0.84),title_kwargs={"fontsize": 15}, label_kwargs={'fontsize': 15},
-                                           data_kwargs={'ms': 1.0, 'alpha': 0.1}, hist_kwargs=dict(density=True))
-                corner_fig.text(0.5, 0.8, f'true theta:{true_theta[mock_idx, :]} \n opt theta:{theta_opt}')
+                corner_fig = hmc_inf.corner_plot(self.z_string,theta_samples,x_samples,true_theta[mock_idx, :],save_str=None, save_bool=False)
+                corner_fig.text(0.5, 0.7,
+                                      f"opt theta: {np.array2string(theta_opt, precision=2, floatmode='fixed')}",
+                                      {'fontsize': 5, 'color': 'green'})
                 corner.overplot_lines(corner_fig, theta_opt, color="g")
                 fit_fig =  hmc_inf.fit_plot(z_string=self.z_string,theta_samples=theta_samples, lnP = lnP,
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
-
 
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
                 fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
