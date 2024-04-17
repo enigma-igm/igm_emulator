@@ -194,7 +194,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
 
     '''
     ax = v_bins
-    sample = 10  # number of functions plotted
+    sample = 9  # number of functions plotted
     fig2 = plt.figure(figsize=(x_size * 6., x_size * .65*3), constrained_layout=True,
                              dpi=dpi_value)
     grid = fig2.add_gridspec(nrows=3, ncols=3)
@@ -205,6 +205,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             axs2 = fig2.add_subplot(grid[row, col])
+            i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c=b, linestyle='--')
 
