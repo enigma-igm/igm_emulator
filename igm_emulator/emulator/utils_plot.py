@@ -214,7 +214,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.set_title('$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}')
-            axs2.legend(fontsize=4, loc='upper right')
+            axs2.legend(fontsize=7, loc='upper right')
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
@@ -289,7 +289,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
     ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
     ax.text(0.5 ,0.7, f'{zstr}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
-    ax.legend(fontsize=7, loc='upper right')
+    ax.legend(fontsize=14, loc='upper right')
     fig.tight_layout()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
     plt.show()
