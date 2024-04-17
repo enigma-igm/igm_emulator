@@ -207,7 +207,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2 = fig2.add_subplot(grid[row, col])
             i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
-            axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c=b, linestyle='--')
+            axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
 
             axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             axs2.set_ylabel(r"$\xi_F$")
