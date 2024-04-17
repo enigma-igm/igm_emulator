@@ -289,8 +289,8 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
     ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
     ax.text(0.5 ,0.7, f'{zstr}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
+    ax.legend(fontsize=7, loc='upper right')
     fig.tight_layout()
-    fig.legend()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
     plt.show()
 
