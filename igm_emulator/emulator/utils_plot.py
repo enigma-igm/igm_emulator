@@ -14,7 +14,7 @@ import dill
 Visualization of hyperparameters
 '''
 
-zstr = 'z55'
+zstr = 'z54'
 small_bin_bool = True
 dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
