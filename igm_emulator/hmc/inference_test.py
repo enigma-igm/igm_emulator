@@ -380,7 +380,7 @@ class INFERENCE_TEST():
             #corner plot for each inference
             if mock_idx < 10:
                 corner_fig = hmc_inf.corner_plot(self.z_string,theta_samples,x_samples,true_theta[mock_idx, :],save_str=None, save_bool=False)
-                corner_fig.text(0.5, 0.7,
+                corner_fig.text(0.5, 0.77,
                                       f"opt theta: {np.array2string(theta_opt, precision=2, floatmode='fixed')}",
                                       {'fontsize': 5, 'color': 'green'})
                 corner.overplot_lines(corner_fig, theta_opt, color="g")
