@@ -632,7 +632,7 @@ class NN_HMC_X:
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, infer_model), decimals=4)],
                       ['1-MAPE',
-                       np.format_float_scientific(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
+                       np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
                       ],
                      headers=['Matrics', 'Values'], tablefmt='orgtbl'),
             {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
