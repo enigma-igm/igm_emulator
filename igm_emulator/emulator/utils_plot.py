@@ -202,8 +202,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
-    for row in grid:
-        for axs2 in row:
+    for row in range(3):
+        for col in range(3):
+            axs2 = fig2.add_subplot(grid[row, col])
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c=b, linestyle='--')
 
