@@ -74,7 +74,7 @@ if __name__ == '__main__':
     covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
 
-    plot_covar_matrix(covar_nn_test, out_tag=out_tag, name='covar_nn')
+    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name='covar_nn')
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag)
     '''
     ##Plot test overplot for sanity check if apply correcly
