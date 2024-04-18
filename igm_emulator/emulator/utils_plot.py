@@ -294,7 +294,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
     plt.show()
 
-def plot_covar_matrix(covar_data,name='covar_nn'):
+def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
     fig = plt.figure(figsize=(1.05 * x_size, 0.8 * x_size), constrained_layout=True,
                      dpi=dpi_value,
                      )
