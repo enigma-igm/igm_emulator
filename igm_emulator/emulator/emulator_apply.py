@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
 from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag,  theta_v, corr_v, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
-from utils_plot import v_bins
+from utils_plot import *
 import dill
 import IPython
 import jax
@@ -70,9 +70,11 @@ if __name__ == '__main__':
 
     ## Load the NN error covariance and mean, while save all the sampels' errors
 
-    covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
+    #covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
     covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
-
+    plot_correlation_matrix(covar_nn_test / np.sqrt(np.outer(np.diag(covar_nn_test), np.diag(covar_nn_test))), name='covar_nn')
+    plot_correlation_matrix(np.sqrt(covar_nn_test) / np.sqrt(trainer.like_dict['covariance'] + covar_nn_test) * 100,
+                            name='sig_nn_frac_sig_tot')
     '''
     ##Plot test overplot for sanity check if apply correcly
 

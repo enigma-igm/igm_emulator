@@ -294,6 +294,22 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
     plt.show()
 
+def plot_covar_matrix(covar_data,name='covar_nn'):
+    fig = plt.figure(figsize=(1.05 * x_size, 0.8 * x_size), constrained_layout=True,
+                     dpi=dpi_value,
+                     )
+    axes = fig.add_subplot()
+    covar_image = axes.pcolor(v_bins, v_bins, covar_data,
+                              cmap='seismic',
+                              vmin=-1., vmax=1.,
+                              rasterized=True)
+    axes.set_xlabel('Velocity (km/s)')
+    axes.set_ylabel('Velocity (km/s)')
+    fig.colorbar(covar_image).set_label('Correlation')
+    axes.set_title(name)
+    fig.show()
+    fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
+
 if __name__ == '__main__':
     dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{zstr}{bin_label}_v_bins.p',
                    'wb'))
