@@ -72,8 +72,8 @@ if __name__ == '__main__':
 
     #covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
     covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
-    plot_correlation_matrix(covar_nn_test / np.sqrt(np.outer(np.diag(covar_nn_test), np.diag(covar_nn_test))), name='covar_nn')
-    plot_correlation_matrix(np.sqrt(covar_nn_test) / np.sqrt(trainer.like_dict['covariance'] + covar_nn_test) * 100,
+    plot_covar_matrix(covar_nn_test / np.sqrt(np.outer(np.diag(covar_nn_test), np.diag(covar_nn_test))), name='covar_nn')
+    plot_covar_matrix(np.sqrt(covar_nn_test) / np.sqrt(trainer.like_dict['covariance'] + covar_nn_test) * 100,
                             name='sig_nn_frac_sig_tot')
     '''
     ##Plot test overplot for sanity check if apply correcly
