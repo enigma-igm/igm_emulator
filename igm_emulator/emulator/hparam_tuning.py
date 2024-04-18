@@ -170,8 +170,8 @@ if __name__ == '__main__':
         dill.dump(err_nn, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn.p',
             'wb'))
-        plot_covar_matrix(covar_nn / np.sqrt(np.outer(np.diag(covar_nn), np.diag(covar_nn))), out_tag=out_tag, name='covar_nn')
-        plot_covar_matrix(np.sqrt(covar_nn)/np.sqrt(trainer.like_dict['covariance']+covar_nn)*100,  out_tag=out_tag, name='sig_nn_frac_sig_tot')
+        plot_covar_matrix(covar_nn, out_tag=out_tag, name='covar_nn')
+        plot_covar_frac(covar_nn, trainer.like_dict['covariance'], out_tag=out_tag)
         return trainer.var_tag
         del trainer
 
