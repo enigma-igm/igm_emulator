@@ -70,20 +70,20 @@ if __name__ == '__main__':
 
     ## Load the NN error covariance and mean, while save all the sampels' errors
 
-    covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num = DataLoader.err_vali_num)
-    covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
+    covar_nn_err, err_nn_err, delta_v_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num = DataLoader.err_vali_num)
+    covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
 
     ## Plot the error propagation results
     plt.figure(figsize=(12, 6))
-    plt.plot(v_bins, err_nn_err.T, color='b', alpha=0.1)
-    plt.plot(v_bins, np.mean(err_nn_err, axis=0), color='r', label='mean')
+    plt.plot(v_bins, delta_v_err.T, color='b', alpha=0.1)
+    plt.plot(v_bins, err_nn_err, color='r', label='mean')
     plt.title(f'Error propagation {DataLoader.err_vali_num}')
     plt.show()
 
     plt.figure(figsize=(12, 6))
-    plt.plot(v_bins, err_nn_test.T, color='b', alpha=0.1)
-    plt.plot(v_bins, np.mean(err_nn_test, axis=0), color='r', label='mean')
+    plt.plot(v_bins, delta_v_test.T, color='b', alpha=0.1)
+    plt.plot(v_bins, err_nn_test, color='r', label='mean')
     plt.title(f'Error propagation {DataLoader.test_num}')
     plt.show()
 

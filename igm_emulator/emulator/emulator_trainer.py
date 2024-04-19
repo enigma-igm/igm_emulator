@@ -246,7 +246,7 @@ class TrainerModule:
             dill.dump(delta_v, open(os.path.join(dir2, f'{self.out_tag}_{err_vali_num}_{self.var_tag}_delta_vali_nn.p'), 'wb'))
             dill.dump(self.like_dict['covariance'], open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_data.p'), 'wb'))
 
-        return self.covar_nn, self.err_nn
+        return self.covar_nn, self.err_nn, delta_v
 
     def save_training_info(self, redshift):
             zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
