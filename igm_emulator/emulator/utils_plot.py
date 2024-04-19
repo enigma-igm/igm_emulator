@@ -350,7 +350,7 @@ def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
                 rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
-    fig1.colorbar(covar_image,label='[%]',format='%.1f',nbinas=10)
+    fig1.colorbar(covar_image,label='[%]',format='%.1f')
     cbar = fig1.colorbar(covar_image)
     tick_locator = ticker.MaxNLocator(nbins=10)
     cbar.locator = tick_locator
