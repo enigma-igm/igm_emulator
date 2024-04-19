@@ -307,8 +307,8 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
     axes.set_ylabel('Velocity (km/s)')
     fig.colorbar(covar_image).set_label('Correlation')
     axes.set_title(name)
-    fig.show()
     fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
+    fig.show()
 
 def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     fig1 = plt.figure(figsize=(x_size, 0.8*x_size), constrained_layout=True,
@@ -325,8 +325,9 @@ def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     axes.set_ylabel('Velocity (km/s)')
     fig1.colorbar(covar_image,label='[%]',format='%.1f',)
     axes.set_title('NN Error/Total Noise')
-    fig1.show()
     fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}_{name}.png'))
+    fig1.show()
+
 
 if __name__ == '__main__':
     dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{zstr}{bin_label}_v_bins.p',
