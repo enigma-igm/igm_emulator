@@ -346,7 +346,6 @@ def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     sig_frac = sig_frac/np.sqrt(np.abs(sig_frac))
     covar_image = axes.pcolor(v_bins, v_bins, sig_frac*100,
                 cmap='OrRd',
-                vmin=-1, vmax=2.5,
                 rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')

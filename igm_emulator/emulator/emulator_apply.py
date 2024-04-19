@@ -74,6 +74,18 @@ if __name__ == '__main__':
     covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
 
+    neg_count_err = 0
+    for i in covar_nn_err:
+        if i < 0:
+            neg_count_err += 1
+    print(f'Negative count in error propagation for {DataLoader.err_vali_num}: {neg_count}')
+
+    neg_count_test = 0
+    for i in covar_nn_test:
+        if i < 0:
+            neg_count_test += 1
+    print(f'Negative count in error propagation for {DataLoader.test_num}: {neg_count_test}')
+
     ## Plot the error propagation results
     plt.figure(figsize=(12, 6))
     plt.plot(v_bins, delta_v_err.T, color='b', alpha=0.1)
