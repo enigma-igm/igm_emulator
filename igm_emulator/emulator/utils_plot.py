@@ -310,6 +310,21 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
     fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
     fig.show()
 
+def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
+    fig = plt.figure(figsize=(1.05 * x_size, 0.8 * x_size), constrained_layout=True,
+                     dpi=dpi_value,
+                     )
+    axes = fig.add_subplot()
+    covar_image = axes.pcolor(v_bins, v_bins, covar_data,
+                              cmap='seismic',
+                              rasterized=True)
+    axes.set_xlabel('Velocity (km/s)')
+    axes.set_ylabel('Velocity (km/s)')
+    fig.colorbar(covar_image).set_label('Covariance')
+    axes.set_title(name)
+    fig.savefig(os.path.join(dir_exp, f'covariance_matrix_{out_tag}_{name}.png'))
+    fig.show()
+
 def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     fig1 = plt.figure(figsize=(x_size, 0.8*x_size), constrained_layout=True,
                              dpi=dpi_value,
