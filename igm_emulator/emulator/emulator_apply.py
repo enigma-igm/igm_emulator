@@ -54,7 +54,7 @@ def nn_emulator(best_params_function, theta_linda):
 Check if jvmap works
 '''
 if __name__ == '__main__':
-    zstr = 'z55'
+    zstr = 'z54'
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
     best_params, _ = trainer.train_loop(True)
     dill.dump(best_params, open(

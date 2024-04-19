@@ -317,6 +317,7 @@ def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
     axes = fig.add_subplot()
     covar_image = axes.pcolor(v_bins, v_bins, covar_data,
                               cmap='seismic',
+                              vmin=-1e-10, vmax=2.5e-9,
                               rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
