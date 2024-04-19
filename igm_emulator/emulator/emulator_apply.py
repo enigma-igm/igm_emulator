@@ -75,14 +75,6 @@ if __name__ == '__main__':
     covar_data = trainer.like_dict['covariance']
 
     ## Plot the error propagation results
-    plot_corr_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
-    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
-    plot_covar_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
-    plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
-    plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
-    plot_covar_frac(covar_nn_err, covar_data, out_tag=out_tag,  name=DataLoader.err_vali_num)
-    plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
-
     plt.figure(figsize=(12, 6))
     plt.plot(v_bins, err_nn_err.T, color='b', alpha=0.1)
     plt.plot(v_bins, np.mean(err_nn_err, axis=0), color='r', label='mean')
@@ -95,6 +87,13 @@ if __name__ == '__main__':
     plt.title(f'Error propagation {DataLoader.test_num}')
     plt.show()
 
+    plot_corr_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
+    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
+    plot_covar_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
+    plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
+    plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
+    plot_covar_frac(covar_nn_err, covar_data, out_tag=out_tag,  name=DataLoader.err_vali_num)
+    plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
 
     '''
     ##Plot test overplot for sanity check if apply correcly
