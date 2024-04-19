@@ -310,20 +310,23 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
     fig.show()
     fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
 
-def plot_covar_frac(covar_nn_test,covar_data,out_tag):
+def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     fig1 = plt.figure(figsize=(x_size, 0.8*x_size), constrained_layout=True,
                              dpi=dpi_value,
                              )
     axes = fig1.add_subplot()
-    covar_image = axes.pcolor(v_bins, v_bins, np.sqrt(covar_nn_test)/np.sqrt(covar_data+covar_nn_test)*100,
+    tot_covar = covar_data+covar_nn_test
+    sig_frac = covar_nn_test/np.sqrt(np.outer(np.diag(tot_covar), np.diag(tot_covar)))
+    sig_frac = sig_frac/np.sqrt(np.abs(sig_frac))
+    covar_image = axes.pcolor(v_bins, v_bins, sig_frac*100,
                 cmap='OrRd',
                 rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
-    fig1.colorbar(covar_image,label='[%]',format='%.1f')
-    axes.set_title('NN Error/Data Noise')
+    fig1.colorbar(covar_image,label='[%]',format='%.1f',)
+    axes.set_title('NN Error/Total Noise')
     fig1.show()
-    fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}.png'))
+    fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}_{name}.png'))
 
 if __name__ == '__main__':
     dill.dump(v_bins,open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/{zstr}{bin_label}_v_bins.p',

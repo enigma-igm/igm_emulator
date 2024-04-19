@@ -70,12 +70,16 @@ if __name__ == '__main__':
 
     ## Load the NN error covariance and mean, while save all the sampels' errors
 
-    #covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num =  DataLoader.err_vali_num)
+    covar_nn_err, err_nn_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num = DataLoader.err_vali_num)
     covar_nn_test, err_nn_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
 
-    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name='covar_nn')
-    plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag)
+    ## Plot the error propagation results
+    plot_corr_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
+    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
+    plot_covar_frac(covar_nn_err, covar_data, out_tag=out_tag,  name=DataLoader.err_vali_num)
+    plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
+
     '''
     ##Plot test overplot for sanity check if apply correcly
 
