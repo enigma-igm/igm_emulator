@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib import ticker
 import seaborn as sns
 import numpy as np
 import jax.numpy as jnp
@@ -305,7 +306,12 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
                               rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
-    fig.colorbar(covar_image).set_label('Correlation')
+    cbar = fig.colorbar(covar_image)
+    tick_locator = ticker.MaxNLocator(nbins=10)
+    cbar.locator = tick_locator
+    cbar.update_ticks()
+    cbar.set_label('Correlation')
+    cbar.ax.minorticks_on()
     axes.set_title(name)
     fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
     fig.show()
@@ -317,11 +323,15 @@ def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
     axes = fig.add_subplot()
     covar_image = axes.pcolor(v_bins, v_bins, covar_data,
                               cmap='seismic',
-                              vmin=-1e-10, vmax=2.5e-9,
                               rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
-    fig.colorbar(covar_image).set_label('Covariance')
+    cbar = fig.colorbar(covar_image)
+    tick_locator = ticker.MaxNLocator(nbins=10)
+    cbar.locator = tick_locator
+    cbar.update_ticks()
+    cbar.set_label('Covariance')
+    cbar.ax.minorticks_on()
     axes.set_title(name)
     fig.savefig(os.path.join(dir_exp, f'covariance_matrix_{out_tag}_{name}.png'))
     fig.show()
@@ -340,7 +350,13 @@ def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
                 rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')
-    fig1.colorbar(covar_image,label='[%]',format='%.1f',)
+    fig1.colorbar(covar_image,label='[%]',format='%.1f',nbinas=10)
+    cbar = fig1.colorbar(covar_image)
+    tick_locator = ticker.MaxNLocator(nbins=10)
+    cbar.locator = tick_locator
+    cbar.update_ticks()
+    cbar.set_label('Covariance')
+    cbar.ax.minorticks_on()
     axes.set_title('NN Error/Total Noise')
     fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}_{name}.png'))
     fig1.show()
