@@ -75,13 +75,13 @@ if __name__ == '__main__':
     covar_data = trainer.like_dict['covariance']
 
     neg_count_err = 0
-    for i in covar_nn_err:
+    for i in covar_nn_err.flatten():
         if i < 0:
             neg_count_err += 1
     print(f'Negative count in error propagation for {DataLoader.err_vali_num}: {neg_count}')
 
     neg_count_test = 0
-    for i in covar_nn_test:
+    for i in covar_nn_test.flatten():
         if i < 0:
             neg_count_test += 1
     print(f'Negative count in error propagation for {DataLoader.test_num}: {neg_count_test}')
