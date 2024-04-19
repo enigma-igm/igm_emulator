@@ -83,6 +83,19 @@ if __name__ == '__main__':
     plot_covar_frac(covar_nn_err, covar_data, out_tag=out_tag,  name=DataLoader.err_vali_num)
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
 
+    plt.figure(figsize=(12, 6))
+    plt.plot(v_bins, err_nn_err.T, color='b', alpha=0.1)
+    plt.plot(v_bins, np.mean(err_nn_err, axis=0), color='r', label='mean')
+    plt.title(f'Error propagation {DataLoader.err_vali_num}')
+    plt.show()
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(v_bins, err_nn_test.T, color='b', alpha=0.1)
+    plt.plot(v_bins, np.mean(err_nn_test, axis=0), color='r', label='mean')
+    plt.title(f'Error propagation {DataLoader.test_num}')
+    plt.show()
+
+
     '''
     ##Plot test overplot for sanity check if apply correcly
 
