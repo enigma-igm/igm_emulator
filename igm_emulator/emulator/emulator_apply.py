@@ -79,12 +79,14 @@ if __name__ == '__main__':
     plt.plot(v_bins, delta_v_err.T, color='b', alpha=0.1)
     plt.plot(v_bins, err_nn_err, color='r', label='mean')
     plt.title(f'Error propagation {DataLoader.err_vali_num}')
+    plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.err_vali_num}.png'))
     plt.show()
 
     plt.figure(figsize=(12, 6))
     plt.plot(v_bins, delta_v_test.T, color='b', alpha=0.1)
     plt.plot(v_bins, err_nn_test, color='r', label='mean')
     plt.title(f'Error propagation {DataLoader.test_num}')
+    plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.test_num}.png'))
     plt.show()
 
     plot_corr_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
