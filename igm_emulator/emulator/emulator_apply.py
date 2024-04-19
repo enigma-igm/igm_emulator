@@ -78,7 +78,7 @@ if __name__ == '__main__':
     for i in covar_nn_err.flatten():
         if i < 0:
             neg_count_err += 1
-    print(f'Negative count in error propagation for {DataLoader.err_vali_num}: {neg_count}')
+    print(f'Negative count in error propagation for {DataLoader.err_vali_num}: {neg_count_err}')
 
     neg_count_test = 0
     for i in covar_nn_test.flatten():
