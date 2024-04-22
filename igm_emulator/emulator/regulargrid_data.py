@@ -303,13 +303,12 @@ class DataSamplerModule:
             plt.savefig(os.path.join(dir,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.show()
 
-        ### Join the extra test data to the test data -- only control test dataset size
-        self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)
         if self.small_bin_bool:
             num = f'bin59_seed_{self.seed}' #if seed = None, it's regular grid
         else:
             num = f'bin276_seed_{self.seed}'
 
+        ### Join the extra test data to the test data -- only control test dataset size
         self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)
 
         train_num = f'_train_{self.X_train.shape[0]}'
