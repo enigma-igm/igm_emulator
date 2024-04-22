@@ -337,7 +337,6 @@ class DataSamplerModule:
         self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
 
         self.out_tag = f'{self.z_string}{train_num}{test_num}_{num}'
-        self.err_vali_num = err_vali_num
         self.train_num = train_num
         self.test_num = test_num
         self.vali_num = vali_num
