@@ -22,7 +22,8 @@ class DataSamplerModule:
     def __init__(self, redshift=5.5,
                 small_bin_bool=True,
                 n_f=4, n_t=7, n_g=4,
-                seed=None,
+                n_testing=0,
+                seed=42,
                 plot_bool=True):
         '''
 
@@ -34,6 +35,7 @@ class DataSamplerModule:
         n_f: int, number of flux bins for emulator in total
         n_t: int, number of temperature bins for emulator in total
         n_g: int, number of gamma bins for emulator in total
+        n_testing: int, number of testing samples apart from the regular grid testing selection (to keep train+validation fixed)
         seed_err
         seed_train
         plot_bool
@@ -56,8 +58,10 @@ class DataSamplerModule:
         self.n_f = n_f
         self.n_t = n_t
         self.n_g = n_g
+        self.n_testing = n_testing
         self.seed = seed
         self.plot_bool = plot_bool
+
 
         # get the appropriate string and pathlength for chosen redshift
         zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
@@ -199,27 +203,11 @@ class DataSamplerModule:
         test_corr = np.asarray(test_corr)
 
 
-        n_testing = round(test_corr.shape[0] * 0.2)
-        n_validation = round(test_corr.shape[0] * 0.8)
-        test_selection = tf.random.shuffle([True]*n_testing+[False]*n_validation)#, lambda:random.gauss(0.5,0.1))
+        n_validation = test_corr.shape[0] - self.n_testing
+        test_selection = tf.random.shuffle([True]*self.n_testing+[False]*n_validation)#, lambda:random.gauss(0.5,0.1))
 
         vali_param, vali_corr = test_param[~test_selection], test_corr[~test_selection] #validation dataset = (358, )
         testing_param, testing_corr = test_param[test_selection], test_corr[test_selection] #testing dataset = (89, )
-
-        if self.plot_bool:
-            H = final_samples
-            ax = plt.axes(projection='3d')
-            ax.scatter(self.xv, self.yv, self.zv, c = 'b', alpha=0.1, linewidth=0.5, label=f'all data: {self.all_data.shape[0]}')
-            ax.scatter(H[:, 0], H[:, 1], H[:, 2], c ='r', linewidth=0.2,label=f'training data: {H.shape[0]}')
-            T =  testing_param
-            ax.scatter(T[:, 0], T[:, 1], T[:, 2], c ='k', linewidth=0.2, label=f'validation data: {T.shape[0]}')
-            ax.set_xlabel(r'$<F>$')
-            ax.set_ylabel(r'$T_0$')
-            ax.set_zlabel(r'$\gamma$')
-            ax.legend()
-            ax.grid(True)
-            plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_regular_grid_train_{final_samples.shape[0]}.png"))
-            plt.show()
 
         return final_samples,testing_param,testing_corr
 
@@ -289,34 +277,40 @@ class DataSamplerModule:
             vali_corr.append(like_dict['mean_data'])
         self.vali_corr = np.asarray(vali_corr)
 
+
+    def data_sampler(self):
+        self.sparce_samples,self.extra_test_err_param,self.extra_test_err_corr = self.regular_grid()
+        self.random_split(self.sparce_samples, test_size=0.1, train_size=0.5)
+
+        dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
+
         if self.plot_bool:
-            H = X_train
+            H = self.X_train
             ax = plt.axes(projection='3d')
             ax.scatter(self.xv, self.yv, self.zv, c='b', alpha=0.1, linewidth=0.5, label=f'all data: {self.all_data.shape[0]}')
             ax.scatter(H[:, 0], H[:, 1], H[:, 2], c='r', linewidth=0.2, label=f'training data: {H.shape[0]}')
-            A = X_vali
+            A = self.X_vali
             ax.scatter(A[:, 0], A[:, 1], A[:, 2], c='g', linewidth=0.2, label=f'validation data: {A.shape[0]}')
-            T = X_test
-            ax.scatter(T[:, 0], T[:, 1], T[:, 2], c='k', linewidth=0.2, label=f'testing data: {T.shape[0]}')
+            T = self.X_test
+            ax.scatter(T[:, 0], T[:, 1], T[:, 2], c='k', linewidth=0.2, label=f'validation data: {T.shape[0]+T_err.shape[0]}')
+            T_err = self.extra_test_err_param
+            ax.scatter(T_err[:, 0], T_err[:, 1], T_err[:, 2], c='k', linewidth=0.2, alpha = 0.5)
             ax.set_xlabel(r'$<F>$')
             ax.set_ylabel(r'$T_0$')
             ax.set_zlabel(r'$\gamma$')
             ax.legend()
             ax.grid(True)
-            plt.savefig(os.path.join(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/GRID/',f"{self.z_string}_params_sampling_random_split_train_{X_train.shape[0]}_seed_{self.seed}.png"))
+            plt.savefig(os.path.join(dir,f"{self.z_string}_params_sampling_random_split_train_{X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.show()
 
-    def data_sampler(self):
-        self.sparce_samples,self.vali_err_param,self.vali_err_corr = self.regular_grid()
-        self.random_split(self.sparce_samples, test_size=0.1, train_size=0.5)
-
-
-        dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
-
+        ### Join the extra test data to the test data -- only control test dataset size
+        self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)
         if self.small_bin_bool:
             num = f'bin59_seed_{self.seed}' #if seed = None, it's regular grid
         else:
             num = f'bin276_seed_{self.seed}'
+
+        self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)
 
         train_num = f'_train_{self.X_train.shape[0]}'
         dill.dump(self.X_train,open(os.path.join(dir, f'{self.z_string}_param{train_num}_{num}.p'),'wb'))
@@ -330,15 +324,10 @@ class DataSamplerModule:
         dill.dump(self.X_vali,open(os.path.join(dir, f'{self.z_string}_param{vali_num}_{num}.p'),'wb'))
         dill.dump(self.vali_corr,open(os.path.join(dir, f'{self.z_string}_model{vali_num}_{num}.p'),'wb'))
 
-        err_vali_num=f'_err_v_{self.vali_err_param.shape[0]}'
-        dill.dump(self.vali_err_param,open(os.path.join(dir, f'{self.z_string}_param{err_vali_num}_{num}.p'),'wb'))
-        dill.dump(self.vali_err_corr,open(os.path.join(dir, f'{self.z_string}_model{err_vali_num}_{num}.p'),'wb'))
-
         print(f'Datasets saved at {dir}')
         print(f'Train: {self.z_string}_param{train_num}_{num}.p; {self.z_string}_model{train_num}_{num}.p')
         print(f'Test: {self.z_string}_param{test_num}_{num}.p; {self.z_string}_model{test_num}_{num}.p')
         print(f'Validation: {self.z_string}_param{vali_num}_{num}.p; {self.z_string}_model{vali_num}_{num}.p')
-        print(f'Error Validation: {self.z_string}_param{err_vali_num}_{num}.p; {self.z_string}_model{err_vali_num}_{num}.p')
 
         # get the fixed covariance dictionary for likelihood
         T0_idx = 8  # 0-14
@@ -347,10 +336,10 @@ class DataSamplerModule:
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
         self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
 
-        self.out_tag = f'{self.z_string}{train_num}_{num}'
+        self.out_tag = f'{self.z_string}{train_num}{test_num}_{num}'
         self.err_vali_num = err_vali_num
         self.train_num = train_num
         self.test_num = test_num
         self.vali_num = vali_num
 
-        return self.X_train, self.train_corr, self.X_test, self.test_corr, self.X_vali, self.vali_corr, self.vali_err_param, self.vali_err_corr, self.like_dict
+        return self.X_train, self.train_corr, self.X_test, self.test_corr, self.X_vali, self.vali_corr, self.like_dict

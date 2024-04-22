@@ -127,19 +127,18 @@ class INFERENCE_TEST():
         '''
         if self.gaussian_bool == False:
             if self.ngp_bool == True:
-                self.note = 'forward_mocks_ngp_prior_diff_covar'
+                self.note = 'forward_mocks_ngp'
             else:
-                self.note = 'forward_mocks_emulator_prior_diff_covar'
+                self.note = 'forward_mocks_emulator'
         else:
             if self.ngp_bool == True and self.emu_test_bool == False:
-                self.note = 'gaussian_mocks_ngp_prior_diff_covar'
+                self.note = 'gaussian_mocks_ngp'
             elif self.ngp_bool == False and self.emu_test_bool == True:
-                self.note = 'gaussian_mocks_emulator_TEST_prior_diff_covar'
+                self.note = 'gaussian_mocks_emulator_TEST'
             elif self.ngp_bool == False and self.emu_test_bool == False:
-                self.note = 'gaussian_mocks_emulator_prior_diff_covar'
+                self.note = 'gaussian_mocks_emulator'
             else:
                 raise ValueError('Invalid combination of ngp_bool and emu_test_bool; if emu_test_bool is True, ngp_bool must be False')
-        self.note += f'_target_0.9'
         print('Sampling parameters from priors')
 
         # get n_inference sampled parameters
@@ -318,7 +317,7 @@ class INFERENCE_TEST():
         out_path = self.out_path
         if os.path.exists(out_path_plot) is False:
             os.makedirs(out_path_plot)
-        self.save_name = f"{self.out_tag}_true_theta_sampled_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_{self.var_tag}_nn_err_prop_{hmc_inf.nn_err_prop}"
+        self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}"
 
 
         '''
@@ -386,8 +385,8 @@ class INFERENCE_TEST():
                                             theta_true=true_theta[mock_idx, :],model_corr=self.model_corr[mock_idx, :],mock_corr=flux,
                                             covariance=covars_mock)
 
-                corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
-                fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_SNR{self.noise_idx}_F{closest_fobs_idx}_P{self.n_path}_mock_{mock_idx}_{self.save_name}.png')
+                corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_mock_{mock_idx}_{self.save_name}.png')
+                fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_mock_{mock_idx}_{self.save_name}.png')
 
                 ## explore Log-Likelihood plot for dual shape -- Solved!
                 # fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
@@ -402,7 +401,6 @@ class INFERENCE_TEST():
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
-        # dill.dump(logP_grid_mean/10, open(out_path_plot + f'logP_grid_mean_fix_{fix}_{self.save_name}_true_theta_sampled.p', 'wb'))
         self.infer_theta = infer_theta
         self.log_prob_x = log_prob
         self.true_log_prob_x = true_log_prob
