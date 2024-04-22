@@ -57,8 +57,8 @@ class TrainerModule:
         #Set dataset and scaler functions
         self.X_train = X_train #transformed x
         self.Y_train = Y_train #transformed y
-        self.X_test = X_test
-        self.Y_test = Y_test
+        self.X_test = X_test[:np.round(X_train.shape[0]/5),:] #20% of training data to evaluate test loss
+        self.Y_test = Y_test[:np.round(X_train.shape[0]/5),:]
         self.X_vali = X_vali
         self.Y_vali = Y_vali
         self.x_scaler = x_scaler #DiffStandardScaler class: scaler.transform(theta) and scaler.inverse_transform(x)

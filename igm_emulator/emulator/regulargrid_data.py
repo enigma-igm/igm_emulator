@@ -293,7 +293,7 @@ class DataSamplerModule:
             ax.scatter(A[:, 0], A[:, 1], A[:, 2], c='g', linewidth=0.2, label=f'validation data: {A.shape[0]}')
             T = self.X_test
             T_err = self.extra_test_err_param
-            ax.scatter(T[:, 0], T[:, 1], T[:, 2], c='k', linewidth=0.2, label=f'validation data: {T.shape[0]+T_err.shape[0]}')
+            ax.scatter(T[:, 0], T[:, 1], T[:, 2], c='k', linewidth=0.2, label=f'testing data: {T.shape[0]+T_err.shape[0]}')
             ax.scatter(T_err[:, 0], T_err[:, 1], T_err[:, 2], c='k', linewidth=0.2, alpha = 0.5)
             ax.set_xlabel(r'$<F>$')
             ax.set_ylabel(r'$T_0$')
