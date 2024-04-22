@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num
+from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string
 from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
@@ -30,7 +30,7 @@ class INFERENCE_TEST():
     '''
     A class to run inference test in HMC for NGP and Emulator models
     '''
-    def __init__(self, redshift,
+    def __init__(self,
                  gaussian_bool,  #True: Gaussian sampling around mean; False: Forward mocks sampling
                  ngp_bool, #True: NGP model; False: emulator model
                  emu_test_bool=False, #True: perfect inference test with emulator mocks; False: inference test with mocks
@@ -43,7 +43,6 @@ class INFERENCE_TEST():
 
         '''
         Args:
-            redshift: float, redshift of the data [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
             gaussian_bool: bool, True: Gaussian sampling around mean; False: Forward mocks sampling
             ngp_bool: bool, True: NGP model; False: Emulator model
             emu_test_bool: bool, True: perfect inference test with emulator mocks; False: inference test with real mocks
@@ -54,11 +53,8 @@ class INFERENCE_TEST():
             key_hmc: int, random key for HMC inference test
         '''
 
-        # get the appropriate string and pathlength for chosen redshift
-        zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
-        z_idx = np.argmin(np.abs(zs - redshift))
-        z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-        self.z_string = z_strings[z_idx]
+        # get the appropriate string and pathlength for chosen redshift (set in hparam_tuning.py)
+        self.z_string = z_string
         self.gaussian_bool = gaussian_bool
         self.ngp_bool = ngp_bool
         self.n_inference = n_inference
@@ -438,20 +434,20 @@ class INFERENCE_TEST():
 '''
 ##emulator -- emulator model test
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=True,nn_err_prop_bool=True, n_inference=100) #,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(gaussian_bool=True,ngp_bool=False,emu_test_bool=True,nn_err_prop_bool=True, n_inference=100) #,key_sample=42,key_hmc=66)
 
 '''
 ##forward mocks -- emulator model
 '''
-#hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
-hmc_infer = INFERENCE_TEST(redshift=5.4,gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
 ##gaussian mocks -- NGP model
 '''
 
-#hmc_infer = INFERENCE_TEST(5.4,True,True,False) #,key_sample=42,key_hmc=66)
-#hmc_infer = INFERENCE_TEST(5.4,False,True,False,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(True,True,False) #,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(False,True,False,key_sample=42,key_hmc=66)
 
 
 hmc_infer.mocks_sampling()
