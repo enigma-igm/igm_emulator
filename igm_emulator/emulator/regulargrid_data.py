@@ -300,7 +300,7 @@ class DataSamplerModule:
             ax.set_zlabel(r'$\gamma$')
             ax.legend()
             ax.grid(True)
-            plt.savefig(os.path.join(dir,f"{self.z_string}_params_sampling_random_split_train_{X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
+            plt.savefig(os.path.join(dir,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.show()
 
         ### Join the extra test data to the test data -- only control test dataset size
