@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag, theta_v, corr_v, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
+from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
 from utils_plot import *
 import dill
 import IPython
