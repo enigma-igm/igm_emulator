@@ -309,7 +309,7 @@ class DataSamplerModule:
             num = f'bin276_seed_{self.seed}'
 
         ### Join the extra test data to the test data -- only control test dataset size
-        self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)]
+        self.X_test = np.concatenate((self.X_test, self.extra_test_err_param), axis=0)
         self.test_corr = np.concatenate((self.test_corr, self.extra_test_err_corr), axis=0)
 
         train_num = f'_train_{self.X_train.shape[0]}'
