@@ -30,7 +30,7 @@ class DataSamplerModule:
 
         Parameters
         ----------
-        redshift
+        redshift: float, redshift of the data [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
         small_bin_bool
         n_f: int, number of flux bins for emulator in total
         n_t: int, number of temperature bins for emulator in total

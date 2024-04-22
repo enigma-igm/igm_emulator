@@ -313,7 +313,7 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
     cbar.set_label('Correlation')
     cbar.ax.minorticks_on()
     axes.set_title(name)
-    fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}_{name}.png'))
+    fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}{name}.png'))
     fig.show()
 
 def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
@@ -333,7 +333,7 @@ def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
     cbar.set_label('Covariance')
     cbar.ax.minorticks_on()
     axes.set_title(name)
-    fig.savefig(os.path.join(dir_exp, f'covariance_matrix_{out_tag}_{name}.png'))
+    fig.savefig(os.path.join(dir_exp, f'covariance_matrix_{out_tag}{name}.png'))
     fig.show()
 
 def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
@@ -356,7 +356,7 @@ def plot_covar_frac(covar_nn_test,covar_data,out_tag,name=None):
     cbar.set_label('[%]')
     cbar.ax.minorticks_on()
     axes.set_title('NN Error/Total Noise')
-    fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}_{name}.png'))
+    fig1.savefig(os.path.join(dir_exp, f'covar_frac_{out_tag}{name}.png'))
     fig1.show()
 
 
