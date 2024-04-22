@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool
+from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num
 from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
@@ -82,12 +82,13 @@ class INFERENCE_TEST():
 
 
         # load model from emulator_apply.py
-        in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
+        in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
+        in_path_hdf5 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/'
         self.var_tag = trainer.var_tag
         self.out_tag = trainer.out_tag
-        self.best_params = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
-        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_covar_nn.p', 'rb'))
-        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}_{self.var_tag}_err_nn.p', 'rb'))
+        self.best_params = dill.load(open(in_path_best_params + f'{self.out_tag}_{self.var_tag}_best_param.p', 'rb')) #changed to optuna tuned best param
+        self.covar_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}{test_num}_{self.var_tag}_covar_nn.p', 'rb'))
+        self.err_nn = dill.load(open(in_path_hdf5 + f'{self.out_tag}{test_num}_{self.var_tag}_err_nn.p', 'rb'))
         if self.ngp_bool:
             self.var_tag += '_NGP_model'
 
@@ -317,7 +318,7 @@ class INFERENCE_TEST():
         out_path = self.out_path
         if os.path.exists(out_path_plot) is False:
             os.makedirs(out_path_plot)
-        self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}"
+        self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}{test_num}"
 
 
         '''

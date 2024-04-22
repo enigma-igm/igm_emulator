@@ -86,7 +86,7 @@ config.update("jax_enable_x64", True)
 # theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
 # corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
-DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4,n_testing=10, seed=11,plot_bool=True)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=10, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -157,20 +157,10 @@ if __name__ == '__main__':
                                 pv=100,
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
-
         best_param, _ = trainer.train_loop(True)
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
-        covar_nn, err_nn,_ = trainer.nn_error_propagation(X_test_og, Y_test_og, save=False) #use test data to appro the error
-        dill.dump(covar_nn, open(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
-            'wb'))
-        dill.dump(err_nn, open(
-            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn.p',
-            'wb'))
-        plot_corr_matrix(covar_nn, out_tag=out_tag, name='covar_nn')
-        plot_covar_frac(covar_nn, trainer.like_dict['covariance'], out_tag=out_tag)
         return trainer.var_tag
         del trainer
 

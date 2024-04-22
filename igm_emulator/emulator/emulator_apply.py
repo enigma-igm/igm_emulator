@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_trainer import TrainerModule
-from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag,  theta_v, corr_v, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
+from hparam_tuning import X_og,Y_og,X_train,Y_train,X_test,Y_test,X_vali,Y_vali,out_tag, theta_v, corr_v, like_dict,X_test_og,Y_test_og, x_scaler, y_scaler, DataLoader
 from utils_plot import *
 import dill
 import IPython
@@ -18,6 +18,7 @@ import IPython
 var_tag = 'mape_l2_0_perc_True_activation_tanh' ##shoule automatic implement
 #var_tag = 'mape_l2_0_perc_True_activation_sigmoid'
 small_bin_bool = DataLoader.small_bin_bool
+test_num = DataLoader.test_num
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
 print(out_tag)
 
@@ -69,16 +70,16 @@ if __name__ == '__main__':
     ### Error propagation
 
     ## Load the NN error covariance and mean, while save all the sampels' errors
-
-    covar_nn_err, err_nn_err, delta_v_err = trainer.nn_error_propagation(theta_v, corr_v, save=True, err_vali_num = DataLoader.err_vali_num)
     covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
-
-    neg_count_err = 0
-    for i in covar_nn_err.flatten():
-        if i < 0:
-            neg_count_err += 1
-    print(f'Negative count in error propagation for {DataLoader.err_vali_num}: {neg_count_err}')
+    '''
+    dill.dump(covar_nn_test, open(
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
+            'wb'))
+    dill.dump(err_nn_test, open(
+            f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn.p',
+            'wb'))
+    '''
 
     neg_count_test = 0
     for i in covar_nn_test.flatten():
@@ -88,26 +89,17 @@ if __name__ == '__main__':
 
     ## Plot the error propagation results
     plt.figure(figsize=(12, 6))
-    plt.plot(v_bins, delta_v_err.T, color='b', alpha=0.1)
-    plt.plot(v_bins, err_nn_err, color='r', label='mean')
-    plt.title(f'Error propagation {DataLoader.err_vali_num}')
-    plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.err_vali_num}.png'))
-    plt.show()
-
-    plt.figure(figsize=(12, 6))
     plt.plot(v_bins, delta_v_test.T, color='b', alpha=0.1)
     plt.plot(v_bins, err_nn_test, color='r', label='mean')
     plt.title(f'Error propagation {DataLoader.test_num}')
     plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.test_num}.png'))
     plt.show()
 
-    plot_corr_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
     plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
-    plot_covar_matrix(covar_nn_err, out_tag=out_tag, name=f'covar_nn_{DataLoader.err_vali_num}')
     plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
     plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
-    plot_covar_frac(covar_nn_err, covar_data, out_tag=out_tag,  name=DataLoader.err_vali_num)
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
+
 
     '''
     ##Plot test overplot for sanity check if apply correcly
