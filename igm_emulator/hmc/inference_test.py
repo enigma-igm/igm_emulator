@@ -198,12 +198,6 @@ class INFERENCE_TEST():
                 mock_covar[mock_idx, :, :] = cov
 
         # save get n_inference sampled parameters and mock correlation functions
-        dill.dump(mock_corr, open(self.out_path + f'{self.note}_mock_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-        dill.dump(model_corr, open(self.out_path + f'{self.note}_model_corr_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-        dill.dump(true_theta_ngp, open(self.out_path + f'{self.note}_theta_ngp_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-        dill.dump(true_theta_sampled, open(self.out_path + f'{self.note}_theta_sampled_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-        dill.dump(mock_covar, open(self.out_path + f'{self.note}_covar_inference_{self.n_inference}_seed_{self.key_sample}.p', 'wb'))
-
         self.mock_corr = mock_corr
         self.mock_covar = mock_covar
         self.model_corr = model_corr
@@ -413,7 +407,7 @@ class INFERENCE_TEST():
 
         alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
         coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, self.log_prob_x, self.true_log_prob_x,
-                                                                                   show=False, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
+                                                                                   show=True, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
         print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
 
         #save HMC inference results
@@ -428,6 +422,7 @@ class INFERENCE_TEST():
             f.get('model_corr') or f.create_dataset('model_corr', data=self.model_corr)
             f.get('mock_corr') or f.create_dataset('mock_corr', data=self.mock_corr)
             f.get('mock_covar') or f.create_dataset('mock_covar', data=self.mock_covar)
+
         print(f'Inference test results saved as {self.out_path}{self.save_name}.hdf5 saved')
 
 
