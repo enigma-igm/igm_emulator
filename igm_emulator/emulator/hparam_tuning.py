@@ -15,6 +15,7 @@ from jax.config import config
 import jax.numpy as jnp
 import jax
 import dill
+from IPython import embed
 config.update("jax_enable_x64", True)
 
 # '''
@@ -95,6 +96,7 @@ x_scaler = DiffStandardScaler(X_og)
 meanX = x_scaler.mean
 stdX = x_scaler.std
 X_train = x_scaler.transform(X_og )
+embed()
 X_test =  x_scaler.transform(X_test_og )[:np.round(X_train.shape[0]/5),:]
 X_vali =  x_scaler.transform(X_vali_og )
 y_scaler = DiffStandardScaler(Y_og)
