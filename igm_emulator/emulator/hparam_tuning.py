@@ -97,14 +97,14 @@ meanX = x_scaler.mean
 stdX = x_scaler.std
 X_train = x_scaler.transform(X_og )
 embed()
-X_test =  x_scaler.transform(X_test_og )[:np.round(X_train.shape[0]/5),:]
+X_test =  x_scaler.transform(X_test_og )[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
 X_vali =  x_scaler.transform(X_vali_og )
 y_scaler = DiffStandardScaler(Y_og)
 
 meanY = y_scaler.mean
 stdY = y_scaler.std
 Y_train = y_scaler.transform(Y_og)
-Y_test = y_scaler.transform(Y_test_og)[:np.round(X_train.shape[0]/5),:] #20% of training data to evaluate test loss in emulator_trainer
+Y_test = y_scaler.transform(Y_test_og)[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
 Y_vali = y_scaler.transform(Y_vali_og)
 
 
