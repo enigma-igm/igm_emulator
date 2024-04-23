@@ -23,7 +23,6 @@ sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
 from qso_fitting.analysis.inference_test import run_inference_test, compute_importance_weights, C_ge
 import corner
-import h5py
 from progressbar import ProgressBar
 
 class INFERENCE_TEST():
