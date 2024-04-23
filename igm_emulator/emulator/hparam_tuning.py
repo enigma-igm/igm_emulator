@@ -96,7 +96,6 @@ x_scaler = DiffStandardScaler(X_og)
 meanX = x_scaler.mean
 stdX = x_scaler.std
 X_train = x_scaler.transform(X_og )
-embed()
 X_test =  x_scaler.transform(X_test_og )[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
 X_vali =  x_scaler.transform(X_vali_og )
 y_scaler = DiffStandardScaler(Y_og)
