@@ -402,14 +402,7 @@ class INFERENCE_TEST():
         plot HMC inference test results
         '''
     def coverage_plot(self):
-        print('plotting')
-
-        alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
-        coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, self.log_prob_x, self.true_log_prob_x,
-                                                                                   show=True, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
-        print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
-
-        #save HMC inference results
+        # save HMC inference results
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
             f.get('true_theta') or f.create_dataset('true_theta', data=self.true_theta)
             f.get('true_theta_ngp') or f.create_dataset('true_theta_ngp', data=self.true_theta_ngp)
@@ -423,6 +416,13 @@ class INFERENCE_TEST():
             f.get('mock_covar') or f.create_dataset('mock_covar', data=self.mock_covar)
 
         print(f'Inference test results saved as {self.out_path}{self.save_name}.hdf5 saved')
+
+        print('plotting')
+
+        alpha_vec = np.concatenate((np.linspace(0.00, 0.994, num=100), np.linspace(0.995, 1.0, num=51)))
+        coverage_gauss, coverage_gauss_lo, coverage_gauss_hi = run_inference_test(alpha_vec, self.log_prob_x, self.true_log_prob_x,
+                                                                                   show=True, title=f'{self.note}',outfile=self.out_path_plot + f'{self.save_name}.png')
+        print(f'plot saved as: {self.out_path_plot}{self.save_name}.png')
 
 
 #IPython.embed()
