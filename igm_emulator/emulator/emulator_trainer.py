@@ -237,7 +237,7 @@ class TrainerModule:
         pred_v = self.y_scaler.inverse_transform(self.custom_forward.apply(self.best_params, self.x_scaler.transform(theta_v)))
         delta_v = corr_v - pred_v
         self.err_nn = delta_v.mean(axis=0)
-        self.covar_nn = 1/(delta_v.shape[0]-1) * jnp.cov((delta_v-self.err_nn).T)
+        self.covar_nn = jnp.cov((delta_v-self.err_nn).T)
 
         if save:
             dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
