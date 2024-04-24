@@ -87,7 +87,7 @@ config.update("jax_enable_x64", True)
 # theta_v = dill.load(open(dir_lhs + f'{z_string}_param{err_vali_num}.p', 'rb'))
 # corr_v = dill.load(open(dir_lhs + f'{z_string}_model{err_vali_num}.p', 'rb'))
 
-DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=10, seed=11, plot_bool=True)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=100, seed=11, plot_bool=True)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
