@@ -403,6 +403,8 @@ class INFERENCE_TEST():
         '''
     def coverage_plot(self):
         # save HMC inference results
+        if os.path.exists(self.out_path + f'{self.save_name}.hdf5'):
+            os.remove(self.out_path + f'{self.save_name}.hdf5') # remove old file to rewrite
         with h5py.File(self.out_path + f'{self.save_name}.hdf5', 'a') as f:
             f.get('true_theta') or f.create_dataset('true_theta', data=self.true_theta)
             f.get('true_theta_ngp') or f.create_dataset('true_theta_ngp', data=self.true_theta_ngp)
