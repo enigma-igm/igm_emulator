@@ -307,8 +307,10 @@ class INFERENCE_TEST():
         out_path = self.out_path
         if os.path.exists(out_path_plot) is False:
             os.makedirs(out_path_plot)
-        self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}{test_num}"
-
+        if hmc_inf.nn_err_prop:
+            self.save_name = f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}{test_num}"
+        else:
+            self.save_name =f"{self.out_tag}_inference_{self.n_inference}_{self.note}_seed_{self.key_sample}_samples_{hmc_inf.num_samples}_chains_{hmc_inf.num_chains}_nn_err_prop_{hmc_inf.nn_err_prop}"
 
         '''
         True and Infered models
