@@ -317,7 +317,7 @@ class INFERENCE_TEST():
         '''
         #getting ready for inference samples
         key = random.PRNGKey(self.key_hmc)
-        infer_theta = np.empty([self.n_inference, self.n_params])
+        infer_theta = np.empty([self.n_inference, self.n_params, 3])
         log_prob = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains])
         true_log_prob = np.empty([self.n_inference])
         samples = np.empty([self.n_inference, hmc_inf.num_samples*hmc_inf.num_chains, self.n_params])
@@ -359,7 +359,7 @@ class INFERENCE_TEST():
             f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                          zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
-            infer_theta[mock_idx, :] = [f_mcmc, t_mcmc, g_mcmc]
+            infer_theta[mock_idx, :, :] = [f_mcmc, t_mcmc, g_mcmc]
             infer_model[mock_idx, :] = hmc_inf.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
 
             samples[mock_idx, :, :] = theta_samples
