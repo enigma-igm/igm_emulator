@@ -359,8 +359,8 @@ class INFERENCE_TEST():
             f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                          zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
 
-            infer_theta[mock_idx, :] = [f_mcmc[0], t_mcmc[0], g_mcmc[0]]
-            infer_model[mock_idx, :] = hmc_inf.get_model_nearest_fine(infer_theta[mock_idx, :])
+            infer_theta[mock_idx, :] = [f_mcmc, t_mcmc, g_mcmc]
+            infer_model[mock_idx, :] = hmc_inf.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
 
             samples[mock_idx, :, :] = theta_samples
             log_prob[mock_idx, :] = lnP
@@ -413,7 +413,7 @@ class INFERENCE_TEST():
             f.get('log_prob_x') or f.create_dataset('log_prob_x', data=self.log_prob_x)
             f.get('true_log_prob_x') or f.create_dataset('true_log_prob_x', data=self.true_log_prob_x)
             f.get('sampled_theta') or f.create_dataset('sampled_theta', data=self.sampled_theta)
-            f.get('infer_theta') or f.create_dataset('infer_theta', data=self.infer_theta)
+            f.get('infer_theta_delta') or f.create_dataset('infer_theta_delta', data=self.infer_theta)
             f.get('inferred_model') or f.create_dataset('inferred_model', data=self.infer_model)
             f.get('model_corr') or f.create_dataset('model_corr', data=self.model_corr)
             f.get('mock_corr') or f.create_dataset('mock_corr', data=self.mock_corr)
@@ -439,7 +439,7 @@ class INFERENCE_TEST():
 ##forward mocks -- emulator model
 '''
 #hmc_infer = INFERENCE_TEST(gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
-hmc_infer = INFERENCE_TEST(gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=False, n_inference=100)#,key_sample=42,key_hmc=66)
+hmc_infer = INFERENCE_TEST(gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
 ##gaussian mocks -- NGP model
