@@ -196,7 +196,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    fig2 = plt.figure(figsize=(x_size * 6., x_size * .65*3), constrained_layout=True,
+    fig2 = plt.figure(figsize=(x_size * 2., x_size * .65*1), constrained_layout=True,
                              dpi=dpi_value)
     grid = fig2.add_gridspec(nrows=3, ncols=3)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
