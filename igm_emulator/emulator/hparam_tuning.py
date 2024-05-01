@@ -17,7 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
-DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=50, seed=42, plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.4,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=50, seed=33, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
