@@ -20,7 +20,8 @@ var_tag = 'mape_l2_0_perc_True_activation_tanh' ##shoule automatic implement
 small_bin_bool = DataLoader.small_bin_bool
 test_num = DataLoader.test_num
 z_string = DataLoader.z_string
-hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
+#hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
+hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/z54_train_55_bin59_seed_11_{var_tag}_hparams_tuned.p', 'rb'))
 print(out_tag)
 
 trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
