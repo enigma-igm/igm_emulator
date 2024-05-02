@@ -98,7 +98,7 @@ if __name__ == '__main__':
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
-    n_inference = 2
+    n_inference = 5
     idx = np.random.randint(10, size=n_inference)
     pbar = ProgressBar()
     for mock_idx in pbar(idx):
