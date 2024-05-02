@@ -66,7 +66,7 @@ mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = np.array([fobs[f_idx], T0s[T0_idx], gammas[g_idx]])
 print(f'true theta:{theta_true}')
-mock_flux = mocks[0:5,:]
+mock_flux = mocks[0:10,:]
 mean_flux = like_dict['mean_data']
 new_covariance = like_dict['covariance']
 
@@ -99,8 +99,9 @@ if __name__ == '__main__':
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
     n_inference = 2
+    idx = np.random.randint(10, size=n_inference)
     pbar = ProgressBar()
-    for mock_idx in pbar(range(n_inference)):
+    for mock_idx in pbar(idx):
         flux = mocks[mock_idx, :]
         x_opt, theta_opt, losses = nn_x.fit_one(flux, new_covariance)
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
