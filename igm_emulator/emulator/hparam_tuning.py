@@ -17,7 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
-DataLoader = DataSamplerModule(redshift=5.6,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.7,small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -89,6 +89,8 @@ if __name__ == '__main__':
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
         best_param, _ = trainer.train_loop(True)
+        covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og, Y_test_og, save=True,
+                                                                                err_vali_num=DataLoader.test_num)
         dill.dump(best_param, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_best_param.p',
             'wb'))
