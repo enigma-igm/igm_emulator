@@ -1,5 +1,6 @@
 from hmc_nn_inference import NN_HMC_X
 import dill
+import os
 import numpy as np
 import IPython
 import jax.random as random
@@ -65,7 +66,7 @@ like_dict = dill.load(open(in_path + like_name, 'rb'))
 mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = [fobs[f_idx], T0s[T0_idx], gammas[g_idx]]
-
+IPython.embed()
 mock_flux = mocks[0:5,:]
 mean_flux = like_dict['mean_data']
 new_covariance = like_dict['covariance']
