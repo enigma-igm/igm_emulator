@@ -15,7 +15,12 @@ import dill
 Visualization of hyperparameters
 '''
 
-zstr = 'z55'
+redshift = 5.5
+zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
+z_idx = np.argmin(np.abs(zs - redshift))
+z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
+zstr = z_strings[z_idx]
+
 small_bin_bool = True
 dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{zstr}/'
 
@@ -289,7 +294,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     ax.tick_params(labelsize=11.5)
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
     ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
-    ax.text(0.5 ,0.7, f'{zstr}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
+    ax.text(0.5 ,0.7, f'z = {redshift}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
     ax.legend(fontsize=14, loc='upper right')
     fig.tight_layout()
     plt.savefig(os.path.join(dir_exp, f'error_distribution_{out_tag}_{var_tag}.png'))
