@@ -379,17 +379,6 @@ class INFERENCE_TEST():
 
                 corner_fig.savefig(out_path_plot + f'corner_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_mock_{mock_idx}_{self.save_name}.png')
                 fit_fig.savefig(out_path_plot + f'fit_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_mock_{mock_idx}_{self.save_name}.png')
-
-                ## explore Log-Likelihood plot for dual shape -- Solved!
-                # fix, f_grid, t_grid, g_grid, logP_grid, chi_grid = hmc_inf.explore_logP_plot(self.z_string,
-                #                                                                                   theta_true=theta_opt,
-                #                                                                                   flux=flux, covar=covars_mock,
-                #                                                                                   fix='t', save_str=self.note, plot = ['logP'])
-                # if mock_idx == 0:
-                #     logP_grid_mean = logP_grid
-                # else:
-                #     logP_grid_mean =+ logP_grid
-
                 plt.close(corner_fig)
                 plt.close(fit_fig)
 
