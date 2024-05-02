@@ -102,7 +102,7 @@ if __name__ == '__main__':
     pbar = ProgressBar()
     for mock_idx in pbar(range(n_inference)):
         flux = mocks[mock_idx, :]
-        x_opt, theta_opt, losses = hmc_inf.fit_one(flux, new_covariance)
+        x_opt, theta_opt, losses = nn_x.fit_one(flux, new_covariance)
         x_samples, theta_samples, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean, \
             hmc_num_steps, hmc_tree_depth, total_time = nn_x.mcmc_one(subkey, x_opt, flux, new_covariance, report=True)
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
