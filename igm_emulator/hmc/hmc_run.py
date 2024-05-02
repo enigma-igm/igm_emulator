@@ -94,7 +94,7 @@ if __name__ == '__main__':
                                 num_chains=4,
                                 covar_nn=covar_nn,
                                 err_nn=err_nn,
-                                nn_err_prop =nn_err_prop_bool)
+                                nn_err_prop =True)
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
