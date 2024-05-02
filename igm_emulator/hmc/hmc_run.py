@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
         corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
                                         save_str='central', save_bool=True)
-        fit_fig = nn_x.fit_plot(z_string=self.z_string, theta_samples=theta_samples, lnP=lnP,
+        fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                    theta_true=theta_true, model_corr=mean_flux,
                                    mock_corr=flux,
                                    covariance=new_covariance, save_str='central', save_bool=True)
