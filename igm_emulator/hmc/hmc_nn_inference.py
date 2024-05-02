@@ -510,7 +510,7 @@ class NN_HMC_X:
             f.create_dataset('t_infer', data=t_mcmc)
             f.create_dataset('g_infer', data=g_mcmc)
             f.close()
-        print(f"hmc results saved for {note}")
+        print(f"hmc results saved for {zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}")
 
     def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None, save_bool=False):
         '''
