@@ -431,8 +431,8 @@ class NN_HMC_X:
                         find_heuristic_step_size=True, target_accept_prob=0.9)
         # Initial position
         if report:
-            print(f'true theta:{self.x_to_theta(x)}')
-            print(f'true x:{x}')
+            print(f'opt theta:{self.x_to_theta(x)}')
+            print(f'opt x:{x}')
             mcmc = MCMC(nuts_kernel, num_warmup=self.num_warmup, num_samples=self.num_samples,
                         num_chains=self.num_chains,
                         jit_model_args=True,
@@ -555,6 +555,8 @@ class NN_HMC_X:
         corner_fig_x.text(0.5, 0.8, f'true x:{x_true}')
         '''
         if save_bool:
+            if os.path.exists(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/') is False:
+                os.makedirs(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/')
             corner_fig_theta.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_theta_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
             #corner_fig_x.savefig(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/corner_x_T{closest_temp_idx}_G{closest_gamma_idx}_F{closest_fobs_idx}_{save_str}.pdf')
             print(f"corner plots saved at /mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc")
@@ -643,6 +645,8 @@ class NN_HMC_X:
         fit_axis.set_ylabel(r"$\xi_F$")
         fit_axis.legend()
         if save_bool:
+            if os.path.exists(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/') is False:
+                os.makedirs(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/')
             closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
             closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
             closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
