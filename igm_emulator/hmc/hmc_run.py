@@ -108,14 +108,14 @@ if __name__ == '__main__':
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         nn_x.save_HMC(z_string,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples,theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-                 hmc_num_steps, hmc_tree_depth, total_time)
+                 hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mock_{mock_idx}')
 
         corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                        save_str='central', save_bool=True)
+                                        save_str=f'central_mock_{mock_idx}', save_bool=True)
         fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                    theta_true=theta_true, model_corr=mean_flux,
                                    mock_corr=flux,
-                                   covariance=new_covariance, save_str='central', save_bool=True)
+                                   covariance=new_covariance, save_str=f'central_mock_{mock_idx}', save_bool=True)
 
         if compare:
             in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'

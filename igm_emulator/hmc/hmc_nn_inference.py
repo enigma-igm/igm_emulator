@@ -490,9 +490,9 @@ class NN_HMC_X:
             hmc_num_steps, hmc_tree_depth, total_time
 
     def save_HMC(self,zstr,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-                 hmc_num_steps, hmc_tree_depth, total_time):
+                 hmc_num_steps, hmc_tree_depth, total_time,save_str=None, ):
         # Save the results
-        with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_hmc_results.hdf5', 'w') as f:
+        with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{save_str}_hmc_results.hdf5', 'w') as f:
             f.create_dataset('theta_true', data=theta_true)
             f.create_dataset('x_samples', data=x_samples)
             f.create_dataset('theta_samples', data=theta_samples)
@@ -510,7 +510,7 @@ class NN_HMC_X:
             f.create_dataset('t_infer', data=t_mcmc)
             f.create_dataset('g_infer', data=g_mcmc)
             f.close()
-        print(f"hmc results saved for {zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}")
+        print(f"hmc results saved for {zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{save_str}")
 
     def corner_plot(self,z_string,theta_samples,x_samples,theta_true,save_str=None, save_bool=False):
         '''
