@@ -1,6 +1,5 @@
 from hmc_nn_inference import NN_HMC_X
 import dill
-import os
 import numpy as np
 import IPython
 import jax.random as random

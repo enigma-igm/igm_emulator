@@ -19,6 +19,7 @@ import IPython
 import igm_emulator as emu
 from igm_emulator.emulator.emulator_apply import nn_emulator,trainer
 import sys
+import os
 sys.path.append('/home/zhenyujin/qso_fitting/')
 from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta, bounded_variable_lnP
 import corner
