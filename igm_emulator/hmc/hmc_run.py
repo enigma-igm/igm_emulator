@@ -20,9 +20,9 @@ import os
 from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
-sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
-sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
-from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
+#sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
+#sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
+#from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
 
 '''
 load params and auto-corr
