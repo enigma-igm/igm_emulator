@@ -18,9 +18,14 @@ z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 T0_idx = 7
 g_idx = 4
 f_idx = 4
+n_inference = 4000
+n_plot_rows = 2
 
 in_path_out = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
 in_path_read = os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/'
+
+samples_temp = np.empty([n_plot_rows, len(redshifts), n_inference])
+samples_gamma = np.empty([n_plot_rows, len(redshifts), n_inference])
 
 for redshift_idx in range(len(redshifts)):
     print(f'z = {redshifts[redshift_idx]}')
@@ -28,7 +33,7 @@ for redshift_idx in range(len(redshifts)):
 
     partial_tag = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_'
 
-    for mock_result in glob.glob(in_path_read + partial_tag + '*.hdf5'):
+    for mock_result in glob.glob(in_path_read + partial_tag + '*.hdf5')[:n_plot_rows]:
         print(mock_result)
 
     '''
