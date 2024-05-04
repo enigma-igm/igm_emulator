@@ -33,25 +33,30 @@ for redshift_idx in range(len(redshifts)):
 
     partial_tag = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_'
 
-    for mock_result in glob.glob(in_path_read + partial_tag + '*.hdf5')[:n_plot_rows]:
-        print(mock_result)
+    for mock_idx, mock_result in enumerate(glob.glob(in_path_read + partial_tag + '*.hdf5')[:n_plot_rows]):
+        with h5py.File(mock_result, 'r') as f:
+            # ["<F>", "$T_0$", "$\gamma$"]
+            samples_temp[mock_idx,redshift_idx,:] = f['theta_samples'][:, 1]
+            samples_gamma[mock_idx, redshift_idx, :] = f['theta_samples'][:, 2]
 
-    '''
-    run_tag = f'data_nearest_model{bin_label}'
+'''
+Save what we have
+'''
 
-    # out_file_tag = f'walkers_{int(n_walkers)}_mcmc_inference_{int(n_inference)}_{prior_tag}_R_{int(R_value)}'
-    out_file_tag = f'steps_{int(n_walkers * (n_mcmc - n_skip))}_mcmc_inference_{int(n_inference)}_{prior_tag}_R_{int(R_value)}'
+out_file_tag = f'hmc_inference_{int(n_inference)}_'
+in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_{out_file_tag}.hdf5'
 
-    in_name_inference = f'{z_strings[redshift_idx]}_{run_tag}_{out_file_tag}.hdf5'
+with h5py.File(in_path_out + in_name_inference, 'w') as f:
+    f.create_dataset('samples_temp', data=samples_temp)
+    f.create_dataset('samples_gamma', data=samples_gamma)
+    f.attrs['z_strings'] = z_strings
+    f.attrs['T0_idx'] = T0_idx
+    f.attrs['g_idx'] = g_idx
+    f.attrs['f_idx'] = f_idx
+    f.attrs['n_inference'] = n_inference
+    f.attrs['n_plot_rows'] = n_plot_rows
+    f.close()
+print(f'saved central models for all redshift at {in_path_out}')
 
-    with h5py.File(in_path_out + f'{z_strings[redshift_idx]}/' + in_name_inference, 'w') as f:
-        # true_theta = f['true_theta'][:, :]
-        log_prob = f['log_prob'][np.sort(mock_indices[redshift_idx * n_plot_rows:(redshift_idx + 1) * n_plot_rows]),
-                   :]  # n_inference, n_total_steps
-        # true_log_prob = f['true_log_prob'][:]
-        samples_temp = f['samples'][np.sort(mock_indices[redshift_idx * n_plot_rows:(redshift_idx + 1) * n_plot_rows]),
-                       :, 0]
-        samples_gamma = f['samples'][np.sort(mock_indices[redshift_idx * n_plot_rows:(redshift_idx + 1) * n_plot_rows]),
-                        :, 1]
-                        
-    '''
+
+
