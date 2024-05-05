@@ -2,16 +2,10 @@ import os
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-import IPython
 import dill
 from scipy.interpolate import interpn, RectBivariateSpline
 from scipy.interpolate import RegularGridInterpolator
-import emcee
-import corner
-import arviz as az
-import time
-import seaborn as sns
+
 
 
 def gaussian(x, mu, sigma):
