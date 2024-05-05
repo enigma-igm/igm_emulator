@@ -18,16 +18,6 @@ def gaussian(x, mu, sigma):
     """ Return the normalized Gaussian with standard deviation sigma. """
     return np.exp(-0.5 * ((x - mu) / sigma)**2) / sigma / np.sqrt(2 * np.pi)
 
-# we need to load the following
-'''
-pdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
-
-hist_temp, bin_edges_temp = np.histogram(
-                samples_temp[mock_idx, :], bins=bins_temp, weights=importance_weights_chain, density=True
-            )
-mids_temp = (bin_edges_temp[:-1] + bin_edges_temp[1:])/2.
-
-'''
 if __name__ == '__main__':
 
     model_in_path = '/mnt/quasar2/mawolfson/correlation_funct/models/'
@@ -41,7 +31,7 @@ if __name__ == '__main__':
     redshifts = [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
     z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 
-    in_path_start = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
+    in_path_start = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/'
 
     out_path = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/all_z/'
     if not os.path.isdir(out_path):
@@ -68,12 +58,6 @@ if __name__ == '__main__':
 
     n_plot_rows = 2
 
-    seed = 203
-    # seed = 635
-    # seed = 286
-    rand = np.random.RandomState(seed)  # if seed is None else seed
-    mock_indices = rand.choice(np.arange(n_inference), replace=False, size=len(redshifts)*n_plot_rows)
-
     bins_temp = np.linspace(350, 19400, 40)
     pdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
     cdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
@@ -86,10 +70,18 @@ if __name__ == '__main__':
     min_temps = np.empty([len(redshifts)])
     max_gammas = np.empty([len(redshifts)])
     min_gammas = np.empty([len(redshifts)])
-    samples_temp = np.empty([n_plot_rows, len(redshifts), n_inference])
-    samples_gamma = np.empty([n_plot_rows, len(redshifts), n_inference])
+
+    in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
+    out_file_tag = f'hmc_inference_{int(n_inference)}_'
+    in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
+    with h5py.File(in_path_read + in_name_inference, 'r') as f:
+        samples_temp = f['samples_temp']
+        samples_gamma = f['samples_gamma']
 
     for redshift_idx in range(len(redshifts)):
+        '''
+        Read params at given z
+        '''
         param_file_name = f'correlation_temp_fluct_skewers_{skewers_use}_R_{int(R_value)}_nf_{n_f}_dict{bin_label}.hdf5'
         with h5py.File(in_path_start + f'{z_strings[redshift_idx]}/' + param_file_name, 'r') as f:
             params = dict(f['params'].attrs.items())
@@ -108,29 +100,17 @@ if __name__ == '__main__':
 
         print(f'z = {redshifts[redshift_idx]}, fobs: {fobs}')
 
-        prior_tag = f'one_prior_T{true_temp_idx}_G{true_gamma_idx}_F{true_fobs_idx}'
-        run_tag = f'data_nearest_model{bin_label}'
-
-        # out_file_tag = f'walkers_{int(n_walkers)}_mcmc_inference_{int(n_inference)}_{prior_tag}_R_{int(R_value)}'
-        out_file_tag = f'steps_{int(n_walkers * (n_mcmc - n_skip))}_mcmc_inference_{int(n_inference)}_{prior_tag}_R_{int(R_value)}'
-
-        in_name_inference = f'{z_strings[redshift_idx]}_{run_tag}_{out_file_tag}.hdf5'
-
-        with h5py.File(in_path_start + f'{z_strings[redshift_idx]}/' + in_name_inference, 'r') as f:
-            # true_theta = f['true_theta'][:, :]
-            log_prob = f['log_prob'][np.sort(mock_indices[redshift_idx*n_plot_rows:(redshift_idx+1)*n_plot_rows]), :]  # n_inference, n_total_steps
-            # true_log_prob = f['true_log_prob'][:]
-            samples_temp = f['samples'][np.sort(mock_indices[redshift_idx*n_plot_rows:(redshift_idx+1)*n_plot_rows]), :, 0]
-            samples_gamma = f['samples'][np.sort(mock_indices[redshift_idx*n_plot_rows:(redshift_idx+1)*n_plot_rows]), :, 1]
-
+        #Read mocks of temp samples at given z
+        samples_temp_z = samples_temp[:, redshift_idx, :]
+        samples_gamma_z = samples_gamma[:, redshift_idx, :]
 
         # make one big histogram
         for mock_idx in range(n_plot_rows):
             hist_temp, bin_edges_temp = np.histogram(
-                samples_temp[mock_idx, :], bins=bins_temp,  density=True
+                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True
             )
             hist_gamma, bin_edges_gamma = np.histogram(
-                samples_gamma[mock_idx, :], bins=bins_gamma, density=True
+                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True
             )
 
             pdf_hists_temp[mock_idx, redshift_idx, :] = hist_temp
@@ -331,7 +311,7 @@ if __name__ == '__main__':
             labelbottom=False
         )
 
-    save_name = f'thermal_state_measurements_sigma_shaded_violin_reweight_R_{int(R_value)}{bin_label}_plot_{n_plot_rows}_seed_{seed}_small_no_g'
+    save_name = f'thermal_state_measurements_sigma_shaded_violin_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_mocks_{n_plot_rows}'
 
     mfp_model_fig.savefig(out_path + f'{save_name}.pdf')
     mfp_model_fig.savefig(out_path + f'{save_name}.png')
