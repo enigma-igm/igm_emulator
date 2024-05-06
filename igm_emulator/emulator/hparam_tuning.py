@@ -17,7 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
-DataLoader = DataSamplerModule(redshift=5.9, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=6.0, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs=hparams['n_epochs'],
-                                pv=100,
+                                pv=500,
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
         best_param, _ = trainer.train_loop(True)
