@@ -35,7 +35,7 @@ trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs=hparams['n_epochs'],
-                                pv=100,
+                                pv=500,
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
 

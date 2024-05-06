@@ -17,7 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
-DataLoader = DataSamplerModule(redshift=5.4, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=6.0, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -57,7 +57,7 @@ if __name__ == '__main__':
                                 layer_sizes= layer_sizes_tune,
                                 activation= jax.nn.tanh,#eval(activation_tune),
                                 dropout_rate= None,
-                                optimizer_hparams=[0.4, lr_tune, 0.003],
+                                optimizer_hparams= [0.8, lr_tune, 0.01], #[0.4, lr_tune, 0.003],
                                 loss_str= 'mape', #loss_str_tune,
                                 loss_weights= [0,0,True],#[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
@@ -110,8 +110,8 @@ if __name__ == '__main__':
     #trial.params['layer_sizes'] = [100, 59]
     trial.params['activation'] = 'jax.nn.tanh'
     trial.params['n_epochs'] = 2000
-    trial.params['max_grad_norm'] = 0.4
-    trial.params['decay'] = 0.003
+    trial.params['max_grad_norm'] =  0.8 #0.4
+    trial.params['decay'] = 0.01 #0.003
     trial.params['dropout_rate'] = None
     trial.params['loss_str'] = 'mape'
     trial.params['loss_weights'] = [0,0,True] # added fixed strings and weights
