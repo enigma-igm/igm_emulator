@@ -66,6 +66,13 @@ if __name__ == '__main__':
     min_gammas = np.empty([len(redshifts)])
 
     in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
+    '''
+    Random 5 mocks
+    '''
+    #out_file_tag = f'hmc_inference_{int(n_inference)}'
+    '''
+    Molly's 2 mocks
+    '''
     out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
     with h5py.File(in_path_read + in_name_inference, 'r') as f:
@@ -304,8 +311,14 @@ if __name__ == '__main__':
             bottom=False,
             labelbottom=False
         )
-
-    save_name = f'thermal_state_measurements_sigma_shaded_violin_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_mocks_{n_plot_rows}'
+    '''
+    Random 5 mocks
+    '''
+    #save_name = f'thermal_state_measurements_sigma_shaded_violin_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_mocks_{n_plot_rows}'
+    '''
+    Molly's 2 mocks
+    '''
+    save_name = f'thermal_state_measurements_sigma_shaded_violin_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_mocks_{n_plot_rows}_Molly'
 
     mfp_model_fig.savefig(out_path + f'{save_name}.pdf')
     mfp_model_fig.savefig(out_path + f'{save_name}.png')
