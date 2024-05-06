@@ -28,6 +28,7 @@ from progressbar import ProgressBar
 load params and auto-corr
 '''
 compare = False
+redshifts = [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
 T0_idx = 7 #0-14
 g_idx = 4 #0-8
