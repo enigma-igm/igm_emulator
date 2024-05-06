@@ -69,8 +69,8 @@ if __name__ == '__main__':
     out_file_tag = f'hmc_inference_{int(n_inference)}'
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
     with h5py.File(in_path_read + 'z54_z6_F4_T07_G4_central_model_hmc_inference_4000.hdf5', 'r') as f:
-        samples_temp = f['samples_temp']
-        samples_gamma = f['samples_gamma']
+        samples_temp = np.array(f['samples_temp'])
+        samples_gamma = np.array(f['samples_gamma'])
 
     for redshift_idx in range(len(redshifts)):
         '''
