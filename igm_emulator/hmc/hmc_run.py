@@ -105,7 +105,7 @@ if __name__ == '__main__':
     # Compare to Molly's mocks
     seed = 203
     rand = np.random.RandomState(seed)  # if seed is None else seed
-    mock_indices = rand.choice(np.arange(n_inference), replace=False, size=len(redshifts) * n_plot_rows)
+    mock_indices = rand.choice(np.arange(100), replace=False, size=len(redshifts) * n_inference)
 
     redshift_idx = z_strings.index(z_string)
     idx = np.sort(mock_indices[redshift_idx*n_inference:(redshift_idx+1)*n_inference])
