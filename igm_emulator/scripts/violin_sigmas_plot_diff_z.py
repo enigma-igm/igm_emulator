@@ -41,7 +41,7 @@ if __name__ == '__main__':
     n_temp = 15
     n_gamma = 9
     n_f = 9
-    n_inference = 100
+    n_inference = 4000 #sample numbers (nwalkers * nsteps)
     n_mcmc = 3500
     n_walkers = 16
     n_skip = 500
