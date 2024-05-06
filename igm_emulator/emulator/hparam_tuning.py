@@ -50,7 +50,7 @@ if __name__ == '__main__':
         #percent_loss_tune = trial.suggest_categorical('percent', [True, False])
         #n_epochs_tune = trial.suggest_categorical('n_epochs', [1000, 1500, 2000])
         #loss_str_tune = trial.suggest_categorical('loss_str', ['chi_one_covariance', 'mse', 'mse+fft', 'huber', 'mae'])
-        bach_size_tune = trial.suggest_categorical('bach_size', [None, 10, 20]) #[None, 32, 50])
+        #bach_size_tune = trial.suggest_categorical('bach_size', [None, 32, 50]) #[None, 10, 20])
         trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
                                 x_scaler= x_scaler,
                                 y_scaler= y_scaler,
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                                 init_rng=42,
                                 n_epochs= 2000, #n_epochs_tune,
                                 pv=100,
-                                bach_size= bach_size_tune,
+                                bach_size= 32, #bach_size_tune,
                                 out_tag=out_tag)
 
         best_vali_loss = trainer.train_loop(False)[1]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     study.optimize(objective, n_trials=number_of_trials, gc_after_trial=True)
 
     trial = study.best_trial
-    #trial.params['bach_size'] = None
+    trial.params['bach_size'] = 32
     #trial.params['layer_sizes'] = [100, 59]
     trial.params['activation'] = 'jax.nn.tanh'
     trial.params['n_epochs'] = 2000
