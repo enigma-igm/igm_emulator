@@ -66,9 +66,9 @@ if __name__ == '__main__':
     min_gammas = np.empty([len(redshifts)])
 
     in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
-    out_file_tag = f'hmc_inference_{int(n_inference)}'
+    out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
-    with h5py.File(in_path_read + 'z54_z6_F4_T07_G4_central_model_hmc_inference_4000.hdf5', 'r') as f:
+    with h5py.File(in_path_read + in_name_inference, 'r') as f:
         samples_temp = np.array(f['samples_temp'])
         samples_gamma = np.array(f['samples_gamma'])
 

@@ -52,7 +52,7 @@ for redshift_idx in range(len(redshifts)):
     '''
     idx = np.sort(mock_indices[redshift_idx * n_plot_rows:(redshift_idx + 1) * n_plot_rows])
     for i, mock_idx in enumerate(idx):
-        name = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_{mock_idx}.hdf5'
+        name = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_{mock_idx}_Molly.hdf5'
         with h5py.File(in_path_read + name, 'r') as f:
             # ["<F>", "$T_0$", "$\gamma$"]
             samples_temp[i, redshift_idx,:] = f['theta_samples'][:, 1]
@@ -62,7 +62,8 @@ for redshift_idx in range(len(redshifts)):
 Save what we have
 '''
 
-out_file_tag = f'hmc_inference_{int(n_inference)}'
+#out_file_tag = f'hmc_inference_{int(n_inference)}'
+out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_{out_file_tag}.hdf5'
 
 with h5py.File(in_path_out + in_name_inference, 'w') as f:
