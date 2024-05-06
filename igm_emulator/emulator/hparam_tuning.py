@@ -43,7 +43,7 @@ if __name__ == '__main__':
         #activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
         #dropout_rate_tune = trial.suggest_categorical('dropout_rate', [None, 0.05, 0.1])
         #max_grad_norm_tune = trial.suggest_float('max_grad_norm', 0, 1, step=0.1)
-        lr_tune = trial.suggest_float('lr', 1e-3,1, log=False) #1e-4,1e-1, log=False)
+        lr_tune = trial.suggest_float('lr', 1e-4,1e-1, log=False)
         #decay_tune = trial.suggest_float('decay', 1e-4, 5e-3, log=False)
         #l2_tune = trial.suggest_categorical('l2', [0, 1e-5, 1e-4, 1e-3])
         #c_loss_tune = trial.suggest_float('c_loss', 1e-3, 1, log=True)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs= 2000, #n_epochs_tune,
-                                pv=100,
+                                pv= 500, #100,
                                 bach_size= 32, #bach_size_tune,
                                 out_tag=out_tag)
 
