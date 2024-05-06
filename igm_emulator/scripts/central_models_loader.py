@@ -21,6 +21,11 @@ f_idx = 4
 n_inference = 4000
 n_plot_rows = 2
 
+# Compare to Molly's mocks
+seed = 203
+rand = np.random.RandomState(seed)  # if seed is None else seed
+mock_indices = rand.choice(np.arange(n_inference), replace=False, size=len(redshifts) * n_plot_rows)
+
 in_path_out = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
 in_path_read = os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/'
 
@@ -31,13 +36,27 @@ for redshift_idx in range(len(redshifts)):
     print(f'z = {redshifts[redshift_idx]}')
     zstr = z_strings[redshift_idx]
 
-    partial_tag = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_'
+    '''
+    Load the central models -- random 5 mocke
+    '''
+    #partial_tag = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_'
+    #
+    #for mock_idx, mock_result in enumerate(glob.glob(in_path_read + partial_tag + '*.hdf5')[:n_plot_rows]):
+    #    with h5py.File(mock_result, 'r') as f:
+    #        # ["<F>", "$T_0$", "$\gamma$"]
+    #        samples_temp[mock_idx, redshift_idx,:] = f['theta_samples'][:, 1]
+    #        samples_gamma[mock_idx, redshift_idx, :] = f['theta_samples'][:, 2]
 
-    for mock_idx, mock_result in enumerate(glob.glob(in_path_read + partial_tag + '*.hdf5')[:n_plot_rows]):
-        with h5py.File(mock_result, 'r') as f:
+    '''
+    Load Molly's mocks with seed 203
+    '''
+    idx = np.sort(mock_indices[redshift_idx * n_plot_rows:(redshift_idx + 1) * n_plot_rows])
+    for i, mock_idx in enumerate(idx):
+        name = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mock_{mock_idx}.hdf5'
+        with h5py.File(in_path_read + name, 'r') as f:
             # ["<F>", "$T_0$", "$\gamma$"]
-            samples_temp[mock_idx,redshift_idx,:] = f['theta_samples'][:, 1]
-            samples_gamma[mock_idx, redshift_idx, :] = f['theta_samples'][:, 2]
+            samples_temp[i, redshift_idx,:] = f['theta_samples'][:, 1]
+            samples_gamma[i, redshift_idx, :] = f['theta_samples'][:, 2]
 
 '''
 Save what we have
