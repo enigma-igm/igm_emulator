@@ -38,6 +38,10 @@ Y_vali = y_scaler.transform(Y_vali_og)
 
 
 if __name__ == '__main__':
+    if DataLoader.redshift >= 5.9:
+        early_stop = 500
+    else:
+        early_stop = 100
     def objective(trial):
         layer_sizes_tune = trial.suggest_categorical('layer_sizes', [ [100, 100, 100, 59], [100, 100, 59], [100, 59]]) # at least three hidden layers
         #activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
@@ -57,13 +61,13 @@ if __name__ == '__main__':
                                 layer_sizes= layer_sizes_tune,
                                 activation= jax.nn.tanh,#eval(activation_tune),
                                 dropout_rate= None,
-                                optimizer_hparams= [0.8, lr_tune, 0.01], #[0.4, lr_tune, 0.003],
+                                optimizer_hparams= [0.4, lr_tune, 0.003],
                                 loss_str= 'mape', #loss_str_tune,
                                 loss_weights= [0,0,True],#[l2_tune,c_loss_tune,percent_loss_tune],
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs= 2000, #n_epochs_tune,
-                                pv= 500, #100,
+                                pv= early_stop,
                                 bach_size= bach_size_tune,
                                 out_tag=out_tag)
 
@@ -85,7 +89,7 @@ if __name__ == '__main__':
                                 like_dict=like_dict,
                                 init_rng=42,
                                 n_epochs=hparams['n_epochs'],
-                                pv=500,
+                                pv=early_stop,
                                 bach_size=hparams['bach_size'],
                                 out_tag=out_tag)
         best_param, _ = trainer.train_loop(True)
@@ -110,8 +114,8 @@ if __name__ == '__main__':
     #trial.params['layer_sizes'] = [100, 59]
     trial.params['activation'] = 'jax.nn.tanh'
     trial.params['n_epochs'] = 2000
-    trial.params['max_grad_norm'] =  0.8 #0.4
-    trial.params['decay'] = 0.01 #0.003
+    trial.params['max_grad_norm'] =  0.4
+    trial.params['decay'] = 0.003
     trial.params['dropout_rate'] = None
     trial.params['loss_str'] = 'mape'
     trial.params['loss_weights'] = [0,0,True] # added fixed strings and weights
