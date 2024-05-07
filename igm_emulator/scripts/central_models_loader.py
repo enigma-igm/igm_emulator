@@ -66,6 +66,9 @@ Save what we have
 out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_{out_file_tag}.hdf5'
 
+if os.path.exists(in_path_out + in_name_inference):
+    os.remove(in_path_out + in_name_inference)
+    print(f'rewrite {in_path_out + in_name_inference}')
 with h5py.File(in_path_out + in_name_inference, 'w') as f:
     f.create_dataset('samples_temp', data=samples_temp)
     f.create_dataset('samples_gamma', data=samples_gamma)
