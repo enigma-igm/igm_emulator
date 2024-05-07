@@ -491,6 +491,9 @@ class NN_HMC_X:
 
     def save_HMC(self,zstr,f_idx,T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples, theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
                  hmc_num_steps, hmc_tree_depth, total_time,save_str=None, ):
+        if os.path.exists(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{save_str}_hmc_results.hdf5'):
+            os.remove(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{save_str}_hmc_results.hdf5')
+
         # Save the results
         with h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_results/{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_{save_str}_hmc_results.hdf5', 'w') as f:
             f.create_dataset('theta_true', data=theta_true)

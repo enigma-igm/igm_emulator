@@ -95,7 +95,7 @@ if __name__ == '__main__':
                                 num_chains=4,
                                 covar_nn=covar_nn,
                                 err_nn=err_nn,
-                                nn_err_prop =False)
+                                nn_err_prop = True)
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
@@ -119,14 +119,14 @@ if __name__ == '__main__':
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         nn_x.save_HMC(z_string,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples,theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-                 hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mock_{mock_idx}_Molly_nn_prop_False')
+                 hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mock_{mock_idx}_Molly')
 
         corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                        save_str=f'central_mock_{mock_idx}_Molly_nn_prop_False', save_bool=True)
+                                        save_str=f'central_mock_{mock_idx}_Molly', save_bool=True)
         fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                    theta_true=theta_true, model_corr=mean_flux,
                                    mock_corr=flux,
-                                   covariance=new_covariance, save_str=f'central_mock_{mock_idx}_Molly_nn_prop_False', save_bool=True)
+                                   covariance=new_covariance, save_str=f'central_mock_{mock_idx}_Molly', save_bool=True)
 
     flux = mean_flux
     x_opt, theta_opt, losses = nn_x.fit_one(flux, new_covariance)
@@ -135,14 +135,14 @@ if __name__ == '__main__':
     f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                  zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
     nn_x.save_HMC(z_string,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples,theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-             hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mean_model_nn_prop_False')
+             hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mean_model')
 
     corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                    save_str=f'central_mean_model_nn_prop_False', save_bool=True)
+                                    save_str=f'central_mean_model', save_bool=True)
     fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                theta_true=theta_true, model_corr=mean_flux,
                                mock_corr=flux,
-                               covariance=new_covariance, save_str=f'central_mean_model_nn_prop_False', save_bool=True)
+                               covariance=new_covariance, save_str=f'central_mean_model', save_bool=True)
         #if compare:
         #    in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
         #    molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
