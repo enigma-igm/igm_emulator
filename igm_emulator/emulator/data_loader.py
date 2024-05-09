@@ -130,42 +130,8 @@ class DataSamplerModule:
         sample_params = sample_params.T
 
 
-        for sample_idx in np.arange(n_samples):
-
-            sample = sample_params[sample_idx]
-
-            # determine the closest model to each lhs sample
-            fobs_idx = np.argmin(np.abs(self.fobs - sample[0]))
-            T0_idx = np.argmin(np.abs(self.T0s - sample[1]))
-            gamma_idx = np.argmin(np.abs(self.gammas - sample[2]))
-
-            # save the closest model parameters for each lhs sample
-            final_samples[sample_idx, 0] = self.fobs[fobs_idx]
-            final_samples[sample_idx, 1] = self.T0s[T0_idx]
-            final_samples[sample_idx, 2] = self.gammas[gamma_idx]
-
-            # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx =+ 1
-
-            # get the corresponding model autocorrelation for each parameter location
-            # **smaller bins**
-            if self.small_bin_bool:
-                like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{self.n_path}_set_bins_3.p'
-
-            # **larger bins**
-            else:
-                like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{gamma_idx}_SNR0_F{fobs_idx}_ncovar_500000_P{self.n_path}_set_bins_4.p'
-
-            like_dict = dill.load(open(self.in_path + like_name, 'rb'))
-            model_autocorrelation = like_dict['mean_data']
-            if sample_idx == 0:
-                models = np.empty([n_samples, len(model_autocorrelation)])
-            models[sample_idx] = model_autocorrelation
-
         # Filter out repeated data
         final_params = [] #training dataset
-        final_corr = []
         count = 0
         for idx, data in enumerate(final_samples):
             for i in final_params:
@@ -173,10 +139,9 @@ class DataSamplerModule:
                     count += 1
             if count == 0:
                 final_params.append(data)
-                final_corr.append(models[idx,:])
             count = 0
         final_samples = np.asarray(final_params) #(768, 3)
-        models = np.asarray(final_corr)
+
 
         # Test data
         test_param = []
