@@ -87,8 +87,8 @@ err_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_err_nn.p'
 Run HMC
 '''
 if __name__ == '__main__':
-    if redshift >= 5.9:
-        fobs = fobs[1:]
+    #if redshift >= 5.9:
+        #fobs = fobs[1:]
 
     nn_x = NN_HMC_X(v_bins, best_params,T0s, gammas, fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,

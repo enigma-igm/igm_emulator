@@ -123,7 +123,7 @@ class DataSamplerModule:
 
 
         # convert the output of grid (between 0 and 1 for each parameter) to our model grid
-        xg_trans = param_transform(xg, self.fobs[0], self.fobs[-1]) #9
+        xg_trans = param_transform(xg, self.fobs[0], self.fobs[-1]) #9 --> 8 for z = 5.9, 6.0
         yg_trans = param_transform(yg, self.T0s[0], self.T0s[-1]) #15
         zg_trans = param_transform(zg, self.gammas[0], self.gammas[-1]) #9
         sample_params = np.array([xg_trans.flatten(),yg_trans.flatten(),zg_trans.flatten()])
