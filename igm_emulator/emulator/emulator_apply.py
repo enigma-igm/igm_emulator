@@ -25,7 +25,7 @@ z_string = DataLoader.z_string
 if DataLoader.redshift >= 5.9:
     early_stop = 500
 else:
-    early_stop = 100
+    early_stop = 200
 
 hparams = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_hparams_tuned.p', 'rb'))
 print(f'Emulator in use: {out_tag}_{var_tag}')

@@ -17,7 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
-DataLoader = DataSamplerModule(redshift=5.9, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
+DataLoader = DataSamplerModule(redshift=5.4, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=0, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     if DataLoader.redshift >= 5.9:
         early_stop = 500
     else:
-        early_stop = 100
+        early_stop = 200
     def objective(trial):
         layer_sizes_tune = trial.suggest_categorical('layer_sizes', [ [100, 100, 100, 59], [100, 100, 59], [100, 59]]) # at least three hidden layers
         #activation_tune = trial.suggest_categorical('activation', ['jax.nn.leaky_relu', 'jax.nn.relu', 'jax.nn.sigmoid', 'jax.nn.tanh'])
