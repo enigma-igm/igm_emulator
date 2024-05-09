@@ -145,8 +145,8 @@ class DataSamplerModule:
             final_samples[sample_idx, 2] = self.gammas[gamma_idx]
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx =+ 1
+            #if self.redshift >= 5.9:
+                #fobs_idx =+ 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
@@ -195,8 +195,8 @@ class DataSamplerModule:
                 gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
                 # Discard the smallest mean flux for redshift >= 5.9
-                if self.redshift >= 5.9:
-                    fobs_idx = + 1
+                #if self.redshift >= 5.9:
+                    #fobs_idx = + 1
 
                 # get the corresponding model autocorrelation for each parameter location
                 #smaller bins
@@ -247,8 +247,8 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
+            #if self.redshift >= 5.9:
+                #fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
@@ -266,8 +266,8 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
+            #if self.redshift >= 5.9:
+                #fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
@@ -285,8 +285,8 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
+            #if self.redshift >= 5.9:
+                #fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
