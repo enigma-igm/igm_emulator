@@ -99,7 +99,7 @@ class DataSamplerModule:
         print(f'fobs:{self.fobs}')
         print(f'T0s: {self.T0s}')
         print(f'gammas:{self.gammas}')
-        if redshift >= 5.9:
+        if self.redshift >= 5.9:
             self.fobs = self.fobs[1:]
             print('discard smallest flux bin')
 
@@ -145,7 +145,7 @@ class DataSamplerModule:
             final_samples[sample_idx, 2] = self.gammas[gamma_idx]
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if redshift >= 5.9:
+            if self.redshift >= 5.9:
                 fobs_idx =+ 1
 
             # get the corresponding model autocorrelation for each parameter location
@@ -197,7 +197,7 @@ class DataSamplerModule:
                 gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
                 # Discard the smallest mean flux for redshift >= 5.9
-                if redshift >= 5.9:
+                if self.redshift >= 5.9:
                     fobs_idx = + 1
 
                 # get the corresponding model autocorrelation for each parameter location
@@ -249,7 +249,7 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if redshift >= 5.9:
+            if self.redshift >= 5.9:
                 fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
@@ -268,7 +268,7 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if redshift >= 5.9:
+            if self.redshift >= 5.9:
                 fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
@@ -287,7 +287,7 @@ class DataSamplerModule:
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
             # Discard the smallest mean flux for redshift >= 5.9
-            if redshift >= 5.9:
+            if self.redshift >= 5.9:
                 fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
