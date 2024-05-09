@@ -22,7 +22,8 @@ var_tag = 'mape_l2_0_perc_True_activation_tanh' ##shoule automatic implement
 small_bin_bool = DataLoader.small_bin_bool
 test_num = DataLoader.test_num
 z_string = DataLoader.z_string
-if DataLoader.redshift >= 5.9:
+redshift = DataLoader.redshift
+if redshift >= 5.9:
     early_stop = 500
 else:
     early_stop = 200

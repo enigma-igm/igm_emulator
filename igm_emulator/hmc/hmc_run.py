@@ -17,7 +17,7 @@ import corner
 import h5py
 import sys
 import os
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string
+from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string, redshift
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
 #sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
@@ -87,6 +87,9 @@ err_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_err_nn.p'
 Run HMC
 '''
 if __name__ == '__main__':
+    if redshift >= 5.9:
+        fobs = fobs[1:]
+
     nn_x = NN_HMC_X(v_bins, best_params,T0s, gammas, fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,
                                 max_tree_depth= 10,
