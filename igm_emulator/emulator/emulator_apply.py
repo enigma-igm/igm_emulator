@@ -110,7 +110,7 @@ if __name__ == '__main__':
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
 
 
-    '''
+
     ##Plot test overplot for sanity check if apply correcly
 
     test_preds = nn_emulator(best_params, X_test_og)
@@ -129,4 +129,3 @@ if __name__ == '__main__':
     plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
     plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     print('emulator_apply_test.png saved')
-    '''

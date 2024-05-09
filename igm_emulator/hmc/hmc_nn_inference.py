@@ -17,7 +17,7 @@ import arviz as az
 import time
 import IPython
 import igm_emulator as emu
-from igm_emulator.emulator.emulator_apply import nn_emulator,trainer
+from igm_emulator.emulator.emulator_apply import nn_emulator
 import sys
 import os
 sys.path.append('/home/zhenyujin/qso_fitting/')
