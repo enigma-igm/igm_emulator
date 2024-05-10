@@ -99,9 +99,6 @@ class DataSamplerModule:
         print(f'fobs:{self.fobs}')
         print(f'T0s: {self.T0s}')
         print(f'gammas:{self.gammas}')
-        if self.redshift >= 5.9:
-            self.fobs = self.fobs[1:]
-            print('discard smallest flux bin')
 
         # Construct all data
         self.xv, self.yv, self.zv = np.meshgrid(self.fobs, self.T0s, self.gammas) # all in physical grids
@@ -123,7 +120,11 @@ class DataSamplerModule:
 
 
         # convert the output of grid (between 0 and 1 for each parameter) to our model grid
-        xg_trans = param_transform(xg, self.fobs[0], self.fobs[-1]) #9 --> 8 for z = 5.9, 6.0
+        if self.redshift >= 5.9:
+            print('discard smallest flux bin')
+            xg_trans = param_transform(xg, self.fobs[1], self.fobs[-1]) #9 --> 8 for z = 5.9, 6.0
+        else:
+            xg_trans = param_transform(xg, self.fobs[0], self.fobs[-1]) #9
         yg_trans = param_transform(yg, self.T0s[0], self.T0s[-1]) #15
         zg_trans = param_transform(zg, self.gammas[0], self.gammas[-1]) #9
         sample_params = np.array([xg_trans.flatten(),yg_trans.flatten(),zg_trans.flatten()])
@@ -143,10 +144,6 @@ class DataSamplerModule:
             final_samples[sample_idx, 0] = self.fobs[fobs_idx]
             final_samples[sample_idx, 1] = self.T0s[T0_idx]
             final_samples[sample_idx, 2] = self.gammas[gamma_idx]
-
-            # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx =+ 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
@@ -193,10 +190,6 @@ class DataSamplerModule:
                 fobs_idx = np.argmin(np.abs(self.fobs - data[0]))
                 T0_idx = np.argmin(np.abs(self.T0s - data[1]))
                 gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
-
-                # Discard the smallest mean flux for redshift >= 5.9
-                if self.redshift >= 5.9:
-                    fobs_idx = + 1
 
                 # get the corresponding model autocorrelation for each parameter location
                 #smaller bins
@@ -246,10 +239,6 @@ class DataSamplerModule:
             T0_idx = np.argmin(np.abs(self.T0s - data[1]))
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
-            # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
-
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
             if self.small_bin_bool:
@@ -265,9 +254,6 @@ class DataSamplerModule:
             T0_idx = np.argmin(np.abs(self.T0s - data[1]))
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
 
-            # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
@@ -283,10 +269,6 @@ class DataSamplerModule:
             fobs_idx = np.argmin(np.abs(self.fobs - data[0]))
             T0_idx = np.argmin(np.abs(self.T0s - data[1]))
             gamma_idx = np.argmin(np.abs(self.gammas - data[2]))
-
-            # Discard the smallest mean flux for redshift >= 5.9
-            if self.redshift >= 5.9:
-                fobs_idx = + 1
 
             # get the corresponding model autocorrelation for each parameter location
             # **smaller bins**
