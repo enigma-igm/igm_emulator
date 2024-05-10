@@ -204,6 +204,7 @@ class TrainerModule:
 
         if plot:
             #Prediction overplots: Training And Test
+            plt.figure()
             plt.plot(range(len(validation_loss)), validation_loss, label=f'vali loss:{best_loss:.4f}')  # plot validation loss
             plt.plot(range(len(training_loss)), training_loss, label=f'train loss:{batch_loss: .4f}')  # plot training loss
             plt.legend()
