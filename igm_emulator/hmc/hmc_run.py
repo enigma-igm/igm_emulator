@@ -17,7 +17,7 @@ import corner
 import h5py
 import sys
 import os
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string, redshift
+from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string, redshift, nn_emulator
 print(f'Training for small bin: {small_bin_bool}')
 from progressbar import ProgressBar
 #sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
@@ -83,9 +83,15 @@ best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_pa
 covar_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_covar_nn.p', 'rb'))
 err_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_err_nn.p', 'rb'))
 
+mean_predict = nn_emulator(best_params, theta_true)
+plt.plot(vbins, mean_predict, label='mean_predict')
+plt.plot(vbins, mean_flux, label='mean_flux', linestyle='--')
+plt.legend()
+plt.show()
+
 '''
 Run HMC
-'''
+
 if __name__ == '__main__':
     if redshift >= 5.9:
         fobs = fobs[1:]
@@ -162,3 +168,4 @@ if __name__ == '__main__':
         #    molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
         #
         #    corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
+'''

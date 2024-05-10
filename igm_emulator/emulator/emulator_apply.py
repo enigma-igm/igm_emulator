@@ -48,9 +48,9 @@ trainer = TrainerModule(X_train, Y_train, X_test, Y_test, X_vali, Y_vali,
                                 out_tag=out_tag)
 
 def _nn_emulator(best_params_function, theta_linda):
-    x = jnp.array((theta_linda - trainer.meanX)/ trainer.stdX)
+    x = trainer.x_scaler.transform(theta_linda)
     emu_out = trainer.custom_forward.apply(best_params_function, x) 
-    return emu_out * trainer.stdY + trainer.meanY
+    return trainer.y_scaler.inverse_transform(emu_out)
 
 def nn_emulator(best_params_function, theta_linda):
     '''
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
     rel_diff = np.divide(difference, Y_test_og)
-    plt.figure(figsize=(12, 6))
+    plt.figure()
     ax1 = plt.subplot2grid((1, 2), (0, 0))
     ax2 = plt.subplot2grid((1, 2), (0, 1))
     for i in range(10):
