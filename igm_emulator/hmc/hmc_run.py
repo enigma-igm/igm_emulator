@@ -91,10 +91,8 @@ plt.show()
 
 '''
 Run HMC
-
+'''
 if __name__ == '__main__':
-    if redshift >= 5.9:
-        fobs = fobs[1:]
 
     nn_x = NN_HMC_X(v_bins, best_params,T0s, gammas, fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,
@@ -168,4 +166,3 @@ if __name__ == '__main__':
         #    molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
         #
         #    corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
-'''
