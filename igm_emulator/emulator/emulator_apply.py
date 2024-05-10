@@ -126,5 +126,7 @@ if __name__ == '__main__':
         ax1.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
         ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
     plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
+    plt.legend()
+    plt.show()
     plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     print('emulator_apply_test.png saved')
