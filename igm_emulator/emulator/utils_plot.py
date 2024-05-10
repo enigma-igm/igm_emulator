@@ -140,7 +140,7 @@ def params_grads_distribution(loss_fn,init_params,X_train,Y_train):
     plt.legend(labels=['layer1', 'layer2', 'layer3'], title='grads_b')
     plt.show()
 
-def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
+def train_overplot(preds, X, Y,  meanX,stdX, meanY, stdY, out_tag, var_tag):
     '''
 
     Parameters
@@ -165,6 +165,7 @@ def train_overplot(preds, X, Y, meanY, stdY, out_tag, var_tag):
     corr_idx = np.random.randint(0, Y.shape[0], sample)  # randomly select correlation functions to compare
     preds = preds * stdY + meanY
     Y = Y * stdY + meanY
+    X = X * stdX + meanX
     for i in range(sample):
         axs.plot(ax, preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X[corr_idx[i], 0]:.2f},'
                                                r'$T_0$='f'{X[corr_idx[i], 1]:.2f},'

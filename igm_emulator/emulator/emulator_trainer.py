@@ -210,7 +210,7 @@ class TrainerModule:
             plt.savefig(os.path.join(dir_exp, f'epoch_loss_{self.out_tag}_{self.var_tag}.png'))
 
             #Fitting plots
-            train_overplot(preds, self.X_train, self.Y_train, self.meanY, self.stdY, self.out_tag, self.var_tag)
+            train_overplot(preds, self.X_train, self.Y_train, self.meanX,self.stdX, self.meanY, self.stdY, self.out_tag, self.var_tag)
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
             #Accuracy + Results Plots
