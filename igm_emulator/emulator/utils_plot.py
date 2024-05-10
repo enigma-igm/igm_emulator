@@ -158,7 +158,7 @@ def train_overplot(preds, X, Y,  meanX,stdX, meanY, stdY, out_tag, var_tag):
 
     '''
     ax = v_bins # velocity bins
-    sample = 8  # number of functions plotted
+    sample = 20  # number of functions plotted
     fig, axs = plt.subplots(1, 1)
     fig.set_figwidth(8)
     fig.set_figheight(4)
