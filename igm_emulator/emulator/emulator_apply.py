@@ -116,7 +116,7 @@ if __name__ == '__main__':
     corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
     difference = np.subtract(test_preds,Y_test_og)
     rel_diff = np.divide(difference, Y_test_og)
-    plt.figure()
+    plt.figure(figsize=(15, 4)
     ax1 = plt.subplot2grid((1, 2), (0, 0))
     ax2 = plt.subplot2grid((1, 2), (0, 1))
     for i in range(10):
