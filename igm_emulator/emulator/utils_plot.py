@@ -204,6 +204,10 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     sample = 9  # number of functions plotted
     fig2 = plt.figure(figsize=(x_size * 4., x_size * .65*2), constrained_layout=True,
                              dpi=dpi_value)
+    fig2.set_constrained_layout_pads(
+        w_pad=.025, h_pad=.025,
+        hspace=0, wspace=0
+    )
     grid = fig2.add_gridspec(nrows=3, ncols=3)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY

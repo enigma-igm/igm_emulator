@@ -281,7 +281,7 @@ class INFERENCE_TEST():
 
         ### Emulator model inference class load in###
         else:
-            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
+            hmc_inf = NN_HMC_X(self.v_bins, self.best_params, self.T0s, self.gammas, self.fobs[1:],  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,
                                 max_tree_depth= 10,
                                 num_warmup=1000,
