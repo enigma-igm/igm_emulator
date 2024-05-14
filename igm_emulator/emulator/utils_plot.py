@@ -202,30 +202,35 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    fig2 = plt.figure(figsize=(x_size * 4., x_size * .65*2), constrained_layout=True,
-                             dpi=dpi_value)
+    #fig2 = plt.figure(figsize=(x_size * 4., x_size * .65*2), constrained_layout=True, dpi=dpi_value)
+    #grid = fig2.add_gridspec(nrows=3, ncols=3)
+    fig2, axes = plt.subplots(3, 3, sharex=True, figsize=(15, 30))
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
     )
-    grid = fig2.add_gridspec(nrows=3, ncols=3)
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
     for row in range(3):
         for col in range(3):
-            axs2 = fig2.add_subplot(grid[row, col])
+            #axs2 = fig2.add_subplot(grid[row, col])
+            ax2 = axes[row, col]
             i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
 
             axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
-            axs2.set_ylabel(r"$\xi_F$")
-            axs2.set_title('$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
+            if col == 0:
+                axs2.set_ylabel(r"$\xi_F$")
+            else:
+                ax2.tick_params(axis='y', direction='in')
+            axs2.text(0.5, 0.5,'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
-                    r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}')
+                    r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes)
             axs2.legend(fontsize=7, loc='upper right')
+
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
