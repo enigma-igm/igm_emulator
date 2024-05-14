@@ -216,16 +216,14 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         for col in range(3):
             if row == 2:
                 axs2 = fig2.add_subplot(grid[row, col])
+                axs2.set(yticks=[])
+                axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
                 axs2 = fig2.add_subplot(grid[row, col], sharex=fig2.add_subplot(grid[2, col]))
+                axs2.tick_params(axis='x', which='both',bottom=False,labelbottom=False)
             i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-
-            if row == 2:
-                axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
-            else:
-                axs2.tick_params(axis='x', which='both',bottom=False,labelbottom=False)
 
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
