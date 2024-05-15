@@ -65,6 +65,7 @@ plt_params = {'legend.fontsize': 7,
               'font.family': 'serif',
               # 'text.usetex': True,
               'xtick.minor.visible': True,
+            'ytick.minor.visible': True
               }
 plt.rcParams.update(plt_params)
 
@@ -202,7 +203,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    fig2, axes = plt.subplots(3, 3,figsize=(x_size * 4.* 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
+    fig2, axes = plt.subplots(3, 3,figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
