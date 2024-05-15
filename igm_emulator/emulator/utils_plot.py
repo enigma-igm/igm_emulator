@@ -208,6 +208,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
     )
+    plt.ticklabel_format(axis='y', style='sci')
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
@@ -225,7 +226,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-            axs2.ticklabel_format(axis='y', style='sci')
+
 
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
