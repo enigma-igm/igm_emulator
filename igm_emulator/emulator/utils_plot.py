@@ -225,13 +225,12 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             i = 3*row+col
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
+            axs2.ticklabel_format(axis='y', style='sci')
 
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
-                axs2.ticklabel_format(axis='y', style='sci')
             else:
                 axs2.tick_params(axis='y', direction='in', pad=-30)
-                axs2.ticklabel_format(axis='y', style='sci')
             yticks = ticker.MaxNLocator(nbins=5)
             axs2.yaxis.set_major_locator(yticks)
 
