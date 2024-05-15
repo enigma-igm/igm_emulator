@@ -221,9 +221,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.sharex(axes[2, col])
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             i = 3*row+col
+            axs2.ticklabel_format(axis='both', style='sci', scilimits=(0, 0))
             axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
             axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-            axs2.ticklabel_format(axis='both', style='sci')
 
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
