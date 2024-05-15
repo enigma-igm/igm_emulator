@@ -233,7 +233,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
 
             axs2.text(0.3, 0.5,'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
-                    r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes)
+                    r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
 
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
