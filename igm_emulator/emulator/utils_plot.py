@@ -215,8 +215,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             if row == 2:
-                axs2 = fig2.add_subplot(grid[row, col], autoscaley_on=False)
-                axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
+                axs2 = fig2.add_subplot(grid[row, col])
+                #axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
                 axs2 = fig2.add_subplot(grid[row, col], sharex=fig2.add_subplot(grid[2, col]))
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
