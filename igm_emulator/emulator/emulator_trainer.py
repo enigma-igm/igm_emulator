@@ -69,6 +69,7 @@ class TrainerModule:
         self.stdY = y_scaler.std
         self.covar_nn = None
         self.err_nn = None
+        self.best_params = None
 
         #Set MLP parameters
         self.layer_sizes = layer_sizes
@@ -235,6 +236,9 @@ class TrainerModule:
         -------
 
         '''
+        if self.best_params is None:
+            print('Train the emulator first! Now read in the history best parameters.')
+            self.best_params = dill.load(open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{self.out_tag}_{self.var_tag}_best_param.p', 'rb'))
         pred_v = self.y_scaler.inverse_transform(self.custom_forward.apply(self.best_params, self.x_scaler.transform(theta_v)))
         delta_v = corr_v - pred_v
         self.err_nn = delta_v.mean(axis=0)
