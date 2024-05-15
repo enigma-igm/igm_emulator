@@ -69,7 +69,7 @@ if __name__ == '__main__':
     with h5py.File(in_path_read + in_name_inference, 'r') as f:
         samples_temp = np.array(f['samples_temp'])
         samples_gamma = np.array(f['samples_gamma'])
-        n_plot_rows = np.array(f['n_plot_rows'])
+        n_plot_rows = np.array(f.attrs['n_plot_rows'])
 
 
     bins_temp = np.linspace(350, 19400, 40)
