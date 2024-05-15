@@ -229,7 +229,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
             else:
-                axs2.tick_params(axis='y', direction='in',pad=-25)
+                axs2.tick_params(axis='y', direction='in',pad=-30)
 
             axs2.text(0.3, 0.5,'$<F>$='f'{X_test[corr_idx[i], 0]:.2f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.2f},'
