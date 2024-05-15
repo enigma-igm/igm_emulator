@@ -20,6 +20,12 @@ g_idx = 4
 f_idx = 4
 n_inference = 4000
 n_plot_rows = 2
+n_inference_w = 300
+n_mcmc = 3500
+n_walkers = 16
+n_skip = 500
+R_value = 30000
+bin_label = '_set_bins_3'
 
 # Compare to Molly's mocks
 seed = 203
@@ -34,6 +40,10 @@ samples_gamma = np.empty([n_plot_rows, len(redshifts), n_inference])
 
 samples_temp_mean = np.empty([1, len(redshifts), n_inference])
 samples_gamma_mean = np.empty([1, len(redshifts), n_inference])
+
+samples_temp_mean_molly = np.empty([1, len(redshifts), n_walkers * (n_mcmc - n_skip)])
+samples_gamma_mean_molly = np.empty([1, len(redshifts), n_walkers * (n_mcmc - n_skip)])
+importance_weights_chain_molly = np.empty([1, len(redshifts), n_walkers * (n_mcmc - n_skip)])
 
 for redshift_idx in range(len(redshifts)):
     print(f'z = {redshifts[redshift_idx]}')
@@ -61,10 +71,31 @@ for redshift_idx in range(len(redshifts)):
             samples_temp[i, redshift_idx,:] = f['theta_samples'][:, 1]
             samples_gamma[i, redshift_idx, :] = f['theta_samples'][:, 2]
 
+    '''
+    Load Mean models -- Emulator
+    '''
     name = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mean_model_hmc_results.hdf5'
     with h5py.File(in_path_read + name, 'r') as f:
         samples_temp_mean[0,redshift_idx,:] = f['theta_samples'][:, 1]
         samples_gamma_mean[0,redshift_idx, :] = f['theta_samples'][:, 2]
+    '''
+    Load Mean models -- Molly
+    '''
+    in_path_start = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{zstr}/'
+    out_file_tag_model = f'steps_{int(n_walkers * (n_mcmc - n_skip))}_R_{int(R_value)}'
+    in_name_model = f'{zstr}_model_T{T0_idx}_G{g_idx}_F{f_idx}_data_nearest_model_{out_file_tag_model}.hdf5'
+    with h5py.File(in_path_start + in_name_model, 'r') as f:
+        # ["$T_0$", "$\gamma$", "<F>"]
+        samples_temp_mean_molly[0,redshift_idx,:] = f['samples'][:, 0]
+        samples_gamma_mean_molly[0,redshift_idx, :] = f['samples'][:, 1]
+        log_prob_model = f['log_prob'][:]
+    prior_tag_w = 'sample_prior_leq'
+    out_file_tag_w = f'steps_{int(n_walkers * (n_mcmc - n_skip))}_mcmc_inference_{int(n_inference_w)}_{prior_tag_w}'
+    weight_name = f'{zstr}_{run_tag}{bin_label}_{out_file_tag_w}_R_{int(R_value)}_weights.p'
+    weight_dict = dill.load(open(in_path_start + weight_name, 'rb'))
+    importance_weights = weight_dict['importance_weights']
+    isort_model = np.argsort(log_prob_model[:])
+    importance_weights_chain_molly[0, redshift_idx, isort_model] = importance_weights
 
 '''
 Save what we have
@@ -74,6 +105,7 @@ Save what we have
 out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_{out_file_tag}.hdf5'
 mean_model_name = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_mean.hdf5'
+mean_model_molly_name = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_mean_reweight_molly.hdf5'
 
 if os.path.exists(in_path_out + in_name_inference):
     os.remove(in_path_out + in_name_inference)
@@ -100,6 +132,21 @@ with h5py.File(in_path_out + mean_model_name, 'w') as f:
     f.attrs['g_idx'] = g_idx
     f.attrs['f_idx'] = f_idx
     f.attrs['n_inference'] = n_inference
+    f.attrs['n_plot_rows'] = 1
+    f.close()
+
+if os.path.exists(in_path_out + mean_model_molly_name):
+    os.remove(in_path_out + mean_model_molly_name)
+    print(f'rewrite {in_path_out + mean_model_molly_name}')
+with h5py.File(in_path_out + mean_model_molly_name, 'w') as f:
+    f.create_dataset('samples_temp', data=samples_temp_mean_molly)
+    f.create_dataset('samples_gamma', data=samples_gamma_mean_molly)
+    f.create_dataset('importance_weights', data=importance_weights_chain_molly)
+    f.attrs['z_strings'] = z_strings
+    f.attrs['T0_idx'] = T0_idx
+    f.attrs['g_idx'] = g_idx
+    f.attrs['f_idx'] = f_idx
+    f.attrs['n_inference'] = int(n_walkers * (n_mcmc - n_skip))
     f.attrs['n_plot_rows'] = 1
     f.close()
 
