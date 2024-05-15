@@ -174,7 +174,7 @@ if __name__ == '__main__':
                                )
     mfp_model_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
     grid = mfp_model_fig.add_gridspec(
-        nrows=n_plot_rows*2, ncols=1, height_ratios=[7, 5, 7, 5],  # width_ratios=[1, 1],
+        nrows=n_plot_rows*2, ncols=1, height_ratios=[7, 5]*n_plot_rows,  # width_ratios=[1, 1],
     )
 
     width_temp = 300
