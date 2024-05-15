@@ -202,7 +202,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    fig2, axes = plt.subplots(3, 3,figsize=(x_size * 3.* 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
+    fig2, axes = plt.subplots(3, 3,figsize=(x_size * 4.* 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
@@ -228,11 +228,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
             else:
-                axs2.tick_params(axis='y', direction='in', pad=-22)
+                axs2.tick_params(axis='y', direction='in', pad=-20)
             yticks = ticker.MaxNLocator(nbins=5)
             axs2.yaxis.set_major_locator(yticks)
 
-            axs2.text(0.2, 0.5,'$<F>$='f'{X_test[corr_idx[i], 0]:.4f},'
+            axs2.text(0.2, 0.48,'$<F>$='f'{X_test[corr_idx[i], 0]:.4f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.0f},'
                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
