@@ -230,7 +230,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.set_ylabel(r"$\xi_F$")
 
             else:
-                axs2.tick_params(axis='y', direction='in')
+                axs2.tick_params(axis='y', direction='in', labelleft=False)
             yticks = ticker.MaxNLocator(nbins=5)
             axs2.yaxis.set_major_locator(yticks)
 
