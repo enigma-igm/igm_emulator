@@ -49,7 +49,7 @@ if __name__ == '__main__':
     true_temp_idx = int(np.floor(n_temp / 2.))
     true_gamma_idx = int(np.floor(n_gamma / 2.))
     true_fobs_idx = int(np.floor(n_f / 2.))
-
+    importance_weights_chain = None
 
     in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
     '''
@@ -62,14 +62,22 @@ if __name__ == '__main__':
     #out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 
     '''
-    Central Mean model
+    Central Mean model -- Emulatpr
     '''
-    out_file_tag = 'mean'
+    #out_file_tag = 'mean'
+
+    '''
+    Reweighted Mean model -- Molly
+    '''
+    out_file_tag = 'mean_reweight_molly'
+
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
     with h5py.File(in_path_read + in_name_inference, 'r') as f:
         samples_temp = np.array(f['samples_temp'])
         samples_gamma = np.array(f['samples_gamma'])
         n_plot_rows = np.array(f.attrs['n_plot_rows'])
+        importance_weights_chain = np.array(f['importance_weights'])
+
 
 
     bins_temp = np.linspace(350, 19400, 40)
@@ -110,14 +118,15 @@ if __name__ == '__main__':
         #Read mocks of temp samples at given z
         samples_temp_z = samples_temp[:, redshift_idx, :]
         samples_gamma_z = samples_gamma[:, redshift_idx, :]
+        importance_weights_chain_z = importance_weights_chain[:, redshift_idx, :]
 
         # make one big histogram
         for mock_idx in range(n_plot_rows):
             hist_temp, bin_edges_temp = np.histogram(
-                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True
+                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain[mock_idx, :]
             )
             hist_gamma, bin_edges_gamma = np.histogram(
-                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True
+                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain[mock_idx, :]
             )
 
             pdf_hists_temp[mock_idx, redshift_idx, :] = hist_temp
