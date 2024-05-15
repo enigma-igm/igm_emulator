@@ -91,7 +91,7 @@ for redshift_idx in range(len(redshifts)):
         log_prob_model = f['log_prob'][:]
     prior_tag_w = 'sample_prior_leq'
     out_file_tag_w = f'steps_{int(n_walkers * (n_mcmc - n_skip))}_mcmc_inference_{int(n_inference_w)}_{prior_tag_w}'
-    weight_name = f'{zstr}_{run_tag}{bin_label}_{out_file_tag_w}_R_{int(R_value)}_weights.p'
+    weight_name = f'{zstr}_data_nearest_model{bin_label}_{out_file_tag_w}_R_{int(R_value)}_weights.p'
     weight_dict = dill.load(open(in_path_start + weight_name, 'rb'))
     importance_weights = weight_dict['importance_weights']
     isort_model = np.argsort(log_prob_model[:])
