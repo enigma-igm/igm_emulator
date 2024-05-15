@@ -228,11 +228,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
             else:
-                axs2.tick_params(axis='y', direction='in', pad=-20)
+                axs2.tick_params(axis='y', direction='in', pad=-18,length=0)
             yticks = ticker.MaxNLocator(nbins=5)
             axs2.yaxis.set_major_locator(yticks)
 
-            axs2.text(0.2, 0.48,'$<F>$='f'{X_test[corr_idx[i], 0]:.4f},'
+            axs2.text(0.2, 0.4,'$<F>$='f'{X_test[corr_idx[i], 0]:.4f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.0f},'
                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
