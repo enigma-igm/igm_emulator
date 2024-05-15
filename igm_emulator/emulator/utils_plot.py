@@ -217,7 +217,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if row == 2:
                 axs2 = fig2.add_subplot(grid[row, col])
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
-                axs2.spines['left'].set_visible(False)
+                axs2.axis('off')
             else:
                 axs2 = fig2.add_subplot(grid[row, col], sharex=fig2.add_subplot(grid[2, col]))
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
