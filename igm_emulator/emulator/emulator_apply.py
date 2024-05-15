@@ -65,10 +65,11 @@ Check if jvmap works
 '''
 if __name__ == '__main__':
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{z_string}/'
-    best_params, _ = trainer.train_loop(True)
-    dill.dump(best_params, open(
-        f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p',
-        'wb'))
+    in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
+    #best_params, _ = trainer.train_loop(True)
+    #dill.dump(best_params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p','wb'))
+    best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p',
+                                 'rb'))
     print(f'Best Trainer:')
     for key, value in hparams.items():
         print(f'-> {key}: {value}')
