@@ -181,25 +181,27 @@ class TrainerModule:
                     break
 
         self.best_params = params
+        X_test_metric = self.X_test[:int(np.round(X_train.shape[0]/5)),:]
+        Y_test_metric = self.Y_test[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
 
         #Validation Metrics
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
         self.best_chi_2_loss = -logpdf(x=vali_preds * self.stdY, mean=self.Y_vali * self.stdY, cov=self.like_dict['covariance'])
         print(f'Reached max number of epochs in this batch. Validation loss ={best_loss}. Training loss ={batch_loss}')
         print(f'early_stopping_counter: {early_stopping_counter}')
-        print(f'Test Loss: {self.loss_fn(params, self.X_test, self.Y_test)}')
+        print(f'Test Loss: {self.loss_fn(params, X_test_metric, Y_test_metric)}')
 
         #Test Metrics
         self.batch_loss = batch_loss
-        test_preds = custom_forward.apply(self.best_params, self.X_test)
-        test_accuracy = (self.Y_test*self.stdY-test_preds*self.stdY)/(self.Y_test*self.stdY+self.meanY) #relative error of test dataset
+        test_preds_metric = custom_forward.apply(self.best_params, X_test_metric)
+        test_accuracy = (Y_test_metric*self.stdY-test_preds_metric*self.stdY)/(Y_test_metric*self.stdY+self.meanY) #relative error of test dataset
         self.RelativeError = test_accuracy
-        self.test_chi_loss = ((test_preds - self.Y_test) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))
+        self.test_chi_loss = ((test_preds_metric - Y_test_metric) * self.stdY) / jnp.sqrt(jnp.diagonal(self.like_dict['covariance']))
         print(f'Test accuracy: {jnp.sqrt(jnp.mean(jnp.square(test_accuracy)))}')
 
-        self.test_loss = self.loss_fn(params, self.X_test, self.Y_test)
+        self.test_loss = self.loss_fn(params, X_test_metric, Y_test_metric)
         self.vali_loss = self.loss_fn(params, self.X_vali, self.Y_vali)
-        self.test_R2 = r2_score(test_preds.squeeze(), self.Y_test)
+        self.test_R2 = r2_score(test_preds_metric.squeeze(), self.Y_test)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, self.X_train)
 
@@ -213,6 +215,7 @@ class TrainerModule:
 
             #Fitting plots
             train_overplot(preds, self.X_train, self.Y_train, self.meanX,self.stdX, self.meanY, self.stdY, self.out_tag, self.var_tag)
+            test_preds = custom_forward.apply(self.best_params, self.X_test)
             test_overplot(test_preds, self.Y_test, self.X_test,self.meanX,self.stdX,self.meanY,self.stdY, self.out_tag, self.var_tag)
 
             #Accuracy + Results Plots

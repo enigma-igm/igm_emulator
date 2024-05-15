@@ -17,6 +17,7 @@ import jax
 import dill
 from IPython import embed
 config.update("jax_enable_x64", True)
+
 DataLoader = DataSamplerModule(redshift=6.0, small_bin_bool=True,n_f=4, n_t=7, n_g=4, n_testing=20, seed=11, plot_bool=True)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
@@ -26,14 +27,14 @@ x_scaler = DiffStandardScaler(X_og)
 meanX = x_scaler.mean
 stdX = x_scaler.std
 X_train = x_scaler.transform(X_og )
-X_test =  x_scaler.transform(X_test_og )[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
+X_test =  x_scaler.transform(X_test_og )
 X_vali =  x_scaler.transform(X_vali_og )
 y_scaler = DiffStandardScaler(Y_og)
 
 meanY = y_scaler.mean
 stdY = y_scaler.std
 Y_train = y_scaler.transform(Y_og)
-Y_test = y_scaler.transform(Y_test_og)[:int(np.round(X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
+Y_test = y_scaler.transform(Y_test_og)
 Y_vali = y_scaler.transform(Y_vali_og)
 
 

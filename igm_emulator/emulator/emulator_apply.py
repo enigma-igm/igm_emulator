@@ -75,9 +75,9 @@ if __name__ == '__main__':
         print(f'-> {key}: {value}')
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
 
-    ## Test overplot (all including err prop) without retraining
-    test_preds = trainer.custom_forward.apply(best_params, trainer.x_scaler.transform(X_test_og))
-    test_overplot(test_preds, trainer.y_scaler.transform(Y_test_og), trainer.x_scaler.transform(X_test_og), trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
+    ## Test overplot (including err prop points) without retraining
+    test_preds = trainer.custom_forward.apply(best_params, trainer.X_test)
+    test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
                   trainer.var_tag)
 
     ### Error propagation
