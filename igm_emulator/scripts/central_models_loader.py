@@ -32,6 +32,9 @@ in_path_read = os.path.expanduser('~') + f'/igm_emulator/igm_emulator/hmc/hmc_re
 samples_temp = np.empty([n_plot_rows, len(redshifts), n_inference])
 samples_gamma = np.empty([n_plot_rows, len(redshifts), n_inference])
 
+samples_temp_mean = np.empty([1, len(redshifts), n_inference])
+samples_gamma_mean = np.empty([1, len(redshifts), n_inference])
+
 for redshift_idx in range(len(redshifts)):
     print(f'z = {redshifts[redshift_idx]}')
     zstr = z_strings[redshift_idx]
@@ -58,6 +61,11 @@ for redshift_idx in range(len(redshifts)):
             samples_temp[i, redshift_idx,:] = f['theta_samples'][:, 1]
             samples_gamma[i, redshift_idx, :] = f['theta_samples'][:, 2]
 
+    name = f'{zstr}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_mean_model_hmc_results.hdf5'
+    with h5py.File(in_path_read + name, 'r') as f:
+        samples_temp_mean[0,redshift_idx,:] = f['theta_samples'][:, 1]
+        samples_gamma_mean[0,redshift_idx, :] = f['theta_samples'][:, 2]
+
 '''
 Save what we have
 '''
@@ -65,6 +73,7 @@ Save what we have
 #out_file_tag = f'hmc_inference_{int(n_inference)}'
 out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_{out_file_tag}.hdf5'
+mean_model_name = f'{z_strings[0]}_{z_strings[-1]}_F{f_idx}_T0{T0_idx}_G{g_idx}_central_model_mean.hdf5'
 
 if os.path.exists(in_path_out + in_name_inference):
     os.remove(in_path_out + in_name_inference)
@@ -79,6 +88,21 @@ with h5py.File(in_path_out + in_name_inference, 'w') as f:
     f.attrs['n_inference'] = n_inference
     f.attrs['n_plot_rows'] = n_plot_rows
     f.close()
+
+if os.path.exists(in_path_out + mean_model_name):
+    os.remove(in_path_out + mean_model_name)
+    print(f'rewrite {in_path_out + mean_model_name}')
+with h5py.File(in_path_out + mean_model_name, 'w') as f:
+    f.create_dataset('samples_temp', data=samples_temp)
+    f.create_dataset('samples_gamma', data=samples_gamma)
+    f.attrs['z_strings'] = z_strings
+    f.attrs['T0_idx'] = T0_idx
+    f.attrs['g_idx'] = g_idx
+    f.attrs['f_idx'] = f_idx
+    f.attrs['n_inference'] = n_inference
+    f.attrs['n_plot_rows'] = 1
+    f.close()
+
 print(f'saved central models for all redshift at {in_path_out}')
 
 
