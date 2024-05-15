@@ -74,7 +74,9 @@ if __name__ == '__main__':
     for key, value in hparams.items():
         print(f'-> {key}: {value}')
     in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-    #best_params = dill.load(open(in_path_hdf5 + f'{trainer.out_tag}_{trainer.var_tag}_best_param.p', 'rb'))  # changed to optuna tuned best param
+    test_preds = trainer.custom_forward.apply(best_params, trainer.X_test)
+    test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
+                  trainer.var_tag)
 
     ### Error propagation
 
