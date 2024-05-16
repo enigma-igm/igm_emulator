@@ -49,7 +49,6 @@ if __name__ == '__main__':
     true_temp_idx = int(np.floor(n_temp / 2.))
     true_gamma_idx = int(np.floor(n_gamma / 2.))
     true_fobs_idx = int(np.floor(n_f / 2.))
-    importance_weights_chain = None
 
     in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
     '''
@@ -77,6 +76,7 @@ if __name__ == '__main__':
         samples_gamma = np.array(f['samples_gamma'])
         n_plot_rows = np.array(f.attrs['n_plot_rows'])
         if 'importance_weights' in f.attrs.keys():
+            reweight_ngp = True
             importance_weights_chain = np.array(f['importance_weights'])
 
 
@@ -118,16 +118,25 @@ if __name__ == '__main__':
         #Read mocks of temp samples at given z
         samples_temp_z = samples_temp[:, redshift_idx, :]
         samples_gamma_z = samples_gamma[:, redshift_idx, :]
-        importance_weights_chain_z = importance_weights_chain[:, redshift_idx, :]
+        if reweight_ngp:
+            importance_weights_chain_z = importance_weights_chain[:, redshift_idx, :]
 
         # make one big histogram
         for mock_idx in range(n_plot_rows):
-            hist_temp, bin_edges_temp = np.histogram(
-                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain_z[mock_idx, :]
-            )
-            hist_gamma, bin_edges_gamma = np.histogram(
-                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain_z[mock_idx, :]
-            )
+            if reweight_ngp:
+                hist_temp, bin_edges_temp = np.histogram(
+                    samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain_z[mock_idx, :]
+                )
+                hist_gamma, bin_edges_gamma = np.histogram(
+                    samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain_z[mock_idx, :]
+                )
+            else:
+                hist_temp, bin_edges_temp = np.histogram(
+                    samples_temp_z[mock_idx, :], bins=bins_temp,  density=True
+                )
+                hist_gamma, bin_edges_gamma = np.histogram(
+                    samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True
+                )
 
             pdf_hists_temp[mock_idx, redshift_idx, :] = hist_temp
             mids_temp = (bin_edges_temp[:-1] + bin_edges_temp[1:])/2.
