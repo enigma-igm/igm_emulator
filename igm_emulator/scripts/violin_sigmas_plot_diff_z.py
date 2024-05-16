@@ -76,7 +76,7 @@ if __name__ == '__main__':
         samples_temp = np.array(f['samples_temp'])
         samples_gamma = np.array(f['samples_gamma'])
         n_plot_rows = np.array(f.attrs['n_plot_rows'])
-        if 'importance_weights' in k in f.attrs.keys():
+        if 'importance_weights' in f.attrs.keys():
             importance_weights_chain = np.array(f['importance_weights'])
 
 
