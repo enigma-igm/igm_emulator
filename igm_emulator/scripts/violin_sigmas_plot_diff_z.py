@@ -79,7 +79,7 @@ if __name__ == '__main__':
         importance_weights_chain = np.array(f['importance_weights'])
 
 
-
+    print(f'importance_weights_chain shape: {importance_weights_chain.shape}, samples_temp shape: {samples_temp.shape}')
     bins_temp = np.linspace(350, 19400, 40)
     pdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
     cdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
