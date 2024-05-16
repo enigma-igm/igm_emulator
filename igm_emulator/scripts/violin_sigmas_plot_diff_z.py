@@ -123,10 +123,10 @@ if __name__ == '__main__':
         # make one big histogram
         for mock_idx in range(n_plot_rows):
             hist_temp, bin_edges_temp = np.histogram(
-                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain[mock_idx, :]
+                samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain_z[mock_idx, :]
             )
             hist_gamma, bin_edges_gamma = np.histogram(
-                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain[mock_idx, :]
+                samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain_z[mock_idx, :]
             )
 
             pdf_hists_temp[mock_idx, redshift_idx, :] = hist_temp
