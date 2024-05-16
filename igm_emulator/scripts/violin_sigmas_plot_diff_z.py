@@ -78,7 +78,8 @@ if __name__ == '__main__':
         if 'importance_weights' in f.attrs.keys():
             reweight_ngp = True
             importance_weights_chain = np.array(f['importance_weights'])
-
+        else:
+            reweight_ngp = False
 
     bins_temp = np.linspace(350, 19400, 40)
     pdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
