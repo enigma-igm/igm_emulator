@@ -64,12 +64,12 @@ if __name__ == '__main__':
     '''
     Central Mean model -- Emulatpr
     '''
-    #out_file_tag = 'mean'
+    out_file_tag = 'mean'
 
     '''
     Reweighted Mean model -- Molly
     '''
-    out_file_tag = 'mean_reweight_molly'
+    #out_file_tag = 'mean_reweight_molly'
 
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
     with h5py.File(in_path_read + in_name_inference, 'r') as f:
