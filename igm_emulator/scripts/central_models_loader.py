@@ -126,8 +126,8 @@ if os.path.exists(in_path_out + mean_model_name):
     os.remove(in_path_out + mean_model_name)
     print(f'rewrite {in_path_out + mean_model_name}')
 with h5py.File(in_path_out + mean_model_name, 'w') as f:
-    f.create_dataset('samples_temp', data=samples_temp)
-    f.create_dataset('samples_gamma', data=samples_gamma)
+    f.create_dataset('samples_temp', data=samples_temp_mean)
+    f.create_dataset('samples_gamma', data=samples_gamma_mean)
     f.attrs['z_strings'] = z_strings
     f.attrs['T0_idx'] = T0_idx
     f.attrs['g_idx'] = g_idx
