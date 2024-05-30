@@ -15,7 +15,7 @@ import dill
 Visualization of hyperparameters
 '''
 
-redshift = 5.7
+redshift = 5.6
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
