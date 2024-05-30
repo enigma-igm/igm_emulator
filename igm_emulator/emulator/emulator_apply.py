@@ -66,7 +66,7 @@ Check if jvmap works
 if __name__ == '__main__':
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{z_string}/'
     in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
-    #best_params, _ = trainer.train_loop(True)
+    best_params, _ = trainer.train_loop(True)
     #dill.dump(best_params, open(f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{var_tag}_best_param.p','wb'))
     best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p',
                                  'rb'))
@@ -108,9 +108,9 @@ if __name__ == '__main__':
     plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.test_num}.png'))
     plt.show()
 
-    #plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
-    #plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
-    #plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
+    plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
+    plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
+    plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
 
 
