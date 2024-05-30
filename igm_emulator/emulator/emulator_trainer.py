@@ -201,7 +201,7 @@ class TrainerModule:
 
         self.test_loss = self.loss_fn(params, X_test_metric, Y_test_metric)
         self.vali_loss = self.loss_fn(params, self.X_vali, self.Y_vali)
-        self.test_R2 = r2_score(test_preds_metric.squeeze(), self.Y_test)
+        self.test_R2 = r2_score(test_preds_metric.squeeze(), Y_test_metric)
         print('Test R^2 Score: {}\n'.format(self.test_R2))  # R^2 score: ranging 0~1, 1 is good model
         preds = custom_forward.apply(self.best_params, self.X_train)
 
