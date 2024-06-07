@@ -338,6 +338,7 @@ class DataSamplerModule:
         f_idx = 4  # 0-8
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
         self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
+        print(f'likelihood on Fobs:{self.fobs[f_idx]}, T_0:{self.T0s[T0_idx]}, gamma:{self.gammas[g_idx]}')
 
         self.out_tag = f'{self.z_string}{train_num}_{num}'
         self.train_num = train_num
