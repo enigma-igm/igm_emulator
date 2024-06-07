@@ -333,7 +333,7 @@ class DataSamplerModule:
         print(f'Validation: {self.z_string}_param{vali_num}_{num}.p; {self.z_string}_model{vali_num}_{num}.p')
 
         # get the fixed covariance dictionary for likelihood
-        T0_idx = 8  # 0-14
+        T0_idx = 7  # 0-14
         g_idx = 4  # 0-8
         f_idx = 4  # 0-8
         like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
