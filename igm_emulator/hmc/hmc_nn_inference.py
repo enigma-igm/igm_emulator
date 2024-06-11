@@ -609,21 +609,21 @@ class NN_HMC_X:
         infer_model = self.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
         fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=5, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        fit_axis.plot(self.vbins, model_corr, c="lightgreen", ls='--', label='True Model', zorder=2, lw=1.75,
+        fit_axis.plot(self.vbins, model_corr, c="green", ls='--', label='True Model', zorder=2, lw=1.75,
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
-        fit_axis.scatter(self.vbins, mock_corr, c="green", label='Inference Mock', zorder=3, s=5)
+        fit_axis.scatter(self.vbins, mock_corr, c="k", zorder=3, s=5)
 
         fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=1,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.errorbar(self.vbins, mock_corr,
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=1, capsize=2,
-                          label='Covariance')
+                          label='Mock Data')
 
         fit_axis.text(
             0.2, 0.7,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
-            {'color': 'lightgreen', 'fontsize': 5}, transform=fit_axis.transAxes
+            {'color': 'green', 'fontsize': 5}, transform=fit_axis.transAxes
         )
 
         fit_axis.text(
