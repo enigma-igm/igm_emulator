@@ -607,12 +607,12 @@ class NN_HMC_X:
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
         max_P_model = self.get_model_nearest_fine(theta_samples[max_P_idx, :][0])
         infer_model = self.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
-        fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=3, lw=1,
+        fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=3, lw=1.75,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.plot(self.vbins, model_corr, c="green", ls='--', label='True Model', zorder=5, lw=1.75,
                       path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
         fit_axis.scatter(self.vbins, mock_corr, c="k", zorder=3, s=2)
-        fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=1,
+        fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=0.75,
                       path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.errorbar(self.vbins, mock_corr,
                           yerr=y_error,
