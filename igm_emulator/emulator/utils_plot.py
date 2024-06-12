@@ -303,14 +303,14 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     for i in range(n):
         rel_err_perc[:, i] = np.percentile(rel_err, percentiles[i], axis=1)
 
-    fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4))
+    fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(8, 4), constrained_layout=True, dpi=dpi_value)
     for i in range(n):
         ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
     ax.plot(v_bins, bias * 100, c='k', linestyle='--', linewidth=0.5, label='bias')
     ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
     ax.tick_params(labelsize=11.5)
-    ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=14)
-    ax.set_ylabel(r'Relative error Emulator(%)', fontsize=10)
+    ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=16)
+    ax.set_ylabel(r'Relative error Emulator(%)', fontsize=16)
     ax.text(0.5 ,0.7, f'z = {redshift}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
     ax.legend(fontsize=14, loc='upper right')
     fig.tight_layout()
