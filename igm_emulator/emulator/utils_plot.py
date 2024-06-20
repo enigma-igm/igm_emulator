@@ -206,7 +206,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     residual_plot = True
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     subfigs = fig2.subfigures(3, 3)
-    axes = subfigs.get_axes()
+    axes = fig2.get_axes()
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
