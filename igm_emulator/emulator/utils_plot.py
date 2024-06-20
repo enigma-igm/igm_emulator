@@ -203,6 +203,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
+    residual_plot = True
     fig2, axes = plt.subplots(3, 3,figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
@@ -223,9 +224,16 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             i = 3*row+col
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-            axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
-            axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-
+            if i == 0:
+                axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
+                axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
+                new_ax = axs2.add_axes((.1, .1, .8, .2))
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], label='Percentage Residual',c='b')
+            else:
+                axs2.plot(ax, Y_test[corr_idx[i]], c='r')
+                axs2.plot(ax, test_preds[corr_idx[i]], c='b', linestyle='--')
+                new_ax = axs2.add_axes((.1, .1, .8, .2))
+                new_ax.plot(ax, (Y_test[corr_idx[i]] - test_preds[corr_idx[i]]) / Y_test[corr_idx[i]], c='b')
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
             else:
