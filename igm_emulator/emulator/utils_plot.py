@@ -210,6 +210,14 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
     )
+    axs2_list = np.empty((3, 3), dtype=object)
+    new_ax_list = np.empty((3, 3), dtype=object)
+    for row in range(3):
+        for col in range(3):
+            axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True)
+            subfigs[row, col].subplots_adjust(hspace=0)
+            axs2_list[row, col] = axs2
+            new_ax_list[row, col] = new_ax
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
@@ -217,25 +225,29 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             i = 3 * row + col
-            axs2,new_ax =  subfigs[row, col].subplots(2,1,sharex=True)
+            axs2 = axs2_list[row, col]
+            new_ax = new_ax_list[row, col]
             if row == 2:
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
-                shared_ax = subfigs[2, col].subplots()
+                shared_ax = new_ax_list[2, col]
                 axs2.sharex(shared_ax) #[2, col]
-                axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
+                new_ax.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             if i == 0:
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-                #new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], label='Percentage Residual',c='b')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], label='Percentage Residual',c='b')
             else:
                 axs2.plot(ax, Y_test[corr_idx[i]], c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], c='b', linestyle='--')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], c='b')
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
+                new_ax.set_ylabel('[%]')
             else:
                 axs2.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
+                new_ax.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
             yticks = ticker.MaxNLocator(nbins=5)
             axs2.yaxis.set_major_locator(yticks)
 
