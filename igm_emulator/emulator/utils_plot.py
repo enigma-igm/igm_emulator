@@ -204,7 +204,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     ax = v_bins
     sample = 9  # number of functions plotted
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
-    subfigs = fig2.subfigures(3, 3,wspace=0,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
+    subfigs = fig2.subfigures(3, 3,wspace=0)#,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
