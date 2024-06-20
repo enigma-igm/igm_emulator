@@ -206,8 +206,6 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     residual_plot = True
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     subfigs = fig2.subfigures(3, 3)
-    axes = fig2.get_axes()
-    print(axes)
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
@@ -224,7 +222,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if row == 2:
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
-                axs2.sharex(axes[3 * 2 + col]) #[2, col]
+                axs2.sharex(subfigs[2, col].get_axes()) #[2, col]
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             if i == 0:
