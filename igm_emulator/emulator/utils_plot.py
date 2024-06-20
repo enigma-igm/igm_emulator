@@ -181,7 +181,7 @@ def train_overplot(preds, X, Y,  meanX,stdX, meanY, stdY, out_tag, var_tag):
     print('Train overplot saved')
     plt.show()
 
-def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, var_tag):
+def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, var_tag,residual_plot = True):
     '''
 
 
@@ -203,7 +203,6 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    residual_plot = True
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     subfigs = fig2.subfigures(3, 3,wspace=0,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
     fig2.set_constrained_layout_pads(
@@ -211,12 +210,16 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         hspace=0, wspace=0
     )
     axs2_list = np.empty((3, 3), dtype=object)
-    new_ax_list = np.empty((3, 3), dtype=object)
-    for row in range(3):
-        for col in range(3):
-            axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
-            axs2_list[row, col] = axs2
-            new_ax_list[row, col] = new_ax
+    if residual_plot:
+        new_ax_list = np.empty((3, 3), dtype=object)
+        for row in range(3):
+            for col in range(3):
+                axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
+                axs2_list[row, col] = axs2
+                new_ax_list[row, col] = new_ax
+    else:
+       for a in fig2.get_axes():
+            axs2_list[row, col] = a
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
@@ -225,31 +228,43 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         for col in range(3):
             i = 3 * row + col
             axs2 = axs2_list[row, col]
-            new_ax = new_ax_list[row, col]
+            if residual_plot:
+                new_ax = new_ax_list[row, col]
             axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
             if row == 2:
-                new_ax.set_xlabel(r'Velocity [$km s^{-1}$]')
+                if residual_plot:
+                    new_ax.set_xlabel(r'Velocity [$km s^{-1}$]')
+                else:
+                    axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
-                shared_ax = new_ax_list[2, col]
+                if residual_plot:
+                    shared_ax = new_ax_list[2, col]
+                    new_ax.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
+                else:
+                    shared_ax = axs2_list[2, col]
+                    axs2.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
                 axs2.sharex(shared_ax) #[2, col]
-                new_ax.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, label='Percentage Residual',alpha = 0.5, c='k')
+                if residual_plot:
+                    new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, label='Percentage Residual',alpha = 0.5, c='k')
             else:
                 axs2.plot(ax, Y_test[corr_idx[i]], c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, alpha = 0.5, c='k')
+                if residual_plot:
+                    new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, alpha = 0.5, c='k')
             new_ax.set_ylim(-1, 1)
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
-                new_ax.set_ylabel('[%]')
+                if residual_plot:
+                    new_ax.set_ylabel('[%]')
             else:
                 axs2.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
-                new_ax.tick_params(axis='y', which='major', direction='in', pad=-20, length=2)
+                if residual_plot:
+                    new_ax.tick_params(axis='y', which='major', direction='in', pad=-20, length=2)
             #yticks = ticker.MaxNLocator(nbins=5)
             #axs2.yaxis.set_major_locator(yticks)
 
@@ -257,7 +272,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.0f},'
                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
-            new_ax.legend(fontsize=7, loc='lower right')
+            if residual_plot:
+                new_ax.legend(fontsize=7, loc='lower right')
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
