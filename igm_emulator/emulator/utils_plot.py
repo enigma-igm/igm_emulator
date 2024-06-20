@@ -237,11 +237,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if i == 0:
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], label='Percentage Residual',c='b')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, label='Percentage Residual',c='b')
             else:
                 axs2.plot(ax, Y_test[corr_idx[i]], c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], c='b')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, c='b')
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 new_ax.set_ylabel('[%]')
