@@ -599,54 +599,54 @@ class NN_HMC_X:
         for idx, ind in enumerate(inds):
             sample = theta_samples[ind]
             model_plot = self.get_model_nearest_fine(sample)
-            #if idx == 0:
-                #fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
-            #else:
-                #fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
+            if idx == 0:
+                fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
+            else:
+                fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
         max_P = max(lnP)
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
         max_P_model = self.get_model_nearest_fine(theta_samples[max_P_idx, :][0])
         infer_model = self.get_model_nearest_fine([f_mcmc[0], t_mcmc[0], g_mcmc[0]])
-        #fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=3, lw=1.75,
-        #              path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
-        #fit_axis.plot(self.vbins, model_corr, c="green", ls='--', label='True Model', zorder=5, lw=1.75,
-        #              path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
+        fit_axis.plot(self.vbins, infer_model, c="r", label='Inferred Model', zorder=3, lw=1.75,
+                      path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+        fit_axis.plot(self.vbins, model_corr, c="green", ls='--', label='True Model', zorder=5, lw=1.75,
+                      path_effects=[pe.Stroke(linewidth=2, foreground='k'), pe.Normal()])
         fit_axis.scatter(self.vbins, mock_corr, c="k", zorder=3, s=2)
-        #fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=0.75,
-        #              path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
+        fit_axis.plot(self.vbins, max_P_model, c="gold", label='Max Probability Model', zorder=4, lw=0.75,
+                      path_effects=[pe.Stroke(linewidth=1.25, foreground='k'), pe.Normal()])
         fit_axis.errorbar(self.vbins, mock_corr,
                           yerr=y_error,
                           color='k', marker='.', linestyle=' ', zorder=2, capsize=2,
                           label='Mock Data')
 
-        #fit_axis.text(
-        #    0.2, 0.7,
-        #    'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
-        #    {'color': 'green', 'fontsize': 5}, transform=fit_axis.transAxes
-        #)
-        #
-        #fit_axis.text(
-        #    0.4, 0.65,
-        #    'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
-        #    f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
-        #    f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
-        #    {'color': 'r', 'fontsize': 5}, transform=fit_axis.transAxes
-        #)
-        #
-        #fit_axis.text(
-        #    0.6, 0.7,
-        #    tabulate([[r' $R_2$',
-        #               np.round(r2_score(model_corr, infer_model), decimals=4)],
-        #              ['1-MAPE',
-        #               np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
-        #              ],
-        #             headers=['Matrics', 'Values'], tablefmt='orgtbl'),
-        #    {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
-        #)
+        fit_axis.text(
+            0.2, 0.7,
+            'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
+            {'color': 'green', 'fontsize': 5}, transform=fit_axis.transAxes
+        )
+
+        fit_axis.text(
+            0.4, 0.65,
+            'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
+            f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
+            f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
+            {'color': 'r', 'fontsize': 5}, transform=fit_axis.transAxes
+        )
+
+        fit_axis.text(
+            0.6, 0.7,
+            tabulate([[r' $R_2$',
+                       np.round(r2_score(model_corr, infer_model), decimals=4)],
+                      ['1-MAPE',
+                       np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
+                      ],
+                     headers=['Matrics', 'Values'], tablefmt='orgtbl'),
+            {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
+        )
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel(r"$\xi_F$")
-        #fit_axis.legend()
+        fit_axis.legend()
         if save_bool:
             if os.path.exists(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/') is False:
                 os.makedirs(f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/{z_string}/hmc/')
