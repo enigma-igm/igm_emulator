@@ -228,10 +228,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2 = axs2_list[row, col]
             new_ax = new_ax_list[row, col]
             if row == 2:
-                axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
+                new_ax.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
                 shared_ax = new_ax_list[2, col]
                 axs2.sharex(shared_ax) #[2, col]
+                axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
                 new_ax.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             if i == 0:
