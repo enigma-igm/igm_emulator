@@ -223,7 +223,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if row == 2:
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
-                axs2.sharex(axes[2, col])
+                axs2.sharex(axes[3 * 2 + col]) #[2, col]
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             if i == 0:
