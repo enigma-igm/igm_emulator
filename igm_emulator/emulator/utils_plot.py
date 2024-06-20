@@ -204,8 +204,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     ax = v_bins
     sample = 9  # number of functions plotted
     residual_plot = True
-    fig2, axes = plt.subplots(3, 3,figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
+    fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * .65 * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
     subfigs = fig2.subfigures(3, 3)
+    axes = subfigs.get_axes()
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
@@ -217,8 +218,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             i = 3 * row + col
-            axsRight = subfigs[row, col].subplots(2, 1, sharex=True)
-            axs2 = axsRight[0]
+            axs2 =  subfigs[row, col].add_axes([0, 0, 2, 2])
+            new_ax =  subfigs[row, col].add_axes([0, 1, 2, 2])
             if row == 2:
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
