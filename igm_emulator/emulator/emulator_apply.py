@@ -68,8 +68,8 @@ if __name__ == '__main__':
     in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
 
     ## Don't have to retrain each time -- if want training plots then fine
-    best_params, _ = trainer.train_loop(True)
-    #best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
+    #best_params, _ = trainer.train_loop(True)
+    best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
 
     print(f'Best Trainer:')
     for key, value in hparams.items():
