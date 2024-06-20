@@ -82,18 +82,18 @@ if __name__ == '__main__':
                   trainer.var_tag)
 
     ### Error propagation
-
+    '''
     ## Load the NN error covariance and mean, while save all the sampels' errors
     covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
-    '''
+    
     dill.dump(covar_nn_test, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_covar_nn.p',
             'wb'))
     dill.dump(err_nn_test, open(
             f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/{out_tag}_{trainer.var_tag}_err_nn.p',
             'wb'))
-    '''
+   
 
     neg_count_test = 0
     for i in covar_nn_test.flatten():
@@ -137,3 +137,4 @@ if __name__ == '__main__':
     plt.show()
     plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
     print('emulator_apply_test.png saved')
+    '''
