@@ -218,7 +218,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         for col in range(3):
             i = 3 * row + col
             if row == 2:
-                axsRight = subfigs[i].subplots(2, 1, sharex=True)
+                axsRight = subfigs[row, col].subplots(2, 1, sharex=True)
                 axs2 = axes[row, col]
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
