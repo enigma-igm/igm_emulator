@@ -205,7 +205,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     sample = 9  # number of functions plotted
     residual_plot = True
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
-    subfigs = fig2.subfigures(3, 3,wspace=0,width_ratios=[1,1,1])
+    subfigs = fig2.subfigures(3, 3,wspace=0,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
@@ -238,17 +238,17 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             if i == 0:
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, label='Percentage Residual',c='b')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, label='Percentage Residual',c='b',ylim=(-1,1))
             else:
                 axs2.plot(ax, Y_test[corr_idx[i]], c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], c='b', linestyle='--')
-                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, c='b')
+                new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]]*100, c='b',ylim=(-1,1))
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 new_ax.set_ylabel('[%]')
             else:
                 axs2.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
-                new_ax.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
+                new_ax.tick_params(axis='y', which='major', direction='in', pad=-20, length=2)
             #yticks = ticker.MaxNLocator(nbins=5)
             #axs2.yaxis.set_major_locator(yticks)
 
