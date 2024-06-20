@@ -214,8 +214,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     new_ax_list = np.empty((3, 3), dtype=object)
     for row in range(3):
         for col in range(3):
-            axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True)
-            subfigs[row, col].subplots_adjust(hspace=0)
+            fig, (axs2, new_ax) = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True)
+            fig.subplots_adjust(hspace=0)
             axs2_list[row, col] = axs2
             new_ax_list[row, col] = new_ax
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
@@ -227,12 +227,12 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             i = 3 * row + col
             axs2 = axs2_list[row, col]
             new_ax = new_ax_list[row, col]
+            axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
             if row == 2:
                 new_ax.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
                 shared_ax = new_ax_list[2, col]
                 axs2.sharex(shared_ax) #[2, col]
-                axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
                 new_ax.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             if i == 0:
