@@ -599,9 +599,9 @@ class NN_HMC_X:
         for idx, ind in enumerate(inds):
             sample = theta_samples[ind]
             model_plot = self.get_model_nearest_fine(sample)
-            if idx == 0:
+            #if idx == 0:
                 #fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1, label='Posterior Draws')
-            else:
+            #else:
                 #fit_axis.plot(self.vbins, model_plot, c="b", lw=.7, alpha=0.12, zorder=1)
         max_P = max(lnP)
         max_P_idx = [index for index, item in enumerate(lnP) if item == max_P]
