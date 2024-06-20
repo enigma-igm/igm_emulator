@@ -217,12 +217,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             i = 3 * row + col
+            axsRight = subfigs[row, col].subplots(2, 1, sharex=True)
+            axs2 = axsRight[0]
             if row == 2:
-                axsRight = subfigs[row, col].subplots(2, 1, sharex=True)
-                axs2 = axes[row, col]
                 axs2.set_xlabel(r'Velocity [$km s^{-1}$]')
             else:
-                axs2 = axes[row, col]
                 axs2.sharex(axes[2, col])
                 axs2.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
