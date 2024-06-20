@@ -234,6 +234,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.sharex(shared_ax) #[2, col]
                 new_ax.tick_params(axis='x', which='both',bottom=False, labelbottom=False)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+            axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
@@ -248,14 +249,14 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             else:
                 axs2.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
                 new_ax.tick_params(axis='y', which='both', direction='in', pad=-20, length=2)
-            yticks = ticker.MaxNLocator(nbins=5)
-            axs2.yaxis.set_major_locator(yticks)
+            #yticks = ticker.MaxNLocator(nbins=5)
+            #axs2.yaxis.set_major_locator(yticks)
 
             axs2.text(0.2, 0.4,'$<F>$='f'{X_test[corr_idx[i], 0]:.4f},'
                     r'$T_0$='f'{X_test[corr_idx[i], 1]:.0f},'
                     r'$\gamma$='f'{X_test[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
-
+            new_ax.legend(fontsize=7, loc='lower right')
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
