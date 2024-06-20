@@ -228,7 +228,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.plot(ax, Y_test[corr_idx[i]], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
                 #new_ax = axs2.add_axes((.1, .1, .8, .2))
-                new_ax = plt.subplot(2,1,sharex=axs2)
+                new_ax = plt.subplot(2,1,2,sharex=axs2)
                 new_ax.plot(ax, (Y_test[corr_idx[i]]-test_preds[corr_idx[i]])/Y_test[corr_idx[i]], label='Percentage Residual',c='b')
             else:
                 axs2.plot(ax, Y_test[corr_idx[i]], c='r')
