@@ -633,16 +633,16 @@ class NN_HMC_X:
             {'color': 'r', 'fontsize': 5}, transform=fit_axis.transAxes
         )
 
-        fit_axis.text(
-            0.6, 0.7,
-            tabulate([[r' $R_2$',
-                       np.round(r2_score(model_corr, infer_model), decimals=4)],
-                      ['1-MAPE',
-                       np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
-                      ],
-                     headers=['Matrics', 'Values'], tablefmt='orgtbl'),
-            {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
-        )
+        #fit_axis.text(
+        #    0.6, 0.7,
+        #    tabulate([[r' $R_2$',
+        #               np.round(r2_score(model_corr, infer_model), decimals=4)],
+        #              ['1-MAPE',
+        #               np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
+        #              ],
+        #             headers=['Matrics', 'Values'], tablefmt='orgtbl'),
+        #    {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes
+        #)
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
         fit_axis.set_ylabel(r"$\xi_F$")
