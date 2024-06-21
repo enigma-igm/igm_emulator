@@ -232,8 +232,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             i = 3 * row + col
             main_ax = fig2.add_subplot(main_grid[row, col])
             nested_grid = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=main_grid[row, col], height_ratios=[0.8, 0.2])
-            axs2 = fig.add_subplot(nested_grid[0, 0])
-            new_ax = fig.add_subplot(nested_grid[1, 0],sharex=axs2)
+            axs2 = fig2.add_subplot(nested_grid[0, 0])
+            new_ax = fig2.add_subplot(nested_grid[1, 0],sharex=axs2)
             #axs2 = axs2_list[row, col]
             #new_ax = new_ax_list[row, col]
             axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
