@@ -230,8 +230,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     random_test_preds = test_preds[corr_idx, :]
     random_Y_test = Y_test[corr_idx, :]
     random_X_test = X_test[corr_idx, :]
+
     # Get the indices that would sort X_test[:,0]
-    sort_indices = np.argsort(random_X_test[corr_idx, 0])
+    sort_indices = np.argsort(random_X_test[:, 0])
 
     # Use these indices to sort X_test, Y_test, and test_preds
     X_test_sorted = random_X_test[sort_indices]
