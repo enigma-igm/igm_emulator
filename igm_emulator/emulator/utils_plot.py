@@ -263,7 +263,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                     axs2.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
                 shared_ax_y = axs2_list[row, 0]
                 axs2.sharex(shared_ax_x) #[2, col]
-                axs2.sharex(shared_ax_y)
+                axs2.sharey(shared_ax_y)
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
