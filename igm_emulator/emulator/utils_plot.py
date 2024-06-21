@@ -214,7 +214,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         new_ax_list = np.empty((3, 3), dtype=object)
         for row in range(3):
             for col in range(3):
-                axs2, new_ax = axes[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
+                axs2 = ax.inset_axes([0, 0.2, 1, 0.8], sharex=axes[row, col])  # Top subplot shares x-axis with parent
+                new_ax = ax.inset_axes([0, 0, 1, 0.2], sharex=axes[row, col])
+                #axs2, new_ax = subfig.subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
                 axs2_list[row, col] = axs2
                 new_ax_list[row, col] = new_ax
     else:
