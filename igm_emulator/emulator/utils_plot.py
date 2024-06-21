@@ -205,11 +205,22 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     ax = v_bins
     sample = 9  # number of functions plotted
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
-    main_grid = gridspec.GridSpec(3, 3, figure=fig2)
+    subfigs = fig2.subfigures(3, 3,wspace=0)#,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
     )
+    axs2_list = np.empty((3, 3), dtype=object)
+    if residual_plot:
+        new_ax_list = np.empty((3, 3), dtype=object)
+        for row in range(3):
+            for col in range(3):
+                axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
+                axs2_list[row, col] = axs2
+                new_ax_list[row, col] = new_ax
+    else:
+       for a in fig2.get_axes():
+            axs2_list[row, col] = a
 
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
@@ -230,12 +241,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     for row in range(3):
         for col in range(3):
             i = 3 * row + col
-            main_ax = fig2.add_subplot(main_grid[row, col])
-            nested_grid = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=main_grid[row, col], height_ratios=[0.8, 0.2])
-            axs2 = fig2.add_subplot(nested_grid[0, 0])
-            new_ax = fig2.add_subplot(nested_grid[1, 0],sharex=axs2)
-            #axs2 = axs2_list[row, col]
-            #new_ax = new_ax_list[row, col]
+            axs2 = axs2_list[row, col]
+            if residual_plot:
+                new_ax = new_ax_list[row, col]
             axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
             if row == 2:
                 if residual_plot:
@@ -245,7 +253,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             else:
                 if residual_plot:
                     shared_ax_x = new_ax_list[2, col]
-                    shared_new_ax_y = new_ax_list[row, 0]
+                    shared_new_ax_y =  new_ax_list[row, 0]
                     new_ax.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
                     new_ax.sharey(shared_new_ax_y)
                 else:
