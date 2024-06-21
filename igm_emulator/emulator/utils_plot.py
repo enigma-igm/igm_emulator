@@ -204,8 +204,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     '''
     ax = v_bins
     sample = 9  # number of functions plotted
-    fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
-    subfigs = fig2.subfigures(3, 3,wspace=0)#,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
+    fig2, axes = plt.subplots(3,3,figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value,sharey='row')
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
@@ -215,7 +214,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
         new_ax_list = np.empty((3, 3), dtype=object)
         for row in range(3):
             for col in range(3):
-                axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
+                axs2, new_ax = axes[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
                 axs2_list[row, col] = axs2
                 new_ax_list[row, col] = new_ax
     else:
@@ -254,22 +253,20 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             else:
                 if residual_plot:
                     shared_ax_x = new_ax_list[2, col]
-                    shared_new_ax_y =  new_ax_list[row, 0]
                     new_ax.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
-                    new_ax.sharey(shared_new_ax_y)
                 else:
                     shared_ax_x = axs2_list[2, col]
                     axs2.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
-                shared_ax_y = axs2_list[row, 0]
                 axs2.sharex(shared_ax_x) #[2, col]
-                axs2.sharey(shared_ax_y) #[row, 0]
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
                 axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r')
                 axs2.plot(ax, test_preds_sorted[i], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
+                axs2.legend(fontsize=7, loc='upper right')
                 if residual_plot:
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, label='Percentage Residual',alpha = 0.5, c='k')
+                    new_ax.legend(fontsize=7, loc='lower right')
             else:
                 axs2.plot(ax, Y_test_sorted[i], c='r')
                 axs2.plot(ax, test_preds_sorted[i], c='b', linestyle='--')
@@ -290,9 +287,6 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.text(0.2, 0.4,'$<F>$='f'{X_test_sorted[i, 0]:.4f},'
                     r'$T_0$='f'{X_test_sorted[i, 1]:.0f},'
                     r'$\gamma$='f'{X_test_sorted[i, 2]:.2f}', transform=axs2.transAxes,fontsize=7)
-            axs2.legend(fontsize=7, loc='upper right')
-            if residual_plot:
-                new_ax.legend(fontsize=7, loc='lower right')
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
     print('Test overplot saved')
     plt.show()
