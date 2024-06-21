@@ -25,6 +25,26 @@ from qso_fitting.analysis.inference_test import run_inference_test, compute_impo
 import corner
 from progressbar import ProgressBar
 
+x_size = 3.5
+dpi_value = 200
+
+plt_params = {'legend.fontsize': 7,
+              'legend.frameon': False,
+              'axes.labelsize': 8,
+              'axes.titlesize': 8,
+              'figure.titlesize': 7,
+              'xtick.labelsize': 7,
+              'ytick.labelsize': 7,
+              'lines.linewidth': .7,
+              'lines.markersize': 2.3,
+              'lines.markeredgewidth': .9,
+              'errorbar.capsize': 2,
+              'font.family': 'serif',
+              # 'text.usetex': True,
+              'xtick.minor.visible': True,
+              }
+plt.rcParams.update(plt_params)
+
 class INFERENCE_TEST():
     '''
     A class to run inference test in HMC for NGP and Emulator models
