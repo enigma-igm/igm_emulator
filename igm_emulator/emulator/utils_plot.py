@@ -216,7 +216,11 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             for col in range(3):
                 axs2 = axes[row, col].inset_axes([0, 0.2, 1, 0.8])  # Top subplot shares x-axis with parent
                 new_ax = axes[row, col].inset_axes([0, 0, 1, 0.2], sharex=axs2)
-                #axs2, new_ax = subfig.subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
+                axs2.set_xticks([])
+                axs2.set_yticks([])
+                new_ax.set_xticks([])
+                new_ax.set_yticks([])
+
                 axs2_list[row, col] = axs2
                 new_ax_list[row, col] = new_ax
     else:
