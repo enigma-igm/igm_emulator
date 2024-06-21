@@ -9,6 +9,7 @@ import dill
 import h5py
 import os
 from matplotlib import cm
+import matplotlib.gridspec as gridspec
 import dill
 
 '''
@@ -204,41 +205,37 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     ax = v_bins
     sample = 9  # number of functions plotted
     fig2 = plt.figure(figsize=(x_size * 3.5 * 0.8, x_size * 2 * 0.8), constrained_layout=True, dpi=dpi_value)
-    subfigs = fig2.subfigures(3, 3,wspace=0)#,width_ratios=[1.2,1,1],height_ratios=[1,1,1.2])
+    main_grid = gridspec.GridSpec(3, 3, figure=fig2)
     fig2.set_constrained_layout_pads(
         w_pad=.025, h_pad=.025,
         hspace=0, wspace=0
     )
-    axs2_list = np.empty((3, 3), dtype=object)
-    if residual_plot:
-        new_ax_list = np.empty((3, 3), dtype=object)
-        for row in range(3):
-            for col in range(3):
-                axs2, new_ax = subfigs[row, col].subplots(2, 1, height_ratios=[0.8,0.2], sharex=True,gridspec_kw=dict(hspace=0))
-                axs2_list[row, col] = axs2
-                new_ax_list[row, col] = new_ax
-    else:
-       for a in fig2.get_axes():
-            axs2_list[row, col] = a
+
     corr_idx = np.random.randint(0, Y_test.shape[0], sample)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
 
+    random_test_preds = test_preds[corr_idx, :]
+    random_Y_test = Y_test[corr_idx, :]
+    random_X_test = X_test[corr_idx, :]
     # Get the indices that would sort X_test[:,0]
-    sort_indices = np.argsort(X_test[:, 0])
+    sort_indices = np.argsort(random_X_test[corr_idx, 0])
 
     # Use these indices to sort X_test, Y_test, and test_preds
-    X_test_sorted = X_test[sort_indices]
-    Y_test_sorted = Y_test[sort_indices]
-    test_preds_sorted = test_preds[sort_indices]
+    X_test_sorted = random_X_test[sort_indices]
+    Y_test_sorted = random_Y_test[sort_indices]
+    test_preds_sorted = random_test_preds[sort_indices]
 
     for row in range(3):
         for col in range(3):
             i = 3 * row + col
-            axs2 = axs2_list[row, col]
-            if residual_plot:
-                new_ax = new_ax_list[row, col]
+            main_ax = fig2.add_subplot(main_grid[row, col])
+            nested_grid = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=main_grid[row, col], height_ratios=[0.8, 0.2])
+            axs2 = fig.add_subplot(nested_grid[0, 0])
+            new_ax = fig.add_subplot(nested_grid[1, 0],sharex=axs2)
+            #axs2 = axs2_list[row, col]
+            #new_ax = new_ax_list[row, col]
             axs2.tick_params(axis='x', which='both', labelbottom=False, bottom=True, direction='in')
             if row == 2:
                 if residual_plot:
@@ -260,30 +257,30 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
-                axs2.plot(ax, Y_test_sorted[corr_idx[i]], label=r'$\xi_F$', c='r')
-                axs2.plot(ax, test_preds_sorted[corr_idx[i]], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
+                axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r')
+                axs2.plot(ax, test_preds_sorted[i], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
                 if residual_plot:
-                    new_ax.plot(ax, (Y_test_sorted[corr_idx[i]]-test_preds_sorted[corr_idx[i]])/Y_test_sorted[corr_idx[i]]*100, label='Percentage Residual',alpha = 0.5, c='k')
+                    new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, label='Percentage Residual',alpha = 0.5, c='k')
             else:
-                axs2.plot(ax, Y_test_sorted[corr_idx[i]], c='r')
-                axs2.plot(ax, test_preds_sorted[corr_idx[i]], c='b', linestyle='--')
+                axs2.plot(ax, Y_test_sorted[i], c='r')
+                axs2.plot(ax, test_preds_sorted[i], c='b', linestyle='--')
                 if residual_plot:
-                    new_ax.plot(ax, (Y_test_sorted[corr_idx[i]]-test_preds_sorted[corr_idx[i]])/Y_test_sorted[corr_idx[i]]*100, alpha = 0.5, c='k')
+                    new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, alpha = 0.5, c='k')
             new_ax.set_ylim(-1, 1)
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 if residual_plot:
                     new_ax.set_ylabel('[%]')
             else:
-                axs2.tick_params(axis='y', which='both', direction='in', length=2, labelleft=False)
+                axs2.tick_params(axis='y', which='both', direction='in',labelleft=False)
                 if residual_plot:
-                    new_ax.tick_params(axis='y', which='both', direction='in', length=2, labelleft=False)
+                    new_ax.tick_params(axis='y', which='both', direction='in', labelleft=False)
             #yticks = ticker.MaxNLocator(nbins=5)
             #axs2.yaxis.set_major_locator(yticks)
 
-            axs2.text(0.2, 0.4,'$<F>$='f'{X_test_sorted[corr_idx[i], 0]:.4f},'
-                    r'$T_0$='f'{X_test_sorted[corr_idx[i], 1]:.0f},'
-                    r'$\gamma$='f'{X_test_sorted[corr_idx[i], 2]:.2f}', transform=axs2.transAxes,fontsize=7)
+            axs2.text(0.2, 0.4,'$<F>$='f'{X_test_sorted[i, 0]:.4f},'
+                    r'$T_0$='f'{X_test_sorted[i, 1]:.0f},'
+                    r'$\gamma$='f'{X_test_sorted[i, 2]:.2f}', transform=axs2.transAxes,fontsize=7)
             axs2.legend(fontsize=7, loc='upper right')
             if residual_plot:
                 new_ax.legend(fontsize=7, loc='lower right')
