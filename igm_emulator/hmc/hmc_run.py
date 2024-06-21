@@ -98,7 +98,7 @@ if __name__ == '__main__':
                                 dense_mass=True,
                                 max_tree_depth= 10,
                                 num_warmup=1000,
-                                num_samples=1000,
+                                num_samples=2000,
                                 num_chains=4,
                                 covar_nn=covar_nn,
                                 err_nn=err_nn,
