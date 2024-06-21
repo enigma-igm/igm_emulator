@@ -102,7 +102,7 @@ if __name__ == '__main__':
                                 num_chains=4,
                                 covar_nn=covar_nn,
                                 err_nn=err_nn,
-                                nn_err_prop = False)                    #add '_nn_prop_False' to save_str
+                                nn_err_prop = False)         #add '_nn_prop_False' to save_str
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
@@ -145,7 +145,7 @@ if __name__ == '__main__':
              hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mean_model_nn_prop_False')
 
     corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                    save_str=f'central_mean_model', save_bool=True)
+                                    save_str=f'central_mean_model_nn_prop_False', save_bool=True)
     fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                theta_true=theta_true, model_corr=mean_flux,
                                mock_corr=flux,
