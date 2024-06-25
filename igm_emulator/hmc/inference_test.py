@@ -438,7 +438,7 @@ class INFERENCE_TEST():
 '''
 ##forward mocks -- emulator model
 '''
-hmc_infer = INFERENCE_TEST(gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True,n_inference=100)#,key_sample=42,key_hmc=66)
+#hmc_infer = INFERENCE_TEST(gaussian_bool=False,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True,n_inference=100)#,key_sample=42,key_hmc=66)
 #hmc_infer = INFERENCE_TEST(gaussian_bool=True,ngp_bool=False,emu_test_bool=False,nn_err_prop_bool=True, n_inference=100)#,key_sample=42,key_hmc=66)
 
 '''
@@ -449,6 +449,6 @@ hmc_infer = INFERENCE_TEST(gaussian_bool=False,ngp_bool=False,emu_test_bool=Fals
 #hmc_infer = INFERENCE_TEST(False,True,False,key_sample=42,key_hmc=66)
 
 
-hmc_infer.mocks_sampling()
-hmc_infer.inference_test_run()
-hmc_infer.coverage_plot()
+#hmc_infer.mocks_sampling()
+#hmc_infer.inference_test_run()
+#hmc_infer.coverage_plot()
