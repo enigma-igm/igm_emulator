@@ -16,7 +16,7 @@ if __name__ != "__main__":
     redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
-
+    redshift, small_scale, n_testing = main()
     emulator_train = input('Re-train the best-hparam emulator with plots (Y/N)?') == 'Y'
 
     if emulator_train:
