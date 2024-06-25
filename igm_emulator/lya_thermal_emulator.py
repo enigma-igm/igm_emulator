@@ -7,7 +7,6 @@ def main():
     # Convert the input to numpy.float64
     try:
         redshift_float64 = np.float64(redshift)
-        print(f"The value you entered is {redshift_float64} with type {type(redshift_float64)}")
     except ValueError:
         print("Invalid input. Please enter a valid redshift.")
     return redshift_float64, small_scale, n_testing
