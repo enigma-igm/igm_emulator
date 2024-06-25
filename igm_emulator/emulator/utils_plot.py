@@ -7,16 +7,17 @@ import jax
 import os
 import dill
 import h5py
-import os
 from matplotlib import cm
 import matplotlib.gridspec as gridspec
 import dill
+import sys
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator')
+from lya_thermal_emulator import redshift
 
 '''
 Visualization of hyperparameters
 '''
 
-redshift = 5.7
 zs = np.array([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0])
 z_idx = np.argmin(np.abs(zs - redshift))
 z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']

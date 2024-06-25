@@ -1,14 +1,11 @@
 def main():
-    Redshift = input("Give me a Boolean: ")
-    String = input("Give me a string: ")
-    Number = int(input("Give me a number: "))
+    redshift = input("Emulate at Redshift ([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]): ")
+    small_scale = input("Less velocity bins of Ly-a forest ([True, False]): ")
+    n_testing = int(input("Extra testing data number: "))
 
-    if Boolean == "True":
-        print('"{s}"\n{s}'.format(s=String))
-    try:
-        print('{}\n{}'.format(int(Number)))
-    except ValueError as err:
-        print('Error you did not give a number: {}'.format(err))
+    return redshift, small_scale, n_testing
 
-if __name__ == "__main__":
-    main()
+redshift, small_scale, n_testing = main()
+
+#if __name__ == "__main__":
+
