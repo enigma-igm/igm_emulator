@@ -1,7 +1,5 @@
 import numpy as np
 import subprocess
-from igm_emulator.hmc.inference_test import INFERENCE_TEST
-
 def main():
     redshift = input("Emulate at Redshift ([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]): ")
     small_scale = input("Less velocity bins of Ly-a forest ([True, False]): ")
@@ -17,6 +15,8 @@ def main():
 redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
+    from igm_emulator.hmc.inference_test import INFERENCE_TEST
+
     emulator_train = input('Re-train the best-hparam emulator with plots (Y/N)?') == 'Y'
     inf_model_values = input('Run HMC at central models/mocks (Y/N)?') == 'Y'
     inf_test_run = input('Start inference test (Y/N)?') == 'Y'
