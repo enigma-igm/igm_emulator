@@ -223,7 +223,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
        for a in fig2.get_axes():
             axs2_list[row, col] = a
 
-    corr_idx = np.random.randint(0, Y_test.shape[0], sample)
+    corr_idx = np.random.choice(np.arange(Y_test.shape[0]), size=9, replace=False)
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
