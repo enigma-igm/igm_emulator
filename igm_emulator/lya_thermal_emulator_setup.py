@@ -16,10 +16,10 @@ if __name__ != "__main__":
     redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
-    redshift, small_scale, n_testing = main()
+
     emulator_train = input('Re-train the best-hparam emulator with plots (Y/N)?') == 'Y'
 
     if emulator_train:
-        print(f"Start re-training emulator at redshift {redshift}...")
+        print(f"Start re-training emulator...")
         # Use subprocess to run 'python3 hparam_tuning'
         subprocess.run(['python3', 'emulator/emulator_apply.py'])
