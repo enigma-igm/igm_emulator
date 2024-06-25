@@ -12,7 +12,8 @@ def main():
         print("Invalid input. Please enter a valid redshift.")
     return redshift_float64, small_scale, n_testing
 
-redshift, small_scale, n_testing = main()
+if __name__ != "__main__":
+    redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
 
