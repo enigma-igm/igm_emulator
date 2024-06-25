@@ -68,8 +68,8 @@ if __name__ == '__main__':
     in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
 
     ## Don't have to retrain each time -- if want training plots then fine
-    #best_params, _ = trainer.train_loop(True)
-    best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
+    best_params, _ = trainer.train_loop(True)
+    #best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
 
     print(f'Best Trainer:')
     for key, value in hparams.items():
@@ -78,8 +78,8 @@ if __name__ == '__main__':
 
     ## Test overplot (including err prop points) without retraining
     test_preds = trainer.custom_forward.apply(best_params, trainer.X_test)
-    test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
-                  trainer.var_tag)
+    #test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
+                  #trainer.var_tag)
 
     ### Error propagation
     '''
