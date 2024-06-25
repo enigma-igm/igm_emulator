@@ -4,7 +4,7 @@ from optuna.samplers import TPESampler
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator')
-from lya_thermal_emulator import redshift, small_scale, n_testing
+from lya_thermal_emulator import main
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from emulator_trainer import TrainerModule
@@ -22,6 +22,7 @@ config.update("jax_enable_x64", True)
 
 
 # Load the data
+redshift, small_scale, n_testing = main()
 DataLoader = DataSamplerModule(redshift=redshift, small_bin_bool=small_scale,n_f=4, n_t=7, n_g=4, n_testing=n_testing, seed=11, plot_bool=False)   #total_data = 112
 X_og, Y_og, X_test_og, Y_test_og, X_vali_og, Y_vali_og, like_dict = DataLoader.data_sampler()
 out_tag = DataLoader.out_tag
