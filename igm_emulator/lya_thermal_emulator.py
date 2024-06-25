@@ -12,6 +12,7 @@ def main():
         print("Invalid input. Please enter a valid redshift.")
     return redshift_float64, small_scale, n_testing
 
+redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
     from igm_emulator.hmc.inference_test import INFERENCE_TEST
