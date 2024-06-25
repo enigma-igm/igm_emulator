@@ -82,7 +82,7 @@ if __name__ == '__main__':
                   #trainer.var_tag)
 
     ### Error propagation
-    '''
+
     ## Load the NN error covariance and mean, while save all the sampels' errors
     covar_nn_test, err_nn_test, delta_v_test = trainer.nn_error_propagation(X_test_og,Y_test_og, save=True, err_vali_num = DataLoader.test_num)
     covar_data = trainer.like_dict['covariance']
@@ -115,26 +115,3 @@ if __name__ == '__main__':
     plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
 
-
-
-    ##Plot test overplot for sanity check if apply correcly
-
-    test_preds = nn_emulator(best_params, X_test_og)
-    corr_idx = np.random.randint(0, Y_test_og.shape[0], 10)
-    difference = np.subtract(test_preds,Y_test_og)
-    rel_diff = np.divide(difference, Y_test_og)
-    plt.figure(figsize=(15, 4))
-    ax1 = plt.subplot2grid((1, 2), (0, 0))
-    ax2 = plt.subplot2grid((1, 2), (0, 1))
-    for i in range(10):
-        ax1.plot(v_bins, test_preds[corr_idx[i]], label=f'Emulated {i}:' r'$<F>$='f'{X_test_og[corr_idx[i], 0]:.2f},'
-                                                     r'$T_0$='f'{X_test_og[corr_idx[i], 1]:.2f},'
-                                                     r'$\gamma$='f'{X_test_og[corr_idx[i], 2]:.2f}', c=f'C{i}', alpha=0.3)
-        ax1.plot(v_bins, Y_test_og[corr_idx[i]], label=f'Exact {i}', c=f'C{i}', linestyle='--')
-        ax2.plot(np.array(100 * difference[i, :] / Y_test_og[i, :]).T, color='b', alpha=0.1)
-    plt.title(f'mean: {np.mean(rel_diff) * 100:.3f}%; std error: {np.std(rel_diff) * 100:.3f}%')
-    plt.legend()
-    plt.show()
-    plt.savefig(os.path.join(dir_exp,'emulator_apply_test.png'))
-    print('emulator_apply_test.png saved')
-    '''
