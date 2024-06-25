@@ -12,7 +12,7 @@ import matplotlib.gridspec as gridspec
 import dill
 import sys
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator')
-from lya_thermal_emulator import redshift
+from lya_thermal_emulator_setup import redshift
 
 '''
 Visualization of hyperparameters

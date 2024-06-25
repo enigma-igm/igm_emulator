@@ -4,7 +4,7 @@ from optuna.samplers import TPESampler
 import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator')
-from lya_thermal_emulator import redshift, small_scale, n_testing
+from lya_thermal_emulator_setup import redshift, small_scale, n_testing
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 import haiku as hk
 from emulator_trainer import TrainerModule
