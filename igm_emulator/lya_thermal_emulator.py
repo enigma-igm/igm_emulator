@@ -32,7 +32,7 @@ if __name__ == "__main__":
         subprocess.run(['python3', 'hmc/hmc_run.py'])
 
     if inf_test_run:
-        print(f"Start inference test at redshift {redshift}...')
+        print(f"Start inference test at redshift {redshift}...")
         nn_err_prop = input('Use NN error propagation (Y/N)?') == 'Y'
         forward_mocks = input('Use forward mocks (Y/N)?') == 'N'
         try:
