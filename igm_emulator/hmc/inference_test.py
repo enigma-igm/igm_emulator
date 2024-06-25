@@ -18,6 +18,7 @@ from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
 from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string
+from igm_emulator.emulator.hparam_tuning import DataLoader
 from hmc_ngp_inference import HMC_NGP
 sys.path.append('/home/zhenyujin/qso_fitting/')
 import h5py
@@ -84,17 +85,11 @@ class INFERENCE_TEST():
         self.key_sample = key_sample
         self.key_hmc = key_hmc
 
-        if small_bin_bool == True:
-            self.n_path = 20  # 17->20
-            self.n_covar = 500000
-            self.bin_label = '_set_bins_3'
-            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{self.z_string}/'
-        else:
-            self.n_path = 17
-            self.n_covar = 500000
-            self.bin_label = '_set_bins_4'
-            self.in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{self.z_string}/final_135/'
 
+        self.n_path = DataLoader.n_path
+        self.n_covar = DataLoader.n_covar
+        self.bin_label = DataLoader.bin_label
+        self.in_path = DataLoader.in_path
 
         # load model from emulator_apply.py
         in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
@@ -123,11 +118,7 @@ class INFERENCE_TEST():
         self.n_gammas = len(self.gammas)
         self.noise_idx = 0
 
-        T0_idx = 7
-        g_idx = 4
-        f_idx = 4
-        like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{self.n_covar}_P{self.n_path}{self.bin_label}.p'
-        self.like_dict = dill.load(open(self.in_path + like_name, 'rb'))
+        self.like_dict = DataLoader.like_dict
 
 
     def mocks_sampling(self):
