@@ -17,10 +17,11 @@ import arviz as az
 import time
 import IPython
 import igm_emulator as emu
-from igm_emulator.emulator.emulator_apply import nn_emulator
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_apply import nn_emulator
 import sys
 import os
-sys.path.append('/home/zhenyujin/qso_fitting/')
+sys.path.append(os.path.expanduser('~') + '/qso_fitting/')
 from qso_fitting.fitting.utils import bounded_theta_to_x, x_to_bounded_theta, bounded_variable_lnP
 import corner
 import matplotlib

@@ -17,10 +17,11 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import matplotlib.patheffects as pe
 from tabulate import tabulate
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string
-from igm_emulator.emulator.hparam_tuning import DataLoader
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_apply import trainer, small_bin_bool, test_num, z_string
+from hparam_tuning import DataLoader
 from hmc_ngp_inference import HMC_NGP
-sys.path.append('/home/zhenyujin/qso_fitting/')
+sys.path.append(os.path.expanduser('~') + '/qso_fitting/')
 import h5py
 from qso_fitting.analysis.inference_test import run_inference_test, compute_importance_weights, C_ge
 import corner

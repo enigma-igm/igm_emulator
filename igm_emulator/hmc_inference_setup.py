@@ -1,7 +1,8 @@
 from igm_emulator.hmc.inference_test import INFERENCE_TEST
 import subprocess
 
-inf_model_values = input('Run HMC at central models/mocks (Y/N)?') == 'Y'
+print("***Use the IGM Emulator for thermal parameter inference! Please follow the upcoming prompts to guide your actions.***")
+inf_model_values = input('Run HMC at central true models/mocks (Y/N)?') == 'Y'
 inf_test_run = input('Start inference test (Y/N)?') == 'Y'
 
 if inf_model_values:
