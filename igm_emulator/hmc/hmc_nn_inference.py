@@ -1,8 +1,7 @@
-from jax.config import config
-config.update("jax_enable_x64", True)
 import numpy as np
 import jax.numpy as jnp
 import jax
+jax.config.update("jax_enable_x64", True)
 import h5py
 import jax.random as random
 from jax import jit

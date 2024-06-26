@@ -12,12 +12,11 @@ from data_loader import DataSamplerModule
 from utils_mlp import DiffStandardScaler
 import h5py
 import numpy as np
-from jax.config import config
 import jax.numpy as jnp
 import jax
 import dill
 from IPython import embed
-config.update("jax_enable_x64", True)
+jax.config.update("jax_enable_x64", True)
 
 
 # Load the data

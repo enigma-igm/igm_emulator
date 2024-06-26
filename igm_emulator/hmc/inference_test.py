@@ -10,8 +10,7 @@ import jax.random as random
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 import jax.numpy as jnp
-from jax.config import config
-config.update("jax_enable_x64", True)
+jax.config.update("jax_enable_x64", True)
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
