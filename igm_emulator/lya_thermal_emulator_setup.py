@@ -21,5 +21,12 @@ if __name__ == "__main__":
 
     if emulator_train:
         print(f"Start re-training emulator...")
-        # Use subprocess to run 'python3 hparam_tuning'
-        subprocess.run(['python3', 'emulator/emulator_apply.py'])
+        try:
+            # Use subprocess to run 'python3 hparam_tuning'
+            subprocess.run(['python3', 'emulator/emulator_apply.py'])
+        except Exception as e:
+            print('Error. Train emulator at this redshift first!', e)
+            print("Running 'python3 hparam_tuning'")
+
+            # Use subprocess to run 'python3 hparam_tuning'
+            subprocess.run(['python3', 'emulator/hparam_tuning.py'])
