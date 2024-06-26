@@ -270,7 +270,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
-                axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r')
+                axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r', lw=2)
                 axs2.plot(ax, test_preds_sorted[i], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
                 axs2.legend(fontsize=7, loc='upper right')
                 if residual_plot:
@@ -278,7 +278,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                     new_ax.legend(fontsize=7, loc='lower right')
                     new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -0.5, 0.5, color='r', alpha=0.1)
             else:
-                axs2.plot(ax, Y_test_sorted[i], c='r')
+                axs2.plot(ax, Y_test_sorted[i], c='r', lw=2)
                 axs2.plot(ax, test_preds_sorted[i], c='b', linestyle='--')
                 if residual_plot:
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, alpha = 0.5, c='k')
@@ -286,11 +286,12 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.set_xlim(ax[0]-100, ax[-1]+100)
             new_ax.set_ylim(-err_scale, err_scale)
             if col == 0:
-                axs2.set_ylabel(r"$\xi_F$")
+                axs2.set_ylabel(r"$\xi_F$",color='blue')
+                axs2.tick_params(axis='y', which='both', colors='blue')
                 if residual_plot:
                     new_ax.set_ylabel('[%]')
             else:
-                axs2.tick_params(axis='y', which='both', direction='in',labelleft=False)
+                axs2.tick_params(axis='y', which='both', direction='in',labelleft=False, colors='blue')
                 if residual_plot:
                     new_ax.tick_params(axis='y', which='both', direction='in', labelleft=False)
 
