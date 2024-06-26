@@ -293,9 +293,13 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.tick_params(axis='y', which='both', direction='in',labelleft=False)
                 if residual_plot:
                     new_ax.tick_params(axis='y', which='both', direction='in', labelleft=False)
-            yticks = ticker.MaxNLocator(nbins=5)
-            axs2.yaxis.set_major_locator(yticks)
-            ax2.set_yticks(ax2.get_yticks().tolist()[1:])
+
+            axs2.yaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
+
+            yticks = ax2.get_yticks().tolist()  # get current y-ticks
+            yticks.append(ax.get_ylim()[1])
+            yticks = yticks[1:]
+            ax2.set_yticks(yticks)
 
             axs2.text(0.2, 0.4,r'$\langle F \rangle$='+f'{X_test_sorted[i, 0]:.4f},'
                     r'$T_0$='f'{X_test_sorted[i, 1]:.0f},'
