@@ -1,17 +1,17 @@
 from igm_emulator.hmc.inference_test import INFERENCE_TEST
 import subprocess
 
-print("***Use the IGM Emulator for thermal parameter inference! Please follow the upcoming prompts to guide your actions.***")
+print("***Use the IGM Emulator for thermal parameter inference with HMC! Please follow the upcoming prompts to guide your actions.***")
 inf_model_values = input('Run HMC at central true models/mocks (Y/N)?') == 'Y'
 inf_test_run = input('Start inference test (Y/N)?') == 'Y'
 
 if inf_model_values:
-    print(f"Start HMC at central models at redshift {redshift}...")
+    print(f"Start HMC at central models at redshift {z_string}...")
     # Use subprocess to run 'python3 hmc_run.py'
     subprocess.run(['python3', 'hmc/hmc_run.py'])
 
 if inf_test_run:
-    print(f"Start inference test at redshift {redshift}...")
+    print(f"Start inference test at redshift {z_string}...")
     nn_err_prop = input('Use NN error propagation (Y/N)?') == 'Y'
     forward_mocks = input('Use forward mocks (Y/N)?') == 'N'
     try:
