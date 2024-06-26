@@ -270,8 +270,8 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             axs2.yaxis.major.formatter.set_powerlimits((0, 0))
             if i == 0:
-                axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r', lw=2)
-                axs2.plot(ax, test_preds_sorted[i], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--')
+                axs2.plot(ax, Y_test_sorted[i], label=r'$\xi_F$', c='r', lw=1.8)
+                axs2.plot(ax, test_preds_sorted[i], label=r'Ly$\alpha$ Emulator', c='b', linestyle='--', lw=1.8)
                 axs2.legend(fontsize=7, loc='upper right')
                 if residual_plot:
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, label='Percentage Residual',alpha = 0.5, c='k')
