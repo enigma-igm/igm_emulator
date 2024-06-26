@@ -282,7 +282,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, alpha = 0.5, c='k')
                     new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -1, 1, color='r', alpha=0.1)
             axs2.set_xlim(ax[0]-100, ax[-1]+100)
-            new_ax.set_ylim(-5, 5)
+            new_ax.set_ylim(-2, 2)
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 if residual_plot:
