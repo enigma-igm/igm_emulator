@@ -96,6 +96,7 @@ class DataSamplerModule:
             self.T0s = np.power(10,log_T0s)
             self.gammas = param_dict['gammas']  # gamma from temperature - density relation -9
 
+        print(f'Loading parameter grid for redshift {self.redshift}...')
         print(f'fobs:{self.fobs}')
         print(f'T0s: {self.T0s}')
         print(f'gammas:{self.gammas}')
