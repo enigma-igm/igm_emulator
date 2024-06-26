@@ -19,13 +19,13 @@ if __name__ != "__main__":
 if __name__ == "__main__":
     print("***Welcome to the IGM Ly-a thermal Emulator! Please follow the upcoming prompts to guide your actions.***")
     emulator_tune = input('Optimize hyperparameters of a NN emulator in ~10 min (Y/N)?') == 'Y'
-    emulator_train = input('Show training of a best-hparam emulator with plots in ~5 sec (Y/N)?') == 'Y'
 
     if emulator_tune:
         print("Running 'python3 hparam_tuning'")
         # Use subprocess to run 'python3 hparam_tuning'
         subprocess.run(['python3', 'emulator/hparam_tuning.py'])
 
+    emulator_train = input('Show training of a best-hparam emulator with plots in ~5 sec (Y/N)?') == 'Y'
     if emulator_train:
         print("Start re-training emulator...")
         try:
