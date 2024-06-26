@@ -1,4 +1,4 @@
-from igm_emulator.hmc.inference_test import INFERENCE_TEST
+from igm_emulator.hmc.inference_test import INFERENCE_TEST, z_string
 import subprocess
 
 print("***Use the IGM Emulator for thermal parameter inference with HMC! Please follow the upcoming prompts to guide your actions.***")
