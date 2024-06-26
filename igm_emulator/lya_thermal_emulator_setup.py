@@ -16,17 +16,18 @@ if __name__ != "__main__":
     redshift, small_scale, n_testing = main()
 
 if __name__ == "__main__":
+    emulator_tune = input('Tune hyperparameters of the emulator at this redshift (Y/N)?') == 'Y'
+    emulator_train = input('Show training of best-hparam emulator with plots (Y/N)?') == 'Y'
 
-    emulator_train = input('Re-train the best-hparam emulator with plots (Y/N)?') == 'Y'
+    if emulator_tune:
+        print("Running 'python3 hparam_tuning'")
+        # Use subprocess to run 'python3 hparam_tuning'
+        subprocess.run(['python3', 'emulator/hparam_tuning.py'])
 
     if emulator_train:
-        print(f"Start re-training emulator...")
+        print("Start re-training emulator...")
         try:
             # Use subprocess to run 'python3 hparam_tuning'
             subprocess.run(['python3', 'emulator/emulator_apply.py'])
         except Exception as e:
-            print('Error. Train emulator at this redshift first!', e)
-            print("Running 'python3 hparam_tuning'")
-
-            # Use subprocess to run 'python3 hparam_tuning'
-            subprocess.run(['python3', 'emulator/hparam_tuning.py'])
+            print('Error. Train best-hparam emulator at this redshift first!', e)
