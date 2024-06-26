@@ -225,6 +225,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             axs2_list[row, col] = a
 
     corr_idx = np.random.choice(np.arange(Y_test.shape[0]), size=9, replace=False)
+    err_scales = np.array([2, 2, 2, 5, 4, 5, 5])
     test_preds = test_preds*stdY+meanY
     Y_test = Y_test*stdY+meanY
     X_test = X_test*stdX+meanX
@@ -240,6 +241,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
     X_test_sorted = random_X_test[sort_indices]
     Y_test_sorted = random_Y_test[sort_indices]
     test_preds_sorted = random_test_preds[sort_indices]
+    err_scale = err_scales[z_idx]
 
     for row in range(3):
         for col in range(3):
@@ -282,7 +284,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, alpha = 0.5, c='k')
                     new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -1, 1, color='r', alpha=0.1)
             axs2.set_xlim(ax[0]-100, ax[-1]+100)
-            new_ax.set_ylim(-2, 2)
+            new_ax.set_ylim(-err_scale, err_scale)
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 if residual_plot:
