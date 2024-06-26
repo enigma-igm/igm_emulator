@@ -280,9 +280,9 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 axs2.plot(ax, test_preds_sorted[i], c='b', linestyle='--')
                 if residual_plot:
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, alpha = 0.5, c='k')
-                    new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -0.5, 0.5, color='r', alpha=0.1)
+                    new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -1, 1, color='r', alpha=0.1)
             axs2.set_xlim(ax[0]-100, ax[-1]+100)
-            new_ax.set_ylim(-1, 1)
+            #new_ax.set_ylim(-1, 1)
             if col == 0:
                 axs2.set_ylabel(r"$\xi_F$")
                 if residual_plot:
@@ -294,7 +294,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
             #yticks = ticker.MaxNLocator(nbins=5)
             #axs2.yaxis.set_major_locator(yticks)
 
-            axs2.text(0.2, 0.4,'$<F>$='f'{X_test_sorted[i, 0]:.4f},'
+            axs2.text(0.2, 0.4,r'$\langle F \rangle$='+f'{X_test_sorted[i, 0]:.4f},'
                     r'$T_0$='f'{X_test_sorted[i, 1]:.0f},'
                     r'$\gamma$='f'{X_test_sorted[i, 2]:.2f}', transform=axs2.transAxes,fontsize=7)
     fig2.savefig(os.path.join(dir_exp, f'test_overplot_{out_tag}_{var_tag}.png'))
