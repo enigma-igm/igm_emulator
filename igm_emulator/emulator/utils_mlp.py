@@ -12,7 +12,7 @@ import struct
 import numpy as np
 from jax.scipy.fft import dct
 import dill
-print(struct.calcsize("P") * 8)
+#print(struct.calcsize("P") * 8)
 
 '''
 Build custom haiku Module
@@ -133,6 +133,22 @@ def loss_fn(params, x, y, like_dict, custom_forward, l2, c_loss, scaler, loss_st
 
 @jax.jit
 def accuracy(params, x, y, meanY, stdY, custom_forward):
+    '''
+
+    Parameters
+    ----------
+    params
+    x
+    y
+    meanY
+    stdY
+    custom_forward
+
+    Returns
+    -------
+
+    '''
+
     preds = custom_forward.apply(params=params, x=x)*stdY+meanY
     y = y*stdY+meanY
     delta = (y - preds) / y
@@ -140,6 +156,27 @@ def accuracy(params, x, y, meanY, stdY, custom_forward):
 
 
 def update(params, opt_state, x, y, optimizer, like_dict, custom_forward, l2, c_loss, scaler, loss_str, percent):
+    '''
+
+    Parameters
+    ----------
+    params
+    opt_state
+    x
+    y
+    optimizer
+    like_dict
+    custom_forward
+    l2
+    c_loss
+    scaler
+    loss_str
+    percent
+
+    Returns
+    -------
+
+    '''
     batch_loss, grads = jax.value_and_grad(loss_fn)(params, x, y, like_dict, custom_forward, l2, c_loss, scaler, loss_str, percent)
     updates, opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
