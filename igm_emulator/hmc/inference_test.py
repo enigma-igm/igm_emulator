@@ -1,6 +1,5 @@
 import sys
 import os
-from hmc_nn_inference import NN_HMC_X
 import igm_emulator as emu
 import dill
 import numpy as np
@@ -19,8 +18,10 @@ from tabulate import tabulate
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_apply import trainer, small_bin_bool, test_num, z_string
 from hparam_tuning import DataLoader
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
 from hmc_ngp_inference import HMC_NGP
 sys.path.append(os.path.expanduser('~') + '/qso_fitting/')
+from hmc_nn_inference import NN_HMC_X
 import h5py
 from qso_fitting.analysis.inference_test import run_inference_test, compute_importance_weights, C_ge
 import corner
