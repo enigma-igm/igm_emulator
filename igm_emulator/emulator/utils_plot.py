@@ -298,7 +298,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
 
             yticks = axs2.get_yticks().tolist()  # get current y-ticks
             yticks.append(axs2.get_ylim()[1])
-            yticks = yticks[1:]
+            yticks = yticks[2:]
             axs2.set_yticks(yticks)
             axs2.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
 
