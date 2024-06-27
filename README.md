@@ -49,17 +49,15 @@ To run the script, use the following command:
 ```sh
 python3 igm_emulator/lya_thermal_emulator_setup.py
 ```
-It will give you a brief greeting and 2 prompts:
+It will give you a brief greeting and 2 action prompts:
 
 ```
 ***Welcome to the IGM Ly-a thermal Emulator! Please follow the upcoming prompts to guide your actions.***
-
 Optimize hyperparameters of a NN emulator in ~10 min (Y/N)?
-
 Show training of a best-hparam emulator with plots in ~5 sec (Y/N)?
 ```
 > [!CAUTION]
-> Please answer Y or N without any spacing or quotes.
+> Please answer Y or N without any spacing or quote.
 
 - If you want to **tune the hyperparameters** of the emulator, respond with **Y** to the first question. This step takes approximately 10 minutes to experiment with 100 configurations.
 - After tuning the hyperparameters, you can **save the training results and plots** with the optimal-configured emulator by responding with **Y** to the second question. This step takes approximately 5 seconds for 2000 epochs of training.
@@ -78,13 +76,59 @@ Loading parameter grid for redshift 5.7...
 The script will then call `emulator/data_loader.py` to load in the Lyman-alpha auto-correlation functions of the selected dimension (59 bins for **Y** to the second question, 276 bins otherwise) and thermal parameters at the selected redshift for training, validation, and testing. The training will hence start based on the action prompt you chose initially. 
 
 ### HMC Inference Setup
-The hmc_inference_setup.py script is used to set up the Hamiltonian Monte Carlo (HMC) inference for the implementation of the IGM emulator.
+The hmc_inference_setup.py script is to implement the IGM emulator for the Hamiltonian Monte Carlo (HMC) thermal parameter inference.
 
 #### Script Description
 The `hmc_inference_setup.py` script performs the following tasks:
 
 1. **Configures the HMC Inference Hyperparameters**: Sets up the hyperparameters required for the HMC inference.
-2. **Initializes the HMC Inference Model**: Initializes the model used for HMC inference.
+2. **Initializes the HMC Inference Model**: Initializes the model used for HMC inference -- we use central models and mocks as examples.
 3. **Runs the HMC Inference**: Executes the HMC inference to sample from the posterior distribution.
 4. **Saves the Inference Results**: Saves the results of the HMC inference for further analysis.
 
+#### Running the Script
+ 
+To run the script, use the following command:
+
+```sh
+python3 igm_emulator/hmc_inference_setup.py
+```
+This command will again give you a brief greeting and 2 action prompts:
+```
+***Use the IGM Emulator for thermal parameter inference with HMC!***
+Run HMC at central true models/mocks? (Y/N)
+Start inference test? (Y/N)
+```
+> [!CAUTION]
+> Please answer Y or N without any spacing or quote.
+
+- If you want to initialize a model and run the HMC inference for thermal parameters from it, respond with **Y** to the first question. This step takes approximately 10 seconds to infer with 4000 samples.
+- Answer **Y** to the second question if you want to test the reliability of the posterior countors from the inference. A **inference test** will be run by repeating a certain number of inference process with different thermal models at given redshift and check if the true credibility level matches with the calculated likelihood.
+
+You can configure the HMC inference by deciding whether use NN error propagted likelihood or not (`Use NN error propagation?`) and the sample size for each chain (`Number of HMC samples (default = 4000)`) by answering 'Y' to either prompt. 
+
+Responding with **Y** to the first question will allow you to infer themal parameters at the central model and 2 random central mocks at a given redshift. Both corner plots with parameter posteriors and fit plots of the Lyman-alpha auto-correlation emulation will be saved. Following commands will appear:
+```
+Use NN error propagation? (Y/N)Y
+Number of HMC samples (default = 4000): 4000
+Starting HMC for the central model and 2 random mocks...
+
+**Indicate which NN emulator to train/use.**
+...
+...
+```
+Responding with **Y** to the second question will allow you to infer themal parameters at a number of thermal models (`Number of inference points (default = 100)`) at a given redshift. Use either forward-modeled random mocks or gaussianized mocks to pass to the inference by aswering to `Use forward-modeled mocks? (Y/N)`. A coverage plot will be saved to check if each credibility level matches with our likelihood. Following commands will appear:
+
+```
+Use NN error propagation? (Y/N)
+Number of HMC samples (default = 4000): 
+Use forward-modeled mocks? (Y/N)
+Number of inference points (default = 100): 
+Starting inference test...
+
+**Indicate which NN emulator to train/use.**
+...
+...
+```
+> [!NOTE]
+> The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
