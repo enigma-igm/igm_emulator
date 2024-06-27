@@ -1,9 +1,8 @@
-import subprocess
 
-
-def run_hmc():
+def run_hmc(num_samples, nn_err_prop_bool):
     print("Starting HMC for the central model and 2 random mocks...")
-    subprocess.run(['python3', 'hmc/hmc_run.py'])
+    from igm_emulator.hmc.hmc_run import run_central_HMC
+    run_central_HMC(num_samples, nn_err_prop_bool)
 
 def start_inference_test(nn_err_prop, forward_mocks, num_inference):
     print("Starting inference test...")
@@ -15,10 +14,15 @@ def start_inference_test(nn_err_prop, forward_mocks, num_inference):
     hmc_infer.coverage_plot()
 
 def main():
-    print("Use the IGM Emulator for thermal parameter inference with HMC!")
+    print("***Use the IGM Emulator for thermal parameter inference with HMC!***")
 
     if input('Run HMC at central true models/mocks? (Y/N)') == 'Y':
-        run_hmc()
+        nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
+        num_samples = int(input('Number of HMC samples (default = 4000): '))
+        try:
+            run_hmc(num_samples, nn_err_prop)
+        except Exception as e:
+            print('Error. Train emulator first!', e)
 
     if input('Start inference test? (Y/N)') == 'Y':
         nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
@@ -28,7 +32,6 @@ def main():
             start_inference_test(nn_err_prop, forward_mocks,num_inference)
         except Exception as e:
             print('Error. Train emulator first!', e)
-            subprocess.run(['python3', 'lya_thermal_emulator_setup.py'])
 
 if __name__ == "__main__":
     main()

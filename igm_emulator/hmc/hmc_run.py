@@ -2,12 +2,12 @@ from hmc_nn_inference import NN_HMC_X
 import dill
 import numpy as np
 import IPython
+import jax
 import jax.random as random
 from sklearn.metrics import mean_squared_error,r2_score
 from scipy.spatial.distance import minkowski
 import jax.numpy as jnp
-from jax.config import config
-config.update("jax_enable_x64", True)
+jax.config.update("jax_enable_x64", True)
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -17,12 +17,10 @@ import corner
 import h5py
 import sys
 import os
-from igm_emulator.emulator.emulator_apply import trainer, small_bin_bool, test_num, z_string, redshift, nn_emulator
-print(f'Training for small bin: {small_bin_bool}')
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
+from emulator_apply import trainer, test_num, z_string, redshift, nn_emulator
+from hparam_tuning import DataLoader
 from progressbar import ProgressBar
-#sys.path.append(os.path.expanduser('~') + '/dw_inference/dw_inference/inference')
-#sys.path.append(os.path.expanduser('~') + '/wdm/correlation/')
-#from mcmc_inference_new_linda_params_mult_file_3d import return_idx, get_model_covar_nearest
 
 '''
 load params and auto-corr
@@ -34,19 +32,10 @@ T0_idx = 7 #0-14
 g_idx = 4 #0-8
 f_idx = 4 #0-8
 
-
-if small_bin_bool==True:
-    n_path = 20  # 17->20
-    n_covar = 500000
-    bin_label = '_set_bins_3'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/{z_string}/'
-else:
-    #n_paths = np.array([17, 16, 16, 15, 15, 15, 14]) #skewers_per_data
-    #n_path = n_paths[z_idx]
-    n_path = 17
-    n_covar = 500000
-    bin_label = '_set_bins_4'
-    in_path = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
+n_path = DataLoader.n_path
+n_covar = DataLoader.n_covar
+bin_label = DataLoader.bin_label
+in_path = DataLoader.in_path
 
 in_name_h5py = f'correlation_temp_fluct_skewers_2000_R_30000_nf_9_dict{bin_label}.hdf5'
 with h5py.File(in_path + in_name_h5py, 'r') as f:
@@ -62,7 +51,7 @@ n_f = len(fobs)
 
 noise_idx = 0
 like_name = f'likelihood_dicts_R_30000_nf_9_T{T0_idx}_G{g_idx}_SNR0_F{f_idx}_ncovar_{n_covar}_P{n_path}{bin_label}.p'
-like_dict = dill.load(open(in_path + like_name, 'rb'))
+like_dict = trainer.like_dict
 mock_name = f'mocks_R_{int(R_value)}_nf_{n_f}_T{T0_idx}_G{g_idx}_SNR{noise_idx}_F{f_idx}_P{n_path}{bin_label}.p'
 mocks = dill.load(open(in_path + mock_name, 'rb'))
 theta_true = np.array([fobs[f_idx], T0s[T0_idx], gammas[g_idx]])
@@ -93,19 +82,23 @@ plt.show()
 Run HMC
 '''
 if __name__ == '__main__':
-
+def run_central_HMC(num_samples,nn_err_prop_bool):
     nn_x = NN_HMC_X(v_bins, best_params,T0s, gammas, fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,
                                 max_tree_depth= 10,
                                 num_warmup=1000,
-                                num_samples=4000,
+                                num_samples=num_samples,
                                 num_chains=4,
                                 covar_nn=covar_nn,
                                 err_nn=err_nn,
-                                nn_err_prop = True)         #add '_nn_prop_False' to save_str
+                                nn_err_prop = nn_err_prop_bool)         #add '_nn_prop_False' to save_str
     key = random.PRNGKey(642)
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
+    if nn_err_prop_bool:
+        name = None
+    else:
+        name = '_nn_prop_False'
     n_inference = 2
     #idx = np.random.randint(10, size=10)
 
@@ -126,14 +119,14 @@ if __name__ == '__main__':
         f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                      zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
         nn_x.save_HMC(z_string,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples,theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-                 hmc_num_steps, hmc_tree_depth, total_time, save_str=f'central_mock_{mock_idx}_Molly')
+                 hmc_num_steps, hmc_tree_depth, total_time, save_str=f'central_mock_{mock_idx}_Molly'+name)
 
         corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                        save_str=f'central_mock_{mock_idx}_Molly', save_bool=True)
+                                        save_str=f'central_mock_{mock_idx}_Molly'+name, save_bool=True)
         fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                    theta_true=theta_true, model_corr=mean_flux,
                                    mock_corr=flux,
-                                   covariance=new_covariance, save_str=f'central_mock_{mock_idx}_Molly', save_bool=True)
+                                   covariance=new_covariance, save_str=f'central_mock_{mock_idx}_Molly'+name, save_bool=True)
 
     flux = mean_flux
     x_opt, theta_opt, losses = nn_x.fit_one(flux, new_covariance)
@@ -142,14 +135,14 @@ if __name__ == '__main__':
     f_mcmc, t_mcmc, g_mcmc = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
                                  zip(*np.percentile(theta_samples, [16, 50, 84], axis=0)))
     nn_x.save_HMC(z_string,f_idx, T0_idx,g_idx, f_mcmc, t_mcmc, g_mcmc, x_samples, theta_samples,theta_true, lnP, neff, neff_mean, sec_per_neff, ms_per_step, r_hat, r_hat_mean,
-             hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mean_model')
+             hmc_num_steps, hmc_tree_depth, total_time,save_str=f'central_mean_model'+name)
 
     corner_fig = nn_x.corner_plot(z_string, theta_samples, x_samples, theta_true,
-                                    save_str=f'central_mean_model', save_bool=True)
+                                    save_str=f'central_mean_model'+name, save_bool=True)
     fit_fig = nn_x.fit_plot(z_string=z_string, theta_samples=theta_samples, lnP=lnP,
                                theta_true=theta_true, model_corr=mean_flux,
                                mock_corr=flux,
-                               covariance=new_covariance, save_str=f'central_mean_model', save_bool=True)
+                               covariance=new_covariance, save_str=f'central_mean_model'+name, save_bool=True)
         #if compare:
         #    in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
         #    molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
