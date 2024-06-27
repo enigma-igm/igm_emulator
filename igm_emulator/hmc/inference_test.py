@@ -59,7 +59,8 @@ class INFERENCE_TEST():
                  n_inference=100, n_params=3,
                  out_path = '/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/',
                  key_sample=36,
-                 key_hmc=642
+                 key_hmc=642,
+                 num_hmc_samples=4000
     ):
 
         '''
@@ -85,6 +86,7 @@ class INFERENCE_TEST():
         self.out_path = out_path
         self.key_sample = key_sample
         self.key_hmc = key_hmc
+        self.num_hmc_samples = num_hmc_samples
 
 
         self.n_path = DataLoader.n_path
@@ -297,7 +299,7 @@ class INFERENCE_TEST():
                                 dense_mass=True,
                                 max_tree_depth= 10,
                                 num_warmup=1000,
-                                num_samples=4000,
+                                num_samples=self.num_hmc_samples,
                                 num_chains=4,
                                 covar_nn=self.covar_nn,
                                 err_nn=self.err_nn,
