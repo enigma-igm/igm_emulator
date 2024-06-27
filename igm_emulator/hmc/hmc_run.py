@@ -81,7 +81,6 @@ plt.show()
 '''
 Run HMC
 '''
-if __name__ == '__main__':
 def run_central_HMC(num_samples,nn_err_prop_bool):
     nn_x = NN_HMC_X(v_bins, best_params,T0s, gammas, fobs,  #switch to new_temps, new_gammas, new_fobs didn't change anything
                                 dense_mass=True,
