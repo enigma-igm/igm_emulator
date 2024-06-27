@@ -1,30 +1,34 @@
-from igm_emulator.hmc.inference_test import INFERENCE_TEST, z_string
 import subprocess
 
-print("***Use the IGM Emulator for thermal parameter inference with HMC! Please follow the upcoming prompts to guide your actions.***")
 
-inf_model_values = input('Run HMC at central true models/mocks (Y/N)?') == 'Y'
-if inf_model_values:
-    print(f"Start HMC at central models at redshift {z_string}...")
-    # Use subprocess to run 'python3 hmc_run.py'
+def run_hmc():
+    print("Starting HMC for the central model and 2 random mocks...")
     subprocess.run(['python3', 'hmc/hmc_run.py'])
 
-inf_test_run = input('Start inference test (Y/N)?') == 'Y'
-if inf_test_run:
-    print(f"Start inference test at redshift {z_string}...")
-    nn_err_prop = input('Use NN error propagation (Y/N)?') == 'Y'
-    forward_mocks = input('Use forward mocks (Y/N)?') == 'N'
-    try:
-        hmc_infer = INFERENCE_TEST(gaussian_bool=forward_mocks, ngp_bool=False, emu_test_bool=False,
-                                   nn_err_prop_bool=nn_err_prop,
-                                   n_inference=100)
+def start_inference_test(nn_err_prop, forward_mocks, num_inference):
+    print("Starting inference test...")
+    from igm_emulator.hmc.inference_test import INFERENCE_TEST
+    hmc_infer = INFERENCE_TEST(gaussian_bool=forward_mocks, ngp_bool=False, emu_test_bool=False,
+                               nn_err_prop_bool=nn_err_prop, n_inference=num_inference)
+    hmc_infer.mocks_sampling()
+    hmc_infer.inference_test_run()
+    hmc_infer.coverage_plot()
 
-        hmc_infer.mocks_sampling()
-        hmc_infer.inference_test_run()
-        hmc_infer.coverage_plot()
-    except Exception as e:
-        print('Error. Train emulator at this redshift first!', e)
-        print("Running 'python3 hparam_tuning'")
+def main():
+    print("Use the IGM Emulator for thermal parameter inference with HMC!")
 
-        # Use subprocess to run 'python3 hparam_tuning'
-        subprocess.run(['python3', 'emulator/hparam_tuning.py'])
+    if input('Run HMC at central true models/mocks? (Y/N)') == 'Y':
+        run_hmc()
+
+    if input('Start inference test? (Y/N)') == 'Y':
+        nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
+        forward_mocks = input('Use forward mocks? (Y/N)') == 'N'
+        num_inference = int(input('Number of inference points (default = 100): '))
+        try:
+            start_inference_test(nn_err_prop, forward_mocks,num_inference)
+        except Exception as e:
+            print('Error. Train emulator first!', e)
+            subprocess.run(['python3', 'lya_thermal_emulator_setup.py'])
+
+if __name__ == "__main__":
+    main()
