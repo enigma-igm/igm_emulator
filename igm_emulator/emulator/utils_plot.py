@@ -276,7 +276,7 @@ def test_overplot(test_preds, Y_test, X_test, meanX,stdX,meanY,stdY, out_tag, va
                 if residual_plot:
                     new_ax.plot(ax, (Y_test_sorted[i]-test_preds_sorted[i])/Y_test_sorted[i]*100, label='Percentage Residual',alpha = 0.5, c='k')
                     new_ax.legend(fontsize=7, loc='lower right')
-                    new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -0.5, 0.5, color='r', alpha=0.1)
+                    new_ax.fill_between(np.arange(ax[0]-2000,ax[-1]+2000), -1, 1, color='r', alpha=0.1)
             else:
                 axs2.plot(ax, Y_test_sorted[i], c='r', lw=1.5)
                 axs2.plot(ax, test_preds_sorted[i], c='b', linestyle='--', lw=1.5)
