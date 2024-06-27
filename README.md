@@ -6,8 +6,8 @@ This project is designed to train and apply a Neural Network (NN) emulator for u
 
 - [Setup](#Setup)
 - [Usage](#Usage)
-  - [Lyman-alpha Thermal Emulator Setup](#Usage)
-  - [HMC Inference Setup](#Usage)
+  - [Lyman-alpha Thermal Emulator Setup](#lyman-alpha-thermal-emulator-setup)
+  - [HMC Inference Setup](#hmc-inference-setup)
 - [Contributing](#contributing)
 - [License](#license)
 
