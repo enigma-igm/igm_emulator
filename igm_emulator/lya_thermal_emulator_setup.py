@@ -1,6 +1,6 @@
 import numpy as np
 import subprocess
-def main():
+def  get_emulator_setups():
     print("**Indicate which NN emulator to train/use.**")
     redshift = input("Emulate at Redshift ([5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]): ")
     small_scale = input("Less velocity bins of Ly-a forest (Y/N): ") == 'Y'
@@ -14,7 +14,7 @@ def main():
     return redshift_float64, small_scale, n_testing
 
 if __name__ != "__main__":
-    redshift, small_scale, n_testing = main()
+    redshift, small_scale, n_testing = get_emulator_setups()
 
 if __name__ == "__main__":
     print("***Welcome to the IGM Ly-a thermal Emulator! Please follow the upcoming prompts to guide your actions.***")
