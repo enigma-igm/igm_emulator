@@ -33,7 +33,9 @@ def main():
             num_samples
         except NameError:
             num_samples = int(input('Number of HMC samples (default = 4000): '))
-        forward_mocks = input('Use forward mocks? (Y/N)') == 'N'
+        forward_mocks = input('Use forward-modeled mocks? (Y/N)') == 'N'
+        if forward_mocks:
+            print('Using Gaussianized mocks...')
         num_inference = int(input('Number of inference points (default = 100): '))
         try:
             start_inference_test(num_samples, nn_err_prop, forward_mocks, num_inference)
