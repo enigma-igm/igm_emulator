@@ -4,7 +4,7 @@ Emulating the z= 4.5-6 Lyman Alpha Forest with IGM's thermal history in JAX.
 
 ## Prerequisites
 
-Ensure you have Python installed on your system. This project is developed using Python.
+Ensure you have Python installed on your system. This project is developed using Python. Ensure you have access to [/mnt/quasar2/]() the @igm.physics.ucsb.edu server 
 
 ## Setup
 
