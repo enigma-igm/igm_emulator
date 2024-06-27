@@ -73,7 +73,10 @@ Extra testing data number for NN error estimation (<= 1115, default = 0): 0
 Loading parameter grid for redshift 5.7...
 ```
 
-The script will then call `emulator/data_loader.py` to load in the Lyman-alpha auto-correlation functions of the selected dimension (59 bins for **Y** to the second question, 276 bins otherwise) and thermal parameters at the selected redshift for training, validation, and testing. The training will hence start based on the action prompt you chose initially. 
+The script will then call `emulator/data_loader.py` to load in the Lyman-alpha auto-correlation functions of the selected dimension (59 bins for **Y** to the second question, 276 bins otherwise) and thermal parameters at the selected redshift for training, validation, and testing. The training will hence start based on the action prompt you chose initially as in the figure, and each emulator training takes about 5 seconds.
+
+<img width="1501" alt="image" src="https://github.com/enigma-igm/igm_emulator/assets/102839205/e4f3b6fa-1f91-4f9f-95ba-a6b251244d94">
+
 
 ### HMC Inference Setup
 The hmc_inference_setup.py script is to implement the IGM emulator for the Hamiltonian Monte Carlo (HMC) thermal parameter inference.
@@ -107,28 +110,28 @@ Start inference test? (Y/N)
 
 You can configure the HMC inference by deciding whether use NN error propagted likelihood or not (`Use NN error propagation?`) and the sample size for each chain (`Number of HMC samples (default = 4000)`) by answering 'Y' to either prompt. 
 
-Responding with **Y** to the first question will allow you to infer themal parameters at the central model and 2 random central mocks at a given redshift. Both corner plots with parameter posteriors and fit plots of the Lyman-alpha auto-correlation emulation will be saved. Following commands will appear:
-```
-Use NN error propagation? (Y/N)Y
-Number of HMC samples (default = 4000): 4000
-Starting HMC for the central model and 2 random mocks...
+1. Responding with **Y** to the first question will allow you to infer themal parameters at the central model and 2 random central mocks at a given redshift. Both corner plots with parameter posteriors and fit plots of the Lyman-alpha auto-correlation emulation will be saved. Following commands will appear:
+  ```
+  Use NN error propagation? (Y/N)Y
+  Number of HMC samples (default = 4000): 4000
+  Starting HMC for the central model and 2 random mocks...
 
-**Indicate which NN emulator to train/use.**
-...
-...
-```
-Responding with **Y** to the second question will allow you to infer themal parameters at a number of thermal models (`Number of inference points (default = 100)`) at a given redshift. Use either forward-modeled random mocks or gaussianized mocks to pass to the inference by aswering to `Use forward-modeled mocks? (Y/N)`. A coverage plot will be saved to check if each credibility level matches with our likelihood. Following commands will appear:
+  **Indicate which NN emulator to train/use.**
+  ...
+  ...
+  ```
+2. Responding with **Y** to the second question will allow you to infer themal parameters at a number of thermal models (`Number of inference points (default = 100)`) at a given redshift. Use either forward-modeled random mocks or gaussianized mocks to pass to the inference by aswering to `Use forward-modeled mocks? (Y/N)`. A coverage plot will be saved to check if each credibility level matches with our likelihood. Following commands will appear:
 
-```
-Use NN error propagation? (Y/N)
-Number of HMC samples (default = 4000): 
-Use forward-modeled mocks? (Y/N)
-Number of inference points (default = 100): 
-Starting inference test...
-
-**Indicate which NN emulator to train/use.**
-...
-...
-```
+  ```
+  Use NN error propagation? (Y/N)
+  Number of HMC samples (default = 4000): 
+  Use forward-modeled mocks? (Y/N)
+  Number of inference points (default = 100): 
+  Starting inference test...
+  
+  **Indicate which NN emulator to train/use.**
+  ...
+  ...
+  ```
 > [!NOTE]
 > The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
