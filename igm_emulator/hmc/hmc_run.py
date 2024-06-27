@@ -1,4 +1,3 @@
-from hmc_nn_inference import NN_HMC_X
 import dill
 import numpy as np
 import IPython
@@ -17,6 +16,8 @@ import corner
 import h5py
 import sys
 import os
+sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/hmc')
+from hmc_nn_inference import NN_HMC_X
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator')
 from emulator_apply import trainer, test_num, z_string, redshift, nn_emulator
 from hparam_tuning import DataLoader
