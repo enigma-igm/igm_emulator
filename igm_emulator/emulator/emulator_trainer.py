@@ -265,8 +265,8 @@ class TrainerModule:
             #Save best emulated parameter
 
             print(f'***Saving training info & best parameters***')
-
-            f = h5py.File(os.path.expanduser('~') + f'/igm_emulator/igm_emulator/emulator/best_params/{self.out_tag}_{self.var_tag}_savefile.hdf5', 'a')
+            dir = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
+            f = h5py.File(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_savefile.hdf5'), 'a')
             group1 = f.create_group('haiku_nn')
             group1.attrs['redshift'] = redshift
             group1.attrs['adamw_decay'] = decay
@@ -299,9 +299,8 @@ class TrainerModule:
             f.close()
             print("training directories and hyperparameters saved")
 
-            dir2 = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params'
-            dill.dump(self.best_params, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
-            dill.dump(self.covar_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
-            dill.dump(self.err_nn, open(os.path.join(dir2, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb'))
+            dill.dump(self.best_params, open(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_best_param.p'), 'wb'))
+            dill.dump(self.covar_nn, open(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_covar_nn.p'), 'wb'))
+            dill.dump(self.err_nn, open(os.path.join(dir, f'{self.out_tag}_{self.var_tag}_err_nn.p'), 'wb'))
             print("trained parameters saved")
 

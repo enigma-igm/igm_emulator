@@ -2,10 +2,13 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from grab_models import param_transform
+sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators')
+from lhc_for_amber import corner_plot
 import dill
 import os
 import numpy as np
 from matplotlib import pyplot as plt
+import corner
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 import h5py
@@ -287,6 +290,7 @@ class DataSamplerModule:
         self.random_split(self.sparce_samples, test_size=0.1, train_size=0.5)
 
         dir = '/home/zhenyujin/igm_emulator/igm_emulator/emulator/GRID'
+        dir_plot = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{self.z_string}'
 
         if self.plot_bool:
             H = self.X_train
@@ -304,8 +308,10 @@ class DataSamplerModule:
             ax.set_zlabel(r'$\gamma$')
             ax.legend()
             ax.grid(True)
-            plt.savefig(os.path.join(dir,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
-            plt.show()
+            plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
+            plt.close()
+
+            corner_plot(H, labels= ["<F>", "$T_0$", "$\gamma$"], fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
 
         if self.small_bin_bool:
             num = f'bin59_seed_{self.seed}' #if seed = None, it's regular grid
