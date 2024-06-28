@@ -2,8 +2,8 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from grab_models import param_transform
-sys.path.append(os.path.expanduser('~') + '/LAF_emulator')
-from laf_emulator.emulators.lhc_for_amber import corner_plot
+#sys.path.append(os.path.expanduser('~') + '/LAF_emulator')
+#from laf_emulator.emulators.lhc_for_amber import corner_plot
 import dill
 import os
 import numpy as np
