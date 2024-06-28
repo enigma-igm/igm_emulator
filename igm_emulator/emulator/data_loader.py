@@ -2,8 +2,8 @@ import sys
 import os
 sys.path.append(os.path.expanduser('~') + '/igm_emulator/igm_emulator/scripts')
 from grab_models import param_transform
-sys.path.append(os.path.expanduser('~') + '/LAF_emulator/laf_emulator/emulators')
-from lhc_for_amber import corner_plot
+sys.path.append(os.path.expanduser('~') + '/LAF_emulator')
+from laf_emulator.emulators.lhc_for_amber import corner_plot
 import dill
 import os
 import numpy as np
@@ -217,7 +217,54 @@ class DataSamplerModule:
 
         return final_samples,testing_param,testing_corr
 
+    def corner_plot(data, labels=None, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k'):
 
+        num_dimensions = data.shape[1]
+
+        if labels is None:
+            labels = [f'Dimension {i + 1}' for i in range(num_dimensions)]
+
+        fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(10, 10))
+
+        for i in range(num_dimensions):
+            for j in range(num_dimensions):
+                if i == j:
+                    axes[i, j].hist(data[:, i], bins=hist_bins, alpha=hist_alpha, color=point_color)
+                    axes[i, j].set_ylabel('')
+                    axes[i, j].yaxis.set_ticklabels([])  # Remove y-axis labels for histograms
+                    if i == num_dimensions - 1:  # Last row
+                        axes[i, j].set_xlabel(labels[i])
+                        axes[i, j].xaxis.set_tick_params(which='both', labelbottom=True)
+                    else:
+                        axes[i, j].set_xlabel('')
+                        axes[i, j].xaxis.set_tick_params(which='both', labelbottom=False)
+                elif i > j:  # Only plot scatter plots below the diagonal
+                    axes[i, j].scatter(data[:, j], data[:, i], alpha=scatter_alpha, color=point_color)
+                    axes[i, j].set_xlabel(labels[j])
+                    axes[i, j].set_ylabel(labels[i])
+                    if i == num_dimensions - 1:  # Last row
+                        axes[i, j].set_xlabel(labels[j])
+                        axes[i, j].xaxis.set_tick_params(which='both', labelbottom=True)
+                    else:
+                        axes[i, j].set_xlabel('')
+                        axes[i, j].xaxis.set_tick_params(which='both', labelbottom=False)
+                    if j == 0:  # First column
+                        axes[i, j].set_ylabel(labels[i])
+                        axes[i, j].yaxis.set_tick_params(which='both', labelleft=True)
+                    else:
+                        axes[i, j].set_ylabel('')
+                        axes[i, j].yaxis.set_tick_params(which='both', labelleft=False)
+                else:
+                    axes[i, j].axis('off')  # Turn off plots above the diagonal
+
+        plt.tight_layout()
+
+        if fig_name is not None:
+            plt.savefig(fig_name, format='png', dpi=512)
+        else:
+            plt.show()
+
+        plt.close(fig)
     def random_split(self, sparce_samples, test_size=0.1, train_size=0.5):
         '''
 
