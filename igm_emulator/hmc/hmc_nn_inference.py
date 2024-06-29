@@ -534,7 +534,7 @@ class NN_HMC_X:
         closest_temp_idx = np.argmin(np.abs(self.T0s - theta_true[1]))
         closest_gamma_idx = np.argmin(np.abs(self.gammas - theta_true[2]))
         closest_fobs_idx = np.argmin(np.abs(self.fobs - theta_true[0]))
-        var_label = ["<F>", "$T_0$", "$\gamma$"]
+        var_label = ['$\langle F \rangle$', '$T_0$', '$\gamma$']
 
         corner_fig_theta = plt.figure(figsize=(x_size*1.2, x_size*1.2),
                                 # constrained_layout=True,

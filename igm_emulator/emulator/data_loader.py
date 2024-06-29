@@ -358,7 +358,7 @@ class DataSamplerModule:
             plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.close()
 
-            self.corner_plot(H, labels= ["<F>", "$T_0$", "$\gamma$"], fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
+            self.corner_plot(H, labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'], fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
 
         if self.small_bin_bool:
             num = f'bin59_seed_{self.seed}' #if seed = None, it's regular grid
