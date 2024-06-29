@@ -233,13 +233,9 @@ class DataSamplerModule:
 
         return final_samples,testing_param,testing_corr
 
-    def corner_plot(self, data, labels, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k'):
+    def corner_plot(self, data, labels, fig, axes, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k', name=None):
 
         num_dimensions = data.shape[1]
-
-        fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(x_size*1.2, x_size*1.2),
-                                # constrained_layout=True,
-                                dpi=dpi_value)
 
         for i in range(num_dimensions):
             for j in range(num_dimensions):
@@ -273,13 +269,9 @@ class DataSamplerModule:
                     axes[i, j].axis('off')  # Turn off plots above the diagonal
 
         plt.tight_layout()
+        return fig, axes
+        #plt.close(fig)
 
-        if fig_name is not None:
-            plt.savefig(fig_name, format='png', dpi=512)
-        else:
-            plt.show()
-
-        plt.close(fig)
     def random_split(self, sparce_samples, test_size=0.1, train_size=0.5):
         '''
 
@@ -372,8 +364,19 @@ class DataSamplerModule:
             ax.grid(True)
             plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.close()
-            self.corner_plot(H, labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'], fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
 
+            fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(x_size * 1.2, x_size * 1.2),
+                                     # constrained_layout=True,
+                                     dpi=dpi_value)
+
+            self.corner_plot(H, fig=fig,axes=axes,point_color='r',labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'])
+            self.corner_plot(A, fig=fig,axes=axes,point_color='g',labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'])
+            self.corner_plot(self.all_data, fig=fig,axes=axes,point_color='b', labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'])
+            self.corner_plot(T, fig=fig,axes=axes,point_color='k',labels= [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'], fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
+
+            #fig.legend(handles=[mlines.Line2D([], [], color=f'C{i}', label=legends[i]) for i in range(2)],
+                       #fontsize=8, bbox_to_anchor=(1, 0.95), loc="upper right")
+            plt.close(fig)
         if self.small_bin_bool:
             num = f'bin59_seed_{self.seed}' #if seed = None, it's regular grid
         else:
