@@ -357,7 +357,7 @@ class DataSamplerModule:
             ax.grid(True)
             plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.close()
-            var_labels = [r'$\langle F \rangle$', r'$T_0$', r'$\gamma$']
+            var_labels = np.asarray([r'$\langle F \rangle$', r'$T_0$', r'$\gamma$'])
             self.corner_plot(H.T, labels= var_labels, fig_name=f'{dir_plot}/corner_plot_train_{self.X_train.shape[0]}_seed_{self.seed}_params_loaded.png')
 
         if self.small_bin_bool:
