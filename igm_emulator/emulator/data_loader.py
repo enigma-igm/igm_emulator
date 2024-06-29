@@ -217,7 +217,7 @@ class DataSamplerModule:
 
         return final_samples,testing_param,testing_corr
 
-    def corner_plot(data, labels=None, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k'):
+    def corner_plot(data, labels, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k'):
 
         num_dimensions = data.shape[1]
 
