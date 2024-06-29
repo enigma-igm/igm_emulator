@@ -17,9 +17,25 @@ import jax
 import jax.numpy as jnp
 import jax.random as random
 
-fig = {'font.family': 'serif'
-       }
-plt.rcParams.update(fig)
+x_size = 3.5
+dpi_value = 200
+
+plt_params = {'legend.fontsize': 7,
+              'legend.frameon': False,
+              'axes.labelsize': 8,
+              'axes.titlesize': 8,
+              'figure.titlesize': 7,
+              'xtick.labelsize': 7,
+              'ytick.labelsize': 7,
+              'lines.linewidth': .7,
+              'lines.markersize': 2.3,
+              'lines.markeredgewidth': .9,
+              'errorbar.capsize': 2,
+              'font.family': 'serif',
+              # 'text.usetex': True,
+              'xtick.minor.visible': True,
+              }
+plt.rcParams.update(plt_params)
 
 class DataSamplerModule:
     def __init__(self, redshift=5.5,
@@ -221,7 +237,9 @@ class DataSamplerModule:
 
         num_dimensions = data.shape[1]
 
-        fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(10, 10))
+        fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(x_size*1.2, x_size*1.2),
+                                # constrained_layout=True,
+                                dpi=dpi_value)
 
         for i in range(num_dimensions):
             for j in range(num_dimensions):
