@@ -145,7 +145,6 @@ def run_central_HMC(num_samples,nn_err_prop_bool):
                                mock_corr=flux,
                                covariance=new_covariance, save_str=f'central_mean_model'+name, save_bool=True)
 
-run_central_HMC(4000,True)
 
 
 
