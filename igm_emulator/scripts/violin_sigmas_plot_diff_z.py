@@ -41,7 +41,7 @@ if __name__ == '__main__':
     n_temp = 15
     n_gamma = 9
     n_f = 9
-    n_inference = 4000 #sample numbers (nwalkers * nsteps)
+    n_inference = 4000*4 #sample numbers (nwalkers * nsteps)
     n_mcmc = 3500
     n_walkers = 16
     n_skip = 500
@@ -58,12 +58,12 @@ if __name__ == '__main__':
     '''
     Molly's 2 mocks
     '''
-    #out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
+    out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 
     '''
     Central Mean model -- Emulatpr
     '''
-    out_file_tag = 'mean'
+    #out_file_tag = 'mean'
 
     '''
     Reweighted Mean model -- Molly
