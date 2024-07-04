@@ -97,7 +97,7 @@ def run_central_HMC(num_samples,nn_err_prop_bool):
     key, subkey = random.split(key)
     var_label = ['fobs', 'T0s', 'gammas']
     if nn_err_prop_bool:
-        name = None
+        name = ''
     else:
         name = '_nn_prop_False'
     n_inference = 2
