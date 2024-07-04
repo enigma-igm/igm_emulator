@@ -144,19 +144,18 @@ def run_central_HMC(num_samples,nn_err_prop_bool):
                                theta_true=theta_true, model_corr=mean_flux,
                                mock_corr=flux,
                                covariance=new_covariance, save_str=f'central_mean_model'+name, save_bool=True)
-        #if compare:
-        #    in_path_model = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final/{z_string}/final_135/'
-        #    molly_name = f'z54_data_nearest_model_set_bins_4_steps_48000_mcmc_inference_5_one_prior_T{T0_idx}_G{g_idx}_F{f_idx}_R_30000.hdf5'
-        #    molly_model = h5py.File(in_path_model + molly_name, 'r')
-        #
-        #    molly_sample = molly_model['samples'][mock_idx, :, :]
-        #    molly_flip = np.zeros(shape=molly_sample.shape)
-        #    molly_flip[:, 0] = molly_sample[:, 2]
-        #    molly_flip[:, 1] = molly_sample[:, 0]
-        #    molly_flip[:, 2] = molly_sample[:, 1]
-        #
-        #    t_molly, g_molly, f_molly = map(lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
-        #                                    zip(*np.percentile(molly_sample, [16, 50, 84], axis=0)))
-        #    molly_infer, covar, log_det = get_model_covar_nearest([t_molly[0], g_molly[0], f_molly[0]])
-        #
-        #    corner.corner(molly_flip, levels=(0.68, 0.95), fig=corner_fig, color='blue',hist_kwargs=dict(density=True))
+
+run_central_HMC(4000,True)
+
+
+
+
+
+
+
+
+
+
+
+
+
