@@ -108,6 +108,7 @@ if __name__ == '__main__':
     plt.title(f'Error propagation {DataLoader.test_num}')
     plt.savefig(os.path.join(dir_exp, f'error_propagation_{DataLoader.test_num}.png'))
     plt.show()
+    plt.close()
 
     plot_corr_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
     plot_corr_matrix(covar_data, out_tag=out_tag, name='covar_data')

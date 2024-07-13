@@ -74,6 +74,17 @@ covar_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_covar_n
 err_nn = dill.load(open(in_path_hdf5 + f'{out_tag}{test_num}_{var_tag}_err_nn.p', 'rb'))
 
 mean_predict = nn_emulator(best_params, theta_true)
+
+plt.figure(figsize=(12, 6))
+data_frac = np.sqrt(np.diagonal(new_covariance))/mean_flux
+nn_frac = np.sqrt(np.diagonal(covar_nn))/mean_flux
+plt.plot(vbins, data_frac, color='b', label='data uncertainty fraction')
+plt.plot(vbins, nn_frac, color='r', label='emulator uncertainty fraction')
+plt.title(f'Error fraction {test_num}')
+plt.legend()
+plt.show()
+plt.close()
+
 plt.plot(vbins, mean_predict, label='mean_predict')
 plt.plot(vbins, mean_flux, label='mean_flux', linestyle='--')
 plt.legend()
