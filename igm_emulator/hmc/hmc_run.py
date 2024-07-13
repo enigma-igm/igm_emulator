@@ -85,12 +85,6 @@ plt.legend()
 plt.show()
 plt.close()
 
-plt.plot(vbins, mean_predict, label='mean_predict')
-plt.plot(vbins, mean_flux, label='mean_flux', linestyle='--')
-plt.legend()
-plt.show()
-plt.close()
-
 '''
 Run HMC
 '''
