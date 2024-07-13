@@ -78,8 +78,8 @@ mean_predict = nn_emulator(best_params, theta_true)
 plt.figure(figsize=(12, 6))
 data_frac = np.sqrt(np.diagonal(new_covariance))/mean_flux
 nn_frac = np.sqrt(np.diagonal(covar_nn))/mean_flux
-plt.plot(vbins, data_frac, color='b', label='data uncertainty fraction')
-plt.plot(vbins, nn_frac, color='r', label='emulator uncertainty fraction')
+plt.plot(vbins, data_frac, color='b', label=f'data uncertainty fraction {data_frac.mean()}')
+plt.plot(vbins, nn_frac, color='r', label=f'emulator uncertainty fraction {nn_frac.mean()}')
 plt.title(f'Error fraction {test_num}')
 plt.legend()
 plt.show()
