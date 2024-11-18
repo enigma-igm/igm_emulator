@@ -53,7 +53,7 @@ v_bins = params['v_bins']
 x_size = 3.5
 dpi_value = 200
 
-plt_params = {'legend.fontsize': 9,
+plt_params = {'legend.fontsize': 12,
               'legend.frameon': False,
               'axes.labelsize': 12,
               'axes.titlesize': 12,
@@ -373,9 +373,9 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     for i in range(n):
         ax.fill_between(v_bins, rel_err_perc[:, i], color=colormap(i / n), zorder=-i, label=f'{percentiles[i]}%')
     ax.plot(v_bins, bias * 100, c='k', linestyle='--', linewidth=0.5, label='bias')
-    ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
-    ax.tick_params(labelsize=11.5)
-    ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=16)
+    ax.set_title(f"Error: {np.mean(new_delta) * 100:.3f}%'r'$\pm$'f'{np.std(new_delta) * 100:.3f}%", fontsize=16)
+    ax.tick_params(labelsize=14)
+    ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=18)
     ax.set_ylabel(r'$\left| \frac{\xi - \xi_{\mathrm{NN}}}{\xi} \right| \times 100$ [%]', fontsize=16)
     ax.text(0.5 ,0.7, f'z = {redshift}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
     ax.legend(fontsize=14, loc='upper right')
@@ -400,7 +400,7 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
     cbar.update_ticks()
     cbar.set_label('Correlation')
     cbar.ax.minorticks_on()
-    axes.set_title(name)
+    axes.set_title(r'$T_0$=9149K, $\gamma$=1.352, $<F>$=0.0801')
     fig.savefig(os.path.join(dir_exp, f'correlation_matrix_{out_tag}{name}.png'))
     fig.show()
 
