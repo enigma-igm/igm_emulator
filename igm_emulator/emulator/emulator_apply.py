@@ -67,20 +67,6 @@ if __name__ == '__main__':
     dir_exp = f'/mnt/quasar2/zhenyujin/igm_emulator/emulator/plots/{z_string}/'
     in_path_best_params = '/mnt/quasar2/zhenyujin/igm_emulator/emulator/best_params/hparam_results/'
 
-    ## Don't have to retrain each time -- if want training plots then fine
-    best_params, _ = trainer.train_loop(True)
-    #best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
-
-    print(f'Best Trainer:')
-    for key, value in hparams.items():
-        print(f'-> {key}: {value}')
-    in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
-
-    ## Test overplot (including err prop points) without retraining
-    test_preds = trainer.custom_forward.apply(best_params, trainer.X_test)
-    #test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
-                  #trainer.var_tag)
-
     ### Error propagation
 
     ## Load the NN error covariance and mean, while save all the sampels' errors
@@ -115,4 +101,18 @@ if __name__ == '__main__':
     plot_covar_matrix(covar_nn_test, out_tag=out_tag, name=f'covar_nn_{DataLoader.test_num}')
     plot_covar_matrix(covar_data, out_tag=out_tag, name='covar_data')
     plot_covar_frac(covar_nn_test, covar_data, out_tag=out_tag, name=DataLoader.test_num)
+
+    ### No retrain each time -- if want training plots then fine
+    best_params, _ = trainer.train_loop(True)
+    #best_params = dill.load(open(in_path_best_params + f'{out_tag}_{var_tag}_best_param.p','rb'))
+
+    print(f'Best Trainer:')
+    for key, value in hparams.items():
+        print(f'-> {key}: {value}')
+    in_path_hdf5 = os.path.expanduser('~') + '/igm_emulator/igm_emulator/emulator/best_params/'
+
+    ## Test overplot (including err prop points) without retraining
+    test_preds = trainer.custom_forward.apply(best_params, trainer.X_test)
+    #test_overplot(test_preds, trainer.Y_test, trainer.X_test, trainer.meanX, trainer.stdX, trainer.meanY, trainer.stdY, trainer.out_tag,
+                  #trainer.var_tag)
 
