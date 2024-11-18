@@ -376,7 +376,7 @@ def plot_error_distribution(new_delta,out_tag, var_tag):
     ax.set_title(f"mean error: {np.mean(new_delta) * 100:.3f}%; std error: {np.std(new_delta) * 100:.3f}%", fontsize=15)
     ax.tick_params(labelsize=11.5)
     ax.set_xlabel(r'Velocity [$km s^{-1}$]', fontsize=16)
-    ax.set_ylabel(r'$\left | \frac{\xi - \xi_\text{NN}}{\boldsymbol{\xi}} \right | \times 100$ [%]', fontsize=16)
+    ax.set_ylabel(r'$\left | \frac{\xi - \xi_{\text{NN}}{\xi} \right | \times 100$ [%]', fontsize=16)
     ax.text(0.5 ,0.7, f'z = {redshift}', transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=dict(boxstyle="square", alpha=0.5))
     ax.legend(fontsize=14, loc='upper right')
     fig.tight_layout()
