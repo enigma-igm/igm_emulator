@@ -181,10 +181,10 @@ class TrainerModule:
                     break
 
         self.best_params = params
-        #X_test_metric = self.X_test[:int(np.round(self.X_train.shape[0]/5)),:]
-        #Y_test_metric = self.Y_test[:int(np.round(self.X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
-        X_test_metric = self.X_test
-        Y_test_metric = self.Y_test
+        X_test_metric = self.X_test[:int(np.round(self.X_train.shape[0]/5)),:]
+        Y_test_metric = self.Y_test[:int(np.round(self.X_train.shape[0]/5)),:] #20% of training data to evaluate test loss in emulator_trainer
+        #X_test_metric = self.X_test
+        #Y_test_metric = self.Y_test
 
         #Validation Metrics
         vali_preds = custom_forward.apply(self.best_params, self.X_vali)
