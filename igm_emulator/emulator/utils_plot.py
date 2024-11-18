@@ -53,13 +53,13 @@ v_bins = params['v_bins']
 x_size = 3.5
 dpi_value = 200
 
-plt_params = {'legend.fontsize': 7,
+plt_params = {'legend.fontsize': 9,
               'legend.frameon': False,
-              'axes.labelsize': 8,
-              'axes.titlesize': 8,
-              'figure.titlesize': 7,
-              'xtick.labelsize': 7,
-              'ytick.labelsize': 7,
+              'axes.labelsize': 12,
+              'axes.titlesize': 12,
+              'figure.titlesize': 11,
+              'xtick.labelsize': 11,
+              'ytick.labelsize': 11,
               'lines.linewidth': .7,
               'lines.markersize': 2.3,
               'lines.markeredgewidth': .9,
@@ -389,7 +389,7 @@ def plot_corr_matrix(covar_data,out_tag, name='covar_nn'):
                      )
     axes = fig.add_subplot()
     covar_image = axes.pcolor(v_bins, v_bins, covar_data/np.sqrt(np.outer(np.diag(covar_data),np.diag(covar_data))),
-                              cmap='seismic',
+                              cmap='bwr',
                               vmin=-1., vmax=1.,
                               rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
@@ -410,7 +410,7 @@ def plot_covar_matrix(covar_data,out_tag, name='covar_nn'):
                      )
     axes = fig.add_subplot()
     covar_image = axes.pcolor(v_bins, v_bins, covar_data,
-                              cmap='seismic',
+                              cmap='bwr',
                               rasterized=True)
     axes.set_xlabel('Velocity (km/s)')
     axes.set_ylabel('Velocity (km/s)')

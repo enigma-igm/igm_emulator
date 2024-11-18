@@ -219,7 +219,7 @@ class DiffStandardScaler:
     @partial(jax.jit, static_argnums=(0,))
     def transform(self, data):
         """
-        Returns the dataset but transformed such that each
+        Returns the dataset but transformed such that eachtot
         feature is min max scaled.
 
         Args:

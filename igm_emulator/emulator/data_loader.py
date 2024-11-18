@@ -20,13 +20,13 @@ import jax.random as random
 x_size = 3.5
 dpi_value = 200
 
-plt_params = {'legend.fontsize': 7,
+plt_params = {'legend.fontsize': 12,
               'legend.frameon': False,
-              'axes.labelsize': 8,
-              'axes.titlesize': 8,
-              'figure.titlesize': 7,
-              'xtick.labelsize': 7,
-              'ytick.labelsize': 7,
+              'axes.labelsize': 12,
+              'axes.titlesize': 12,
+              'figure.titlesize': 11,
+              'xtick.labelsize': 11,
+              'ytick.labelsize': 11,
               'lines.linewidth': .7,
               'lines.markersize': 2.3,
               'lines.markeredgewidth': .9,
@@ -34,6 +34,7 @@ plt_params = {'legend.fontsize': 7,
               'font.family': 'serif',
               # 'text.usetex': True,
               'xtick.minor.visible': True,
+            'ytick.minor.visible': True
               }
 plt.rcParams.update(plt_params)
 
@@ -234,7 +235,6 @@ class DataSamplerModule:
         return final_samples,testing_param,testing_corr
 
     def corner_plot(self, data, labels, hist_bins=30, scatter_alpha=0.5, hist_alpha=0.5, fig_name=None, point_color='k'):
-
         num_dimensions = data.shape[1]
 
         fig, axes = plt.subplots(nrows=num_dimensions, ncols=num_dimensions, figsize=(x_size*1.2, x_size*1.2),
@@ -368,7 +368,7 @@ class DataSamplerModule:
             ax.set_xlabel(r'$<F>$')
             ax.set_ylabel(r'$T_0$')
             ax.set_zlabel(r'$\gamma$')
-            ax.legend()
+            ax.legend(fontsize=12)
             ax.grid(True)
             plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.close()
