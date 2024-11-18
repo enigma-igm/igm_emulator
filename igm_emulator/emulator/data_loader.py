@@ -368,7 +368,7 @@ class DataSamplerModule:
             ax.set_xlabel(r'$<F>$')
             ax.set_ylabel(r'$T_0$')
             ax.set_zlabel(r'$\gamma$')
-            ax.legend()
+            ax.legend(loc='upper right')
             ax.grid(True)
             plt.savefig(os.path.join(dir_plot,f"{self.z_string}_params_sampling_random_split_train_{self.X_train.shape[0]}_test_{T.shape[0]+T_err.shape[0]}_seed_{self.seed}.png"))
             plt.close()
