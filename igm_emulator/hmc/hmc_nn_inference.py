@@ -634,7 +634,7 @@ class NN_HMC_X:
         )
 
         fit_axis.text(
-            0.55, 0.6,
+            0.55, 0.65,
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, infer_model), decimals=4)],
                       ['1-MAPE',
