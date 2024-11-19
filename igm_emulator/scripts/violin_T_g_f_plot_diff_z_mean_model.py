@@ -389,7 +389,7 @@ if __name__ == '__main__':
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
-        f_axis.set_ylim([min_f[-1], max_f[1]])
+        f_axis.set_ylim([0.0006, 0.085])
 
         temp_axis.tick_params(
             axis='x',
