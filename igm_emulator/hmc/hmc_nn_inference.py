@@ -641,7 +641,7 @@ class NN_HMC_X:
                        np.round(1-mean_absolute_percentage_error(model_corr, infer_model), decimals=4)],
                       ],
                      headers=['Matrics', 'Values'], tablefmt='orgtbl'),
-            {'color': 'm', 'fontsize': 5}, transform=fit_axis.transAxes,  fontsize=7
+            {'color': 'm', 'fontsize': 7}, transform=fit_axis.transAxes,  fontsize=7
         )
         fit_axis.set_xlim(self.vbins[0], self.vbins[-1])
         fit_axis.set_xlabel("Velocity (km/s)")
