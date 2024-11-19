@@ -21,6 +21,8 @@ if __name__ == '__main__':
     fred_z = fred_models_1[:, 0]
     fred_t0_1 = fred_models_1[:, 1]
     fred_g_1 = fred_models_1[:, 2]
+    fred_f_1 = fred_models_1[:, 3]
+
 
     redshifts = [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
     z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
@@ -51,35 +53,19 @@ if __name__ == '__main__':
     true_fobs_idx = int(np.floor(n_f / 2.))
 
     in_path_read = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/hmc_results/central_models/'
-    '''
-    Random 5 mocks
-    '''
-    #out_file_tag = f'hmc_inference_{int(n_inference)}'
-    '''
-    Molly's 2 mocks
-    '''
-    #out_file_tag = f'hmc_inference_{int(n_inference)}_Molly'
 
     '''
     Central Mean model -- Emulator
     '''
     out_file_tag = 'mean'
 
-    '''
-    Reweighted Mean model -- Molly
-    '''
-    #out_file_tag = 'mean_reweight_molly'
-
     in_name_inference = f'{z_strings[0]}_{z_strings[-1]}_F{true_fobs_idx}_T0{true_temp_idx}_G{true_gamma_idx}_central_model_{out_file_tag}.hdf5'
     with h5py.File(in_path_read + in_name_inference, 'r') as f:
         samples_temp = np.array(f['samples_temp'])
         samples_gamma = np.array(f['samples_gamma'])
+        samples_f = np.array(f['samples_f'])
         n_plot_rows = np.array(f.attrs['n_plot_rows'])
-        if 'importance_weights' in f.attrs.keys():
-            reweight_ngp = True
-            importance_weights_chain = np.array(f['importance_weights'])
-        else:
-            reweight_ngp = False
+        reweight_ngp = False
 
     bins_temp = np.linspace(350, 19400, 40)
     pdf_hists_temp = np.empty([n_plot_rows, len(redshifts), len(bins_temp)-1])
@@ -89,7 +75,7 @@ if __name__ == '__main__':
     pdf_hists_gamma = np.empty([n_plot_rows, len(redshifts), len(bins_gamma)-1])
     cdf_hists_gamma = np.empty([n_plot_rows, len(redshifts), len(bins_gamma)-1])
 
-    bins_f = np.linspace(.002, 0.144, 40)
+    bins_f = np.linspace(.0005, 0.747, 40)
     pdf_hists_f = np.empty([n_plot_rows, len(redshifts), len(bins_f) - 1])
     cdf_hists_f = np.empty([n_plot_rows, len(redshifts), len(bins_f) - 1])
 
@@ -127,25 +113,22 @@ if __name__ == '__main__':
         #Read mocks of temp samples at given z
         samples_temp_z = samples_temp[:, redshift_idx, :]
         samples_gamma_z = samples_gamma[:, redshift_idx, :]
-        if reweight_ngp:
-            importance_weights_chain_z = importance_weights_chain[:, redshift_idx, :]
+        samples_f_z = samples_f[:, redshift_idx, :]
+
 
         # make one big histogram
         for mock_idx in range(n_plot_rows):
-            if reweight_ngp:
-                hist_temp, bin_edges_temp = np.histogram(
-                    samples_temp_z[mock_idx, :], bins=bins_temp,  density=True, weights=importance_weights_chain_z[mock_idx, :]
-                )
-                hist_gamma, bin_edges_gamma = np.histogram(
-                    samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True, weights=importance_weights_chain_z[mock_idx, :]
-                )
-            else:
-                hist_temp, bin_edges_temp = np.histogram(
+
+            hist_temp, bin_edges_temp = np.histogram(
                     samples_temp_z[mock_idx, :], bins=bins_temp,  density=True
                 )
-                hist_gamma, bin_edges_gamma = np.histogram(
+            hist_gamma, bin_edges_gamma = np.histogram(
                     samples_gamma_z[mock_idx, :], bins=bins_gamma, density=True
                 )
+
+            hist_f, bin_edges_f = np.histogram(
+                        samples_f_z[mock_idx, :], bins=bins_f, density=True
+                    )
 
             pdf_hists_temp[mock_idx, redshift_idx, :] = hist_temp
             mids_temp = (bin_edges_temp[:-1] + bin_edges_temp[1:])/2.
@@ -161,9 +144,20 @@ if __name__ == '__main__':
             )*np.diff(bin_edges_gamma)[0]
             print(cdf_hists_gamma[mock_idx, redshift_idx, -1])
 
+            pdf_hists_f[mock_idx, redshift_idx, :] = hist_f
+            mids_f = (bin_edges_f[:-1] + bin_edges_f[1:])/2.
+            cdf_hists_f[mock_idx, redshift_idx, :] = np.cumsum(
+                    pdf_hists_f[mock_idx, redshift_idx, :]
+                )*np.diff(bin_edges_f)[0]
+            print(cdf_hists_f[mock_idx, redshift_idx, -1])
+
+    print(f'overall max fob: {max_f}')
+    print(f'overall min fob: {min_f}')
 
     print(f'overall max temp: {max_temps}')
     print(f'overall min temp: {min_temps}')
+
+
     print(f'overall max gamma: {max_gammas}')
     print(f'overall min gamma: {min_gammas}')
 
@@ -197,33 +191,40 @@ if __name__ == '__main__':
 
     # make the plot
 
-    mfp_model_fig = plt.figure(figsize=(x_size, x_size*2.4*.55/2*n_plot_rows), constrained_layout=True,
+    mfp_model_fig = plt.figure(figsize=(x_size, x_size*2.4*.55/2*1.5), constrained_layout=True,
                                dpi=dpi_value,
                                )
     mfp_model_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
-    height_ratios = n_plot_rows* [7, 5]
+    height_ratios = n_plot_rows* [7, 5, 5]
     grid = mfp_model_fig.add_gridspec(
-        nrows=n_plot_rows*2, ncols=1, height_ratios=height_ratios,  # width_ratios=[1, 1],
+        nrows=n_plot_rows*3, ncols=1, height_ratios=height_ratios,  # width_ratios=[1, 1],
     )
 
 
     width_temp = 300
     width_gamma = .02
+    width_f = .002
 
     for mock_plot_idx in range(n_plot_rows):
         if mock_plot_idx == 0:
-            temp_axis = mfp_model_fig.add_subplot(grid[2*mock_plot_idx])
+            temp_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx])
             first_temp_axis = temp_axis
 
-            gamma_axis = mfp_model_fig.add_subplot(grid[2*mock_plot_idx + 1])
+            gamma_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx + 1])
             first_gamma_axis = gamma_axis
+
+            f_axis = mfp_model_fig.add_subplot(grid[3 * mock_plot_idx + 2])
+            first_f_axis = f_axis
         else:
-            temp_axis = mfp_model_fig.add_subplot(grid[2*mock_plot_idx],
+            temp_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx],
                                                   sharey=first_temp_axis, sharex=first_temp_axis
                                                   )
-            gamma_axis = mfp_model_fig.add_subplot(grid[2*mock_plot_idx + 1],
+            gamma_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx + 1],
                                                   sharey=first_gamma_axis, sharex=first_gamma_axis
                                                   )
+            f_axis = mfp_model_fig.add_subplot(grid[3 * mock_plot_idx + 2],
+                                                   sharey=first_f_axis, sharex=first_f_axis
+                                                   )
 
         for redshift_idx_2 in range(len(redshifts)):
             mask_nonzero_temp = (pdf_hists_temp[mock_plot_idx, redshift_idx_2, :] > 0.000002)
@@ -256,6 +257,23 @@ if __name__ == '__main__':
             mask_1sig_gamma = (cdf_hists_gamma[mock_plot_idx, redshift_idx_2, :] > 0.16) & (cdf_hists_gamma[mock_plot_idx, redshift_idx_2, :] < 0.84)
             mask_2sig_gamma = (cdf_hists_gamma[mock_plot_idx, redshift_idx_2, :] > 0.025) & (cdf_hists_gamma[mock_plot_idx, redshift_idx_2, :] < 0.975)
 
+            mask_nonzero_f = (pdf_hists_f[mock_plot_idx, redshift_idx_2, :] > 0.00000001)
+            f_axis.plot(
+                redshifts[redshift_idx_2]+width_f*pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_nonzero_f],
+                mids_f[mask_nonzero_f],
+                color='k'
+            )
+            f_axis.plot(
+                redshifts[redshift_idx_2]-width_f*pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_nonzero_f],
+                mids_f[mask_nonzero_f],
+                color='k'
+            )
+
+
+            mask_1sig_f = (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] > 0.16) & (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] < 0.84)
+            mask_2sig_f = (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] > 0.025) & (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] < 0.975)
+
+
             if redshift_idx_2 == 0:
                 temp_axis.fill_betweenx(
                     mids_temp[mask_2sig_temp],
@@ -286,6 +304,22 @@ if __name__ == '__main__':
                     color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                     label=r'mean models 68% region' if out_file_tag == 'mean' else r'mock data 68% region',
                 )
+                f_axis.fill_betweenx(
+                    mids_f[mask_2sig_f],
+                    redshifts[redshift_idx_2]+ width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_2sig_f],
+                    redshifts[redshift_idx_2]- width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_2sig_f],
+                    color='lightcoral' if out_file_tag == 'mean' else 'skyblue',
+                    label=r'mean models 95% region' if out_file_tag == 'mean' else r'mock data 95% region',
+                )
+                f_axis.fill_betweenx(
+                    mids_f[mask_2sig_f],
+                    redshifts[redshift_idx_2] + width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
+                    redshifts[redshift_idx_2] - width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
+                    label=r'mean models 68% region' if out_file_tag == 'mean' else r'mock data 68% region',
+                )
+
+
             else:
                 temp_axis.fill_betweenx(
                     mids_temp[mask_2sig_temp],
@@ -313,41 +347,59 @@ if __name__ == '__main__':
                     color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                 )
 
+                f_axis.fill_betweenx(
+                    mids_f[mask_2sig_f],
+                    redshifts[redshift_idx_2]+ width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_2sig_f],
+                    redshifts[redshift_idx_2]- width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_2sig_f],
+                    color='lightcoral' if out_file_tag == 'mean' else 'skyblue',
+                )
+                f_axis.fill_betweenx(
+                    mids_f[mask_2sig_f],
+                    redshifts[redshift_idx_2] + width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
+                    redshifts[redshift_idx_2] - width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
+                )
+
         temp_axis.plot(fred_z, fred_t0_1, linestyle='--', color='k', label='model')
         gamma_axis.plot(fred_z, fred_g_1, linestyle='--', color='k', label='model')
+        f_axis.plot(fred_z, fred_f_1, linestyle='--', color='k', label='model')
 
         temp_axis.text(5.315, 16000., f'mean models' if out_file_tag == 'mean' else f'mock {mock_plot_idx + 1}', {'color': 'k', 'fontsize': 7}, )
 
         temp_axis.set_ylabel(r'$T_{{0}}$ (K)')
         gamma_axis.set_ylabel(r'$\gamma$')
+        f_axis.set_ylabel(r'$\langle F \rangle$')
 
         gamma_axis.set_xlim([5.301, 6.099])
         temp_axis.set_xlim([5.301, 6.099])
+        f_axis.set_xlim([5.301, 6.099])
 
         if mock_plot_idx == 0:
             temp_axis.legend(frameon=True, bbox_to_anchor=(1.1, 1.3), loc='upper right')
-            gamma_axis.tick_params(
-                axis='x',
-                which='both',
-                bottom=False,
-                labelbottom=False
-            )
         else:
             temp_axis.set_title(' ')
+            gamma_axis.set_title(' ')
 
         if mock_plot_idx == n_plot_rows - 1:
-            gamma_axis.tick_params(
+            f_axis.tick_params(
                 axis='x',
                 which='both',
                 bottom=True,
                 labelbottom=True
             )
-            gamma_axis.set_xlabel('Redshift')
+            f_axis.set_xlabel('Redshift')
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
+        f_axis.set_ylim([min_f[0], max_f[-1]])
 
         temp_axis.tick_params(
+            axis='x',
+            which='both',
+            bottom=False,
+            labelbottom=False
+        )
+        gamma_axis.tick_params(
             axis='x',
             which='both',
             bottom=False,
@@ -360,7 +412,7 @@ if __name__ == '__main__':
     '''
     Molly's 2 mocks
     '''
-    save_name = f'thermal_state_measurements_sigma_shaded_violin_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_mocks_{n_plot_rows}_{out_file_tag}'
+    save_name = f'thermal_state_measurements_sigma_shaded_violin_3_rows_F{true_fobs_idx}_T{true_temp_idx}_G{true_gamma_idx}_R_{int(R_value)}{bin_label}_plot_{out_file_tag}'
 
     mfp_model_fig.savefig(out_path + f'{save_name}.pdf')
     mfp_model_fig.savefig(out_path + f'{save_name}.png')

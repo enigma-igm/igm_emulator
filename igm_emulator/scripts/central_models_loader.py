@@ -41,6 +41,7 @@ samples_gamma = np.empty([n_plot_rows, len(redshifts), n_inference])
 
 samples_temp_mean = np.empty([1, len(redshifts), n_inference])
 samples_gamma_mean = np.empty([1, len(redshifts), n_inference])
+samples_f_mean = np.empty([1, len(redshifts), n_inference])
 
 samples_temp_mean_molly = np.empty([1, len(redshifts), n_walkers * (n_mcmc - n_skip)])
 samples_gamma_mean_molly = np.empty([1, len(redshifts), n_walkers * (n_mcmc - n_skip)])
@@ -79,6 +80,8 @@ for redshift_idx in range(len(redshifts)):
     with h5py.File(in_path_read + name, 'r') as f:
         samples_temp_mean[0,redshift_idx,:] = f['theta_samples'][:, 1]
         samples_gamma_mean[0,redshift_idx, :] = f['theta_samples'][:, 2]
+        samples_f_mean[0,redshift_idx, :] = f['theta_samples'][:, 0]
+
     '''
     Load Mean models -- Molly
     '''
@@ -128,6 +131,7 @@ if os.path.exists(in_path_out + mean_model_name):
 with h5py.File(in_path_out + mean_model_name, 'w') as f:
     f.create_dataset('samples_temp', data=samples_temp_mean)
     f.create_dataset('samples_gamma', data=samples_gamma_mean)
+    f.create_dataset('samples_f', data=samples_f_mean)
     f.attrs['z_strings'] = z_strings
     f.attrs['T0_idx'] = T0_idx
     f.attrs['g_idx'] = g_idx
