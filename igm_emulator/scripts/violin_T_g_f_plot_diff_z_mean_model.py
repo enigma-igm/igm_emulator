@@ -351,6 +351,7 @@ if __name__ == '__main__':
         temp_axis.set_ylabel(r'$T_{{0}}$ (K)')
         gamma_axis.set_ylabel(r'$\gamma$')
         f_axis.set_ylabel(r'$\langle F \rangle$')
+        f_axis.set_yscale('log')
 
         gamma_axis.set_xlim([5.301, 6.099])
         temp_axis.set_xlim([5.301, 6.099])
@@ -373,7 +374,7 @@ if __name__ == '__main__':
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
-        f_axis.set_ylim([0.0005, 0.0802])
+        f_axis.set_ylim([0.0005, 0.0801])
 
         temp_axis.tick_params(
             axis='x',
