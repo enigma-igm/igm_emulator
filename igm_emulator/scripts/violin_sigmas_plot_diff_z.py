@@ -259,7 +259,7 @@ if __name__ == '__main__':
                     mids_temp[mask_1sig_temp],
                     redshifts[redshift_idx_2]+ width_temp * pdf_hists_temp[mock_plot_idx, redshift_idx_2, mask_1sig_temp],
                     redshifts[redshift_idx_2]- width_temp * pdf_hists_temp[mock_plot_idx, redshift_idx_2, mask_1sig_temp],
-                    color='salmon' if out_file_tag == 'mean' else 'dodgerblue',
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                     label=r'mean models 68% region' if out_file_tag == 'mean' else r'mock data 68% region',
                 )
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
                     mids_gamma[mask_1sig_gamma],
                     redshifts[redshift_idx_2]+ width_gamma * pdf_hists_gamma[mock_plot_idx, redshift_idx_2, mask_1sig_gamma],
                     redshifts[redshift_idx_2]- width_gamma * pdf_hists_gamma[mock_plot_idx, redshift_idx_2, mask_1sig_gamma],
-                    color='salmon' if out_file_tag == 'mean' else 'dodgerblue',
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                     label=r'mean models 68% region' if out_file_tag == 'mean' else r'mock data 68% region',
                 )
             else:
@@ -288,7 +288,7 @@ if __name__ == '__main__':
                     mids_temp[mask_1sig_temp],
                     redshifts[redshift_idx_2]+ width_temp * pdf_hists_temp[mock_plot_idx, redshift_idx_2, mask_1sig_temp],
                     redshifts[redshift_idx_2]- width_temp * pdf_hists_temp[mock_plot_idx, redshift_idx_2, mask_1sig_temp],
-                    color='salmon' if out_file_tag == 'mean' else 'dodgerblue',
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                 )
 
                 gamma_axis.fill_betweenx(
@@ -301,7 +301,7 @@ if __name__ == '__main__':
                     mids_gamma[mask_1sig_gamma],
                     redshifts[redshift_idx_2]+ width_gamma * pdf_hists_gamma[mock_plot_idx, redshift_idx_2, mask_1sig_gamma],
                     redshifts[redshift_idx_2]- width_gamma * pdf_hists_gamma[mock_plot_idx, redshift_idx_2, mask_1sig_gamma],
-                    color='salmon' if out_file_tag == 'mean' else 'dodgerblue',
+                    color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
                 )
 
         temp_axis.plot(fred_z, fred_t0_1, linestyle='--', color='k', label='model')
