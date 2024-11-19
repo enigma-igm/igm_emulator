@@ -74,7 +74,7 @@ if __name__ == '__main__':
     pdf_hists_gamma = np.empty([n_plot_rows, len(redshifts), len(bins_gamma)-1])
     cdf_hists_gamma = np.empty([n_plot_rows, len(redshifts), len(bins_gamma)-1])
 
-    bins_f = np.linspace(.0005, 0.747, 40)
+    bins_f = np.linspace(.0005, 0.0747, 40)
     pdf_hists_f = np.empty([n_plot_rows, len(redshifts), len(bins_f) - 1])
     cdf_hists_f = np.empty([n_plot_rows, len(redshifts), len(bins_f) - 1])
 
@@ -352,7 +352,7 @@ if __name__ == '__main__':
                     color='lightcoral' if out_file_tag == 'mean' else 'skyblue',
                 )
                 f_axis.fill_betweenx(
-                    mids_f[mask_2sig_f],
+                    mids_f[mask_1sig_f],
                     redshifts[redshift_idx_2] + width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
                     redshifts[redshift_idx_2] - width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
                     color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
