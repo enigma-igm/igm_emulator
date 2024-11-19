@@ -16,24 +16,25 @@ def start_inference_test(num_samples, nn_err_prop, forward_mocks, num_inference)
 def main():
     print("***Use the IGM Emulator for thermal parameter inference with HMC!***")
     print('Here you can: 1.run parameter inference with central true models/mocks, 2.start inference test at a redshift.')
-    if input('1. Run HMC at central true models/mocks? (Y/N)') == 'Y':
-        nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
+
+    if input('1. Run HMC at central true models/mocks? (Y/N)') == 'Y' or 'y':
+        nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y' or 'y'
         num_samples = int(input('Number of HMC samples (default = 4000): '))
         try:
             run_hmc(num_samples, nn_err_prop)
         except Exception as e:
             print('Error. Train emulator first!', e)
 
-    if input('2. Start inference test? (Y/N)') == 'Y':
+    if input('2. Start inference test? (Y/N)') == 'Y' or 'y':
         try:
             nn_err_prop
         except NameError:
-            nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
+            nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y' or 'y'
         try:
             num_samples
         except NameError:
             num_samples = int(input('Number of HMC samples (default = 4000): '))
-        forward_mocks = input('Use forward-modeled mocks? (Y/N)') == 'N'
+        forward_mocks = input('Use forward-modeled mocks? (Y/N)') == 'N' or 'n'
         if forward_mocks:
             print('Using Gaussianized mocks...')
         num_inference = int(input('Number of inference points (default = 100): '))
