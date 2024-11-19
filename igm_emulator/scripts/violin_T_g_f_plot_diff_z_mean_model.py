@@ -202,7 +202,7 @@ if __name__ == '__main__':
 
     width_temp = 300
     width_gamma = .02
-    width_f = .02
+    width_f = .002
 
     for mock_plot_idx in range(n_plot_rows):
         if mock_plot_idx == 0:
