@@ -15,7 +15,7 @@ def start_inference_test(num_samples, nn_err_prop, forward_mocks, num_inference)
 
 def main():
     print("***Use the IGM Emulator for thermal parameter inference with HMC!***")
-    print('Here you can: 1.run parameter inference at central true models/mocks, 2.start inference test at a redshift.')
+    print('Here you can: 1.run parameter inference with central true models/mocks, 2.start inference test at a redshift.')
     if input('1. Run HMC at central true models/mocks? (Y/N)') == 'Y':
         nn_err_prop = input('Use NN error propagation? (Y/N)') == 'Y'
         num_samples = int(input('Number of HMC samples (default = 4000): '))
