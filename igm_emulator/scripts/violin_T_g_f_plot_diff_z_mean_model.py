@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
     # make the plot
 
-    mfp_model_fig = plt.figure(figsize=(x_size*1.5, x_size*2.4*.55/2*1.5), constrained_layout=True,
+    mfp_model_fig = plt.figure(figsize=(x_size, x_size*2.4*.55/2*1.5), constrained_layout=True,
                                dpi=dpi_value,
                                )
     mfp_model_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
