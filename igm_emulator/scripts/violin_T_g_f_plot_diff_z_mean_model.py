@@ -375,7 +375,7 @@ if __name__ == '__main__':
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
-        f_axis.set_ylim([0.0007, 0.085])
+        f_axis.set_ylim([0.0007, 0.08])
         f_axis.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4, prune='lower'))
 
         temp_axis.tick_params(
