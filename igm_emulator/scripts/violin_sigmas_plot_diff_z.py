@@ -307,7 +307,7 @@ if __name__ == '__main__':
         temp_axis.plot(fred_z, fred_t0_1, linestyle='--', color='k', label='model')
         gamma_axis.plot(fred_z, fred_g_1, linestyle='--', color='k', label='model')
 
-        temp_axis.text(5.315, 16000., f'mock {mock_plot_idx + 1}', {'color': 'k', 'fontsize': 7}, )
+        temp_axis.text(5.315, 16000., f'mean models' if out_file_tag == 'mean' else f'mock {mock_plot_idx + 1}', {'color': 'k', 'fontsize': 7}, )
 
         temp_axis.set_ylabel(r'$T_{{0}}$ (K)')
         gamma_axis.set_ylabel(r'$\gamma$')
