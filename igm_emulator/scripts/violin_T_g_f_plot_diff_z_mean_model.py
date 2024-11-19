@@ -194,7 +194,7 @@ if __name__ == '__main__':
                                dpi=dpi_value,
                                )
     mfp_model_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
-    height_ratios = n_plot_rows* [7, 5, 5]
+    height_ratios = n_plot_rows* [7, 7, 3]
     grid = mfp_model_fig.add_gridspec(
         nrows=n_plot_rows*3, ncols=1, height_ratios=height_ratios,  # width_ratios=[1, 1],
     )
@@ -373,7 +373,7 @@ if __name__ == '__main__':
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
-        f_axis.set_ylim([0.0005, 0.09])
+        f_axis.set_ylim([0.0005, 0.0802])
 
         temp_axis.tick_params(
             axis='x',
