@@ -190,7 +190,7 @@ if __name__ == '__main__':
 
     # make the plot
 
-    mfp_model_fig = plt.figure(figsize=(x_size, x_size*2.4*.55/2*1.5), constrained_layout=True,
+    mfp_model_fig = plt.figure(figsize=(x_size*1.5, x_size*2.4*.55/2*1.5), constrained_layout=True,
                                dpi=dpi_value,
                                )
     mfp_model_fig.set_constrained_layout_pads(w_pad=0, h_pad=0, hspace=0, wspace=0)
@@ -389,7 +389,7 @@ if __name__ == '__main__':
 
         temp_axis.set_ylim([min_temps[-1], max_temps[0]])
         gamma_axis.set_ylim([min_gammas[0], max_gammas[-1]])
-        f_axis.set_ylim([min_f[0], max_f[-1]])
+        f_axis.set_ylim([min_f[-1], max_f[1]])
 
         temp_axis.tick_params(
             axis='x',
