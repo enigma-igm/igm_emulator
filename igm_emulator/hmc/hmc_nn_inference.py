@@ -620,13 +620,13 @@ class NN_HMC_X:
                           label='Mock Data')
 
         fit_axis.text(
-            0.2, 0.6,
+            0.15, 0.6,
             'True Model \n' + r'$\langle F \rangle$' + f' = {np.round(theta_true[0], decimals=4)}' + f'\n $T_0$ = {int(theta_true[1])} K \n $\gamma$ = {np.round(theta_true[2], decimals=3)} \n',
             {'color': 'green', 'fontsize': 5}, transform=fit_axis.transAxes, fontsize=7
         )
 
         fit_axis.text(
-            0.4, 0.55,
+            0.32, 0.55,
             'Inferred Model \n' + r'$\langle F \rangle$' + f' = {np.round(f_mcmc[0], decimals=4)}$^{{+{np.round(f_mcmc[1], decimals=4)}}}_{{-{np.round(f_mcmc[2], decimals=4)}}}$' +
             f'\n $T_0$ = {int(t_mcmc[0])}$^{{+{int(t_mcmc[1])}}}_{{-{int(t_mcmc[2])}}}$ K'
             f'\n ' + r'$\gamma$' + f' = {np.round(g_mcmc[0], decimals=3)}$^{{+{np.round(g_mcmc[1], decimals=3)}}}_{{-{np.round(g_mcmc[2], decimals=3)}}}$\n',
@@ -634,7 +634,7 @@ class NN_HMC_X:
         )
 
         fit_axis.text(
-            0.6, 0.7,
+            0.55, 0.6,
             tabulate([[r' $R_2$',
                        np.round(r2_score(model_corr, infer_model), decimals=4)],
                       ['1-MAPE',
