@@ -205,25 +205,9 @@ if __name__ == '__main__':
     width_f = .0002
 
     for mock_plot_idx in range(n_plot_rows):
-        if mock_plot_idx == 0:
-            temp_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx])
-            first_temp_axis = temp_axis
-
-            gamma_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx + 1])
-            first_gamma_axis = gamma_axis
-
-            f_axis = mfp_model_fig.add_subplot(grid[3 * mock_plot_idx + 2])
-            first_f_axis = f_axis
-        else:
-            temp_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx],
-                                                  sharey=first_temp_axis, sharex=first_temp_axis
-                                                  )
-            gamma_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx + 1],
-                                                  sharey=first_gamma_axis, sharex=first_gamma_axis
-                                                  )
-            f_axis = mfp_model_fig.add_subplot(grid[3 * mock_plot_idx + 2],
-                                                   sharey=first_f_axis, sharex=first_f_axis
-                                                   )
+        temp_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx])
+        gamma_axis = mfp_model_fig.add_subplot(grid[3*mock_plot_idx + 1])
+        f_axis = mfp_model_fig.add_subplot(grid[3 * mock_plot_idx + 2])
 
         for redshift_idx_2 in range(len(redshifts)):
             mask_nonzero_temp = (pdf_hists_temp[mock_plot_idx, redshift_idx_2, :] > 0.000002)
