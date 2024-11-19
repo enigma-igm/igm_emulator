@@ -268,7 +268,6 @@ if __name__ == '__main__':
                 color='k'
             )
 
-
             mask_1sig_f = (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] > 0.16) & (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] < 0.84)
             mask_2sig_f = (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] > 0.025) & (cdf_hists_f[mock_plot_idx, redshift_idx_2, :] < 0.975)
 
@@ -311,7 +310,7 @@ if __name__ == '__main__':
                     label=r'mean models 95% region' if out_file_tag == 'mean' else r'mock data 95% region',
                 )
                 f_axis.fill_betweenx(
-                    mids_f[mask_2sig_f],
+                    mids_f[mask_1sig_f],
                     redshifts[redshift_idx_2] + width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
                     redshifts[redshift_idx_2] - width_f * pdf_hists_f[mock_plot_idx, redshift_idx_2, mask_1sig_f],
                     color='orangered' if out_file_tag == 'mean' else 'dodgerblue',
