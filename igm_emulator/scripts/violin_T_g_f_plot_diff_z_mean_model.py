@@ -21,12 +21,11 @@ if __name__ == '__main__':
     fred_z = fred_models_1[:, 0]
     fred_t0_1 = fred_models_1[:, 1]
     fred_g_1 = fred_models_1[:, 2]
-    fred_f_1 = fred_models_1[:, 3]
 
 
     redshifts = [5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0]
     z_strings = ['z54', 'z55', 'z56', 'z57', 'z58', 'z59', 'z6']
-
+    fred_f_1 = [0.0801, 0.0591, 0.0447, 0.0256, 0.0172, 0.0114, 0.0089]
     in_path_start = f'/mnt/quasar2/mawolfson/correlation_funct/temp_gamma/final_135/'
 
     out_path = f'/mnt/quasar2/zhenyujin/igm_emulator/hmc/plots/all_z/'
@@ -362,7 +361,7 @@ if __name__ == '__main__':
 
         temp_axis.plot(fred_z, fred_t0_1, linestyle='--', color='k', label='model')
         gamma_axis.plot(fred_z, fred_g_1, linestyle='--', color='k', label='model')
-        f_axis.plot(fred_z, fred_f_1, linestyle='--', color='k', label='model')
+        f_axis.plot(redshifts, fred_f_1, linestyle='--', color='k', label='model')
 
         temp_axis.text(5.315, 16000., f'mean models' if out_file_tag == 'mean' else f'mock {mock_plot_idx + 1}', {'color': 'k', 'fontsize': 7}, )
 
