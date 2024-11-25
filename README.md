@@ -102,8 +102,6 @@ This command will again give you a brief greeting and 2 action prompts:
 Run HMC at central true models/mocks? (Y/N)
 Start inference test? (Y/N)
 ```
-> [!CAUTION]
-> Please answer Y or N without any spacing or quote.
 
 - If you want to initialize a model and run the HMC inference for thermal parameters from it, respond with **Y** to the first question. This step takes approximately 10 seconds to infer with 4000 samples.
 - Answer **Y** to the second question if you want to test the reliability of the posterior countors from the inference. A **inference test** will be run by repeating a certain number of inference process with different thermal models at given redshift and check if the true credibility level matches with the calculated likelihood.
@@ -135,3 +133,21 @@ You can configure the HMC inference by deciding whether use NN error propagted l
   ```
 > [!NOTE]
 > The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
+
+#### Citation
+@ARTICLE{2024arXiv241006505J,
+       author = {{Jin}, Zhenyu and {Wolfson}, Molly and {Hennawi}, Joseph F. and {Gonz{\'a}lez-Hern{\'a}ndez}, Diego},
+        title = "{Neural network emulator to constrain the high-$z$ IGM thermal state from Lyman-$\alpha$ forest flux auto-correlation function}",
+      journal = {arXiv e-prints},
+     keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics},
+         year = 2024,
+        month = oct,
+          eid = {arXiv:2410.06505},
+        pages = {arXiv:2410.06505},
+          doi = {10.48550/arXiv.2410.06505},
+archivePrefix = {arXiv},
+       eprint = {2410.06505},
+ primaryClass = {astro-ph.CO},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2024arXiv241006505J},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
