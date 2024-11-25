@@ -135,6 +135,7 @@ You can configure the HMC inference by deciding whether use NN error propagted l
 > The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
 
 #### Citation
+```
 @ARTICLE{2024arXiv241006505J,
        author = {{Jin}, Zhenyu and {Wolfson}, Molly and {Hennawi}, Joseph F. and {Gonz{\'a}lez-Hern{\'a}ndez}, Diego},
         title = "{Neural network emulator to constrain the high-$z$ IGM thermal state from Lyman-$\alpha$ forest flux auto-correlation function}",
@@ -151,3 +152,4 @@ archivePrefix = {arXiv},
        adsurl = {https://ui.adsabs.harvard.edu/abs/2024arXiv241006505J},
       adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
+```
