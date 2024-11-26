@@ -144,7 +144,7 @@ You can configure the HMC inference by deciding whether use NN error propagted l
 > [!NOTE]
 > The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
 
-In the end, you will have corner plots for parameter inference at cebtral model.
+In the end, you will have nice corner plots for parameter inference at central model.
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/9e344e38-40d5-4d6e-b7f5-9006246567dd">
 
 And coverage plot for inference test in 100 (default) inferences, shaded region is Poisson error and closer to red line would mark passing the test.
@@ -152,12 +152,12 @@ And coverage plot for inference test in 100 (default) inferences, shaded region 
 
 #### Results
 
-If you repeat the above procedures for all redshift, you will have the following inference results. 
+If you repeat the above procedures for all redshift, you will have the following inference results, dashed line is true values. 
 
-For noiseless data at central-grid model, dashed line is true values:
+For the noiseless data at central-grid model:
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/1d22ca3e-069f-4afc-8ea0-c39a114c677e">
 
-For noisy random mocks at central-grid model, dashed line is true values:
+For noisy random mocks at central-grid model:
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/697af92d-1c9f-4f22-b132-699ce67bcca6">
 
 
