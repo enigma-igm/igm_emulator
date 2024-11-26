@@ -79,13 +79,13 @@ The script will then call `emulator/data_loader.py` to load in the Lyman-alpha a
 
 It will also give you nice training/performace plots.
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/5c6c410e-9f9a-48ad-b955-8d99e81cb741">
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/4e6d9e4d-c3f3-440a-b7ca-dc9013dcb601">
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/5c6c410e-9f9a-48ad-b955-8d99e81cb741">
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/4e6d9e4d-c3f3-440a-b7ca-dc9013dcb601">
 
 And error estimation of the emulator.
 
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/2b317f09-f95c-4e43-84d2-a2a46830d714">
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/023794a8-05f2-4168-b2ad-db3b56c22d72">
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/2b317f09-f95c-4e43-84d2-a2a46830d714">
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/647f7cf5-8ada-4949-9c0a-8b2fb457269b">
 
 
 ### HMC Inference Setup
@@ -148,17 +148,17 @@ In the end, you will have corner plots for parameter inference at cebtral model.
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/9e344e38-40d5-4d6e-b7f5-9006246567dd">
 
 And coverage plot for inference test in 100 (default) inferences, shaded region is Poisson error and closer to red line would mark passing the test.
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/d450525d-2941-4481-bd81-eb462eef10cd">
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/d450525d-2941-4481-bd81-eb462eef10cd">
 
 #### Results
 
 If you repeat the above procedures for all redshift, you will have the following inference results. 
 
 For noiseless data at central-grid model, dashed line is true values:
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/1d22ca3e-069f-4afc-8ea0-c39a114c677e">
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/1d22ca3e-069f-4afc-8ea0-c39a114c677e">
 
 For noisy random mocks at central-grid model, dashed line is true values:
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/697af92d-1c9f-4f22-b132-699ce67bcca6">
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/697af92d-1c9f-4f22-b132-699ce67bcca6">
 
 
 #### Citation
