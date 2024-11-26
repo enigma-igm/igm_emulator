@@ -36,7 +36,7 @@ Once you have done the prerequisites and setup, it's very easy to train an emula
 
 The `lya_thermal_emulator_setup.py` script performs the following tasks:
 
-1. **Loads the Training Data**: Loads the training data at a chosen redshift required for the Lyman-alpha thermal history emulator.
+1. **Loads the Training Data**: Loads the noiseless training data at a chosen redshift required for the Lyman-alpha thermal history emulator.
 2. **Configures the Emulator**: Finds the best hyperparameters for the emulator by optimizing on validation loss.
 3. **Trains the Emulator**: Uses the training data to train the best-configured emulator and gives estimated prediction error.
 4. **Visualizes the Training Process**: Shows the learning curve plot; the Emulation vs. Data overplots on training data, testing data; residuals of testing dataset; and estimated NN error matrix with its fraction to the total uncertainties.
@@ -76,6 +76,14 @@ Loading parameter grid for redshift 5.7...
 The script will then call `emulator/data_loader.py` to load in the Lyman-alpha auto-correlation functions of the selected dimension (59 bins for **Y** to the second question, 276 bins otherwise) and thermal parameters at the selected redshift for training, validation, and testing. The training will hence start based on the action prompt you chose initially as in the figure, and each emulator training takes about 5 seconds.
 
 <img width="1501" alt="image" src="https://github.com/enigma-igm/igm_emulator/assets/102839205/e4f3b6fa-1f91-4f9f-95ba-a6b251244d94">
+
+It will also give you nice training/performace plots.
+![image](https://github.com/user-attachments/assets/5c6c410e-9f9a-48ad-b955-8d99e81cb741)
+![image](https://github.com/user-attachments/assets/4e6d9e4d-c3f3-440a-b7ca-dc9013dcb601)
+
+And error estimation of the emulator.
+![image](https://github.com/user-attachments/assets/2b317f09-f95c-4e43-84d2-a2a46830d714)
+![image](https://github.com/user-attachments/assets/023794a8-05f2-4168-b2ad-db3b56c22d72)
 
 
 ### HMC Inference Setup
@@ -133,6 +141,23 @@ You can configure the HMC inference by deciding whether use NN error propagted l
   ```
 > [!NOTE]
 > The physics of the emulator and data is set up after the HMC setups (`**Indicate which NN emulator to train/use.**`) and is consistent if answer **Y** to both prompts.
+
+In the end, you will have corner plots for parameter inference at cebtral model.
+![image](https://github.com/user-attachments/assets/9e344e38-40d5-4d6e-b7f5-9006246567dd)
+
+And coverage plot for inference test in 100 (default) inferences, shaded region is Poisson error and closer to red line would mark passing the test.
+![image](https://github.com/user-attachments/assets/d450525d-2941-4481-bd81-eb462eef10cd)
+
+#### Results
+
+If you repeat the above procedures for all redshift, you will have the following inference results. 
+
+For noiseless data at central-grid model, dashed line is true values:
+![image](https://github.com/user-attachments/assets/1d22ca3e-069f-4afc-8ea0-c39a114c677e)
+
+For noisy random mocks at central-grid model, dashed line is true values:
+![image](https://github.com/user-attachments/assets/697af92d-1c9f-4f22-b132-699ce67bcca6)
+
 
 #### Citation
 ```
